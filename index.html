@@ -59,12 +59,6 @@ body{height:100%;margin:0;background:#000;overflow:hidden;color:var(--fg);font-f
 .mr input{position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;font-size:16px;cursor:pointer}.mr u{cursor:pointer;padding:0 6px;color:#ff6a58;text-decoration:none}
 #hn{position:fixed;right:12px;bottom:calc(min(42vh,330px) + 8px);padding:10px 16px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:rgba(8,12,18,.7);color:#e9eef5;font-size:14px;z-index:3;touch-action:none;font-family:inherit}
 kbd{background:#1b222c;border:1px solid #38424f;border-radius:4px;padding:0 6px;font-size:12px}
-#ys{position:fixed;left:12px;bottom:calc(min(42vh,330px) + 8px);padding:10px 16px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:rgba(8,12,18,.7);color:#e9eef5;font-size:14px;z-index:3;touch-action:none;font-family:inherit}#ys.on{border-color:var(--grn);color:var(--grn)}
-#sgr{font-size:11.5px;line-height:1.45;color:#c9d6e4;text-align:center;max-width:250px;min-height:34px}
-#win{position:fixed;inset:0;pointer-events:none;display:none;background:linear-gradient(180deg,#1b1f25 0,#2a2f37 9%,transparent 9.4%),linear-gradient(0deg,#3b3f46 0,#5a5348 20%,#2b2f35 20.4%,transparent 21%),linear-gradient(90deg,#20242a 0,#2b3038 5%,transparent 5.4%),linear-gradient(270deg,#20242a 0,#2b3038 5%,transparent 5.4%),linear-gradient(90deg,transparent 62%,#2b3038 62.2%,#2b3038 65%,transparent 65.2%)}
-#mini{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 12px);display:none;white-space:nowrap;z-index:2}
-#cv{position:fixed;left:12px;bottom:calc(min(42vh,330px) + 58px);padding:10px 16px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:rgba(8,12,18,.7);color:#e9eef5;font-size:14px;z-index:3;touch-action:none;font-family:inherit}
-body.ext #cv{bottom:calc(env(safe-area-inset-bottom,0px) + 62px)}body.ext #ys,body.ext #hn{bottom:calc(env(safe-area-inset-bottom,0px) + 12px)}
 </style></head><body>
 <canvas id="gl"></canvas><div id="fr"></div>
 <div id="hud">
@@ -75,15 +69,15 @@ body.ext #cv{bottom:calc(env(safe-area-inset-bottom,0px) + 62px)}body.ext #ys,bo
 <div id="cab">
  <div class="lv" id="bl"><h4>ブレーキ弁ハンドル</h4><div class="trk"><div class="plate"></div><div class="kn b"></div></div></div>
  <div id="mid"><canvas id="gauge" width="300" height="300"></canvas>
-  <div id="dig"><span>制限 <b id="lm">-</b></span><span>BC <b id="bcv">-</b></span><span class="lamp" id="lAts">ATS</span><span class="lamp g" id="lYs">抑速</span><span class="lamp g" id="lDr">戸閉</span></div><div id="sgr"></div></div>
+  <div id="dig"><span>制限 <b id="lm">-</b></span><span>BC <b id="bcv">-</b></span><span class="lamp" id="lAts">ATS</span><span class="lamp g" id="lDr">戸閉</span></div></div>
  <div class="lv" id="ml"><h4>主幹制御器（マスコン）</h4><div class="trk"><div class="plate"></div><div class="kn"></div></div></div>
 </div>
-<button id="hn">警笛 (H)</button><div id="win"></div><div id="mini" class="chip"></div><button id="cv">視点 (C)</button><button id="ys">抑速 OFF (E)</button><div id="ann"></div><div id="msg"></div>
+<button id="hn">警笛 (H)</button><div id="ann"></div><div id="msg"></div>
 <div id="ov"><div class="card">
  <h1>電車でGO！</h1>
  <p style="font-size:18px;color:#fff;margin:0">大網特快　東京 → 大網</p>
  <p>停止位置に合わせて各駅に止め、ATSを鳴らさずに大網まで運転しよう。<br>
- マスコン <kbd>W</kbd>/<kbd>S</kbd>（<kbd>←</kbd><kbd>→</kbd>、<kbd>0</kbd>〜<kbd>5</kbd>で直接）<br>ブレーキ <kbd>↑</kbd>/<kbd>Q</kbd>緩め　<kbd>↓</kbd>/<kbd>A</kbd>込め　<kbd>Z</kbd>全緩め　<kbd>X</kbd>B8　非常 <kbd>Space</kbd>　開始 <kbd>Enter</kbd>　警笛 <kbd>H</kbd><br>画面のレバーもドラッグ・タップで操作できます。<kbd>C</kbd>で視点切替（運転席・車外・客席窓・駅ホーム）。<br>ブレーキを「緩め」にしてからマスコンを入れて発車。<br><span style="color:#ffcf5a">信号:</span> 赤=停止 / 黄=注意45 / 黄緑=減速65 / 緑=進行。先行列車に近づくと現示が下がり、赤信号の手前にはATSの減速パターンが出ます。<br><span style="color:#ffcf5a">勾配:</span> 下り坂は速度が上がるので、<kbd>E</kbd>で抑速ブレーキ（マスコン切・15km/h以上で設定速度を保持）またはブレーキで調整。登り坂はノッチを足そう。</p>
+ マスコン <kbd>W</kbd>/<kbd>S</kbd>（<kbd>←</kbd><kbd>→</kbd>、<kbd>0</kbd>〜<kbd>5</kbd>で直接）<br>ブレーキ <kbd>↑</kbd>/<kbd>Q</kbd>緩め　<kbd>↓</kbd>/<kbd>A</kbd>込め　<kbd>Z</kbd>全緩め　<kbd>X</kbd>B8　非常 <kbd>Space</kbd>　開始 <kbd>Enter</kbd>　警笛 <kbd>H</kbd><br>画面のレバーもドラッグ・タップで操作できます。<br>ブレーキを「緩め」にしてからマスコンを入れて発車。</p>
  <div class="mr" style="justify-content:center;gap:14px"><span style="flex:0">モード</span><b id="mNorm" style="border-color:#ffcf5a">通常運転</b><b id="mTrain">訓練モード</b></div>
 <div class="mr" style="justify-content:center;gap:14px"><span style="flex:0">停車時間</span><b data-d="5">短め(5秒)</b><b data-d="9.5" style="border-color:#ffcf5a">標準(9.5秒)</b><b data-d="16">長め(16秒)</b><b data-d="25">じっくり(25秒)</b></div>
 <p id="trdesc" style="display:none;color:#ffb45a">訓練モード: 走行中、前方に踏切内の人や停止中の列車などの支障が不意に現れます。十分に減速・停止して安全確認できれば加点、間に合わずATSが動作すると減点されます。</p>
@@ -110,16 +104,10 @@ let sd=7;const rng=()=>{sd=(sd*16807)%2147483647;return sd/2147483647};
 const gate=s=>{let g=1;for(const t of ST)g=Math.min(g,sm(230,520,Math.abs(s-t.s)));return g};
 const tx=s=>(46*Math.sin(s/620+1)+22*Math.sin(s/230))*gate(s);
 const yaw=s=>Math.atan2(tx(s+1)-tx(s-1),2);
-/* 勾配: 区間[開始,終了,‰(+登り/-下り)]。端部120mは緩和曲線。駅構内は水平 */
-const GRD=[[9850,10650,10],[10800,11500,-10],[12350,13350,25],[13600,13900,-12],[14300,15300,-25],[15600,16200,8]];
-const grd=s=>{let g=0;for(const[a,b,k]of GRD)g+=k*sm(a,a+120,s)*(1-sm(b-120,b,s));return g};
-const GS=2,GO=-800,GN=Math.ceil((END+2000-GO)/GS),GT=new Float32Array(GN+1);
-{let c=0;for(let i=0;i<=GN;i++){GT[i]=c;c+=grd(GO+i*GS)*GS/1000}}
-const GE=s=>{const f=(s-GO)/GS,i=Math.min(GN-1,Math.max(0,Math.floor(f))),u=Math.min(1,Math.max(0,f-i));return GT[i]*(1-u)+GT[i+1]*u};
-const EL=s=>8*(1-sm(7600,8600,s))+GE(s),zn=s=>s<8300?0:s<13200?1:2;
+const EL=s=>8*(1-sm(7600,8600,s)),zn=s=>s<8300?0:s<13200?1:2;
 const amp=s=>4+34*sm(11600,13000,s)*(1-.75*sm(15200,16400,s));
 const H=(x,z)=>{const s=-z,d=Math.abs(x-tx(s));let h=Math.max(0,fbm(x*.006,z*.006)-.34)*1.7*amp(s)*sm(16,150,d);
- h+=sm(330,480,Math.abs(x))*110*(.6+fbm(x*.01,z*.01))+sm(END+900,END+1600,s)*110+(1-sm(-650,-450,s))*80;return -.45+h+GE(s)*(1-sm(20,170,d))};
+ h+=sm(330,480,Math.abs(x))*110*(.6+fbm(x*.01,z*.01))+sm(END+900,END+1600,s)*110+(1-sm(-650,-450,s))*80;return -.45+h};
 
 /* renderer / scene */
 const R=new T.WebGLRenderer({canvas:$('gl'),antialias:true,powerPreference:'high-performance'});
@@ -261,36 +249,12 @@ function signAt(s,off,y,map,w,h){const th=yaw(s),g=new T.Group();g.position.set(
  const p=new T.Mesh(box,mPs);p.scale.set(.08,y,.08);p.position.y=y/2;g.add(p);
  const b=new T.Mesh(new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({map,transparent:true}));b.position.set(0,y,.06);g.add(b);scene.add(g)}
 const sigs=[],dimC={r:0x3a0d0a,y:0x3a3008,g:0x0a3a14},onC={r:0xff3020,y:0xffc820,g:0x30ff70};
-/* 現示: 0=停止(赤) 1=注意(黄,45) 2=減速(黄+緑,65) 3=進行(緑) */
-const ASN=['停止','注意','減速','進行'],ASL=[0,45,65,999],ASC=['#ff5a48','#ffd23a','#c8f04a','#5fd07a'];
-let sigLim=999,nextSig=null;
-const glowT=tex(64,64,c=>{const g=c.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.25,'rgba(255,255,255,.55)');g.addColorStop(1,'rgba(255,255,255,0)');c.fillStyle=g;c.fillRect(0,0,64,64)});
 function signal(s,dep,k){const th=yaw(s),g=new T.Group();g.position.set(tx(s)-3.6*Math.cos(th),EL(s),-s-3.6*Math.sin(th));g.rotation.y=-th;
  const p=new T.Mesh(box,mPs);p.scale.set(.14,4.6,.14);p.position.y=2.3;g.add(p);
- const h=new T.Mesh(box,new T.MeshLambertMaterial({color:0x111418}));h.scale.set(.7,1.7,.3);h.position.set(0,4.6,0);g.add(h);
- const l=[0,1,2].map(i=>{const m=new T.MeshBasicMaterial({color:0x222222}),c=new T.Mesh(new T.CircleGeometry(.21,14),m);c.position.set(0,5.1-i*.5,.16);g.add(c);
-  const sp=new T.Sprite(new T.SpriteMaterial({map:glowT,color:onC['ryg'[i]],transparent:true,blending:T.AdditiveBlending,depthWrite:false,fog:false}));sp.scale.set(3.4,3.4,1);sp.position.set(0,5.1-i*.5,.3);sp.visible=false;g.add(sp);return{m,sp}});
- scene.add(g);sigs.push({dep,k,l,s,asp:3})}
-/* 先行列車: 定時より LHW 秒前を走る。閉塞区間を占有して後続(自列車)の信号を変える */
-const PSx=ST.map(t=>t.s).concat(END+320),PTx=ST.map((t,k)=>Math.round(t.s/15.5+k*21)).concat([Math.round(END/15.5+147)+75]);
-const LHW=80,LDW=22,LEG=[];
-for(let k=0;k<PSx.length-1;k++){const D=PSx[k+1]-PSx[k],T0=PTx[k]-LHW+LDW,TT=PTx[k+1]-PTx[k]-LDW,a=.8,vc=(TT-Math.sqrt(Math.max(0,TT*TT-4*D/a)))*a/2;LEG.push({s0:PSx[k],D,t0:T0,T:TT,a,vc,ta:vc/a})}
-function leadS(t){let s=PSx[0];for(const g of LEG){if(t<g.t0)return s;const u=t-g.t0;if(u>=g.T){s=g.s0+g.D;continue}
- const ta=g.ta,tc=g.T-2*ta;let d;if(u<ta)d=.5*g.a*u*u;else if(u<ta+tc)d=.5*g.a*ta*ta+g.vc*(u-ta);else{const w=g.T-u;d=g.D-.5*g.a*w*w}return g.s0+d}return s}
-let LTM=null;
-function lamps(){const n=sigs.length,LH=leadS(time),LT=LH-165;
- if(LTM)trainAt(LTM,LH-9.7,0,1);
- const occ=j=>j<n&&LT<(j+1<n?sigs[j+1].s:1e9)&&LH>sigs[j].s;
- let cj=-1,nj=-1;
- for(let j=0;j<n;j++){const g=sigs[j];let a=occ(j)?0:occ(j+1)?1:occ(j+2)?2:3;
-  if(g.dep&&((g.k===idx+1&&state==='dwell'&&ph<4)||(g.k===idx&&state==='hold')))a=0;
-  if(a!==g.asp||g.init===undefined){g.init=1;g.asp=a;const on=[a===0,a===1||a===2,a>=2];for(let i=0;i<3;i++){g.l[i].m.color.setHex(on[i]?onC['ryg'[i]]:dimC['ryg'[i]]);g.l[i].sp.visible=on[i]}}
-  if(g.s<=pos)cj=j;else if(nj<0)nj=j}
- nextSig=nj>=0?{g:sigs[nj],d:sigs[nj].s-pos}:null;
- /* ATS: 通過した信号の制限 + 前方信号への減速パターン(停止は手前25m, 減速度0.7m/s²) */
- sigLim=999;if(cj>=0){const a=sigs[cj].asp;sigLim=a===0?15:ASL[a]}
- if(nj>=0)for(let j=nj;j<n&&sigs[j].s-pos<1500;j++){const g=sigs[j],a=g.asp;if(a===3)continue;const d=g.s-pos;
-  sigLim=Math.min(sigLim,3.6*Math.sqrt((a?(ASL[a]/3.6)**2:0)+1.4*Math.max(0,d-(a?0:25))))}}
+ const h=new T.Mesh(box,new T.MeshLambertMaterial({color:0x111418}));h.scale.set(.55,1.5,.3);h.position.set(0,4.6,0);g.add(h);
+ const l=[0,1,2].map(i=>{const m=new T.MeshBasicMaterial({color:0x222222}),c=new T.Mesh(new T.CircleGeometry(.17,14),m);c.position.set(0,5.05-i*.45,.16);g.add(c);return m});
+ scene.add(g);sigs.push({dep,k,l,s})}
+function lamps(){for(const g of sigs){const red=g.dep&&((g.k===idx+1&&state==='dwell')||(g.k===idx&&state==='hold'));g.l[0].color.setHex(red?onC.r:dimC.r);const ye=!g.dep&&g.k>0&&g.k===idx+1&&pos<g.s&&state!=='hold';g.l[1].color.setHex(ye?onC.y:dimC.y);g.l[2].color.setHex(red||ye?dimC.g:onC.g)}}
 for(let i=0;i<ST.length;i++){const a=ST[i].s,b=i<ST.length-1?ST[i+1].s:null;
  for(const sd of[-1,1])for(const m of[100,50,30,20,10])signAt(a-m,sd*2.4,1.9,dTex(m),.8,.5);
  if(b!==null){[[a+95,65],[a+270,100],[b-700,90],[b-350,70],[b-125,45]].forEach(([s,n])=>signAt(s,2.9,2.6,spdTex(n),1.2,1.2));signal(b-450,0,i+1);signal(a+100,1,i)}}
@@ -327,7 +291,7 @@ for(let i=0;i<ST.length;i++){const a=ST[i].s,b=i<ST.length-1?ST[i+1].s:null;
  const nh=900,hw=inst(box,new T.MeshLambertMaterial({color:0xffffff}),nh,1,1),cg=new T.ConeGeometry(.75,1,4);cg.rotateY(Math.PI/4);
  const hr=inst(cg,new T.MeshLambertMaterial({color:0xffffff}),nh,1,0),wc=[0xe8e2d4,0xd9d3c3,0xf0ede6,0xcfd6da,0xe2d3bd],rc=[0x3b4a5c,0x6a3f35,0x2f3a33,0x55606b];let h=0;
  for(let i=0;i<nh*3&&h<nh;i++){const s=S0+rng()*(S1-S0),sdd=rng()<.5?-1:1,x=tx(s)+sdd*(14+rng()*80),z=-s,y=H(x,z);
-  if(y-GE(s)>4||s<8300||(zn(s)===2&&rng()<.7)||(Math.abs(s-ST[0].s)<130&&Math.abs(x)<9))continue;
+  if(y>4||s<8300||(zn(s)===2&&rng()<.7)||(Math.abs(s-ST[0].s)<130&&Math.abs(x)<9))continue;
   const w=6+rng()*5,d=6+rng()*5,hh=(s<8000?8+rng()*16:4+rng()*3),ry=(rng()-.5)*.5-yaw(s);
   dm.position.set(x,y+hh/2-.2,z);dm.rotation.set(0,ry,0);dm.scale.set(w,hh,d);dm.updateMatrix();hw.setMatrixAt(h,dm.matrix);hw.setColorAt(h,cc.setHex(wc[i%5]));
   dm.position.set(x,y+hh+(s<8000?.2:1.1)-.2,z);dm.scale.set(w/1.06*1.08,(s<8000?.4:2.2),d/1.06*1.08);dm.updateMatrix();hr.setMatrixAt(h,dm.matrix);hr.setColorAt(h,cc.setHex(rc[i%4]));h++}
@@ -344,10 +308,10 @@ function line(o,s0,s1){const L=s1-s0,nb=Math.ceil(L/3),ns=Math.ceil(L/.9),nr=Mat
  for(let i=0;i<nb;i++)put(bal,i,s0+i*3,o,-.1,[3.9,.5,3.4]);for(let i=0;i<ns;i++)put(sl,i,s0+i*.9,o,.215,[2.3,.13,.25]);
  for(let i=0;i<nr;i++)for(let j=0;j<2;j++)put(rl,i*2+j,s0+i*2.5,o+(j?.53:-.53),.36,[.075,.16,2.6]);
  for(let i=0;i<np;i++)put(po,i,s0+i*45+20,o+(o>0?1.9:-1.9),3.5,[.26,7,.26]);
- for(let s=s0;s<s1;s+=3)if(EL(s)>.3&&s<8700){vs.push(s);if(EL(s)>1.3&&(s-s0)%15<3)fl.push(s)}
+ for(let s=s0;s<s1;s+=3)if(EL(s)>.3){vs.push(s);if(EL(s)>1.3&&(s-s0)%15<3)fl.push(s)}
  const sv=inst(box,mCo,vs.length,0,1),pv=inst(box,mCo,fl.length,0,1);
  vs.forEach((s,i)=>put(sv,i,s,o*.55,-.92,[6+Math.abs(o)*.9,1.05,3.2]));fl.forEach((s,i)=>put(pv,i,s,o,-(EL(s)+1.9)/2,[1.8,EL(s)-1,1.8]))}
-line(9.4,S0,12400);line(-9.4,S0,3500);line(9.4,12400,END+300);
+line(9.4,S0,12400);line(-9.4,S0,3500);
 
 const _noseCache={};
 function noseTex(c,label,no){const key=c+'|'+label+'|'+no;if(_noseCache[key])return _noseCache[key];
@@ -376,10 +340,8 @@ function emu(c,n,label,no){label=label||'普通';no=no||'B'+(1+Math.floor(Math.r
  for(let i=0;i<n;i++){const u=new T.Group();[[mb,3,3.1,19.4,2],[ms,3.04,.5,19.5,1.15],[mw,3.05,.8,17,2.5],[rf,2.6,.25,19,3.65]].forEach(([m,w,h,l,y])=>{const o=new T.Mesh(box,m);o.scale.set(w,h,l);o.position.y=y;u.add(o)});
   if(i===0)cab(u,1);if(i===n-1&&n>1)cab(u,-1);if(i===0&&n===1)cab(u,-1);
   scene.add(u);g.push(u)}return g}
-function trainAt(g,s,o,d){g.forEach((u,i)=>{const cs=s-d*i*20.5,[x,z,th]=pt(cs,o);u.position.set(x,EL(cs),z);u.rotation.y=-th+(d>0?Math.PI:0)})}
+function trainAt(g,s,o,d){g.forEach((u,i)=>{const cs=s-d*i*20.5,[x,z,th]=pt(cs,o);u.position.set(x,EL(cs),z);u.rotation.y=-th})}
 const TR=[[emu(0x00b1e7,10,'京浜東北線','K'),9.4,-1,24,S0+230,12100,0],[emu(0x9acd32,8,'山手線','G'),9.4,-1,24,S0+230,12100,5800],[emu(0xffd400,10,'中央・総武線','B'),-9.4,1,17,S0+230,3300,0],[emu(0xffd400,10,'中央・総武線','B'),-9.4,1,17,S0+230,3300,1500]];
-TR.push([emu(0x00b1e7,8,'京浜東北線','K'),9.4,-1,27,12400,END+300,0],[emu(0xffd400,8,'普通','B'),9.4,-1,22,12400,END+300,2300]);
-const PAR=[{a:12700,b:13800,i:70,r:-4,g:emu(0xe8752c,8,'快速','P1')},{a:14500,b:15500,i:-150,r:4,g:emu(0x9acd32,8,'快速','P2')}];PAR.forEach(q=>q.g.forEach(u=>u.visible=false));
 /* 東京・千葉: 多数の並行ホーム・線路(装飾のみ・列車は静止) */
 {const mBa=M1(0x54524c),mRz=M1(0x2c2c2c),mRPl=M1(0x9a9d9f),mRTa=M1(0xd8d2c0),CN2=[0x00b1e7,0x9acd32,0xffd400,0xe8752c];
  const extraLine=(z0,side)=>{const offs=[11.4,14.9,18.4];
@@ -391,7 +353,7 @@ const PAR=[{a:12700,b:13800,i:70,r:-4,g:emu(0xe8752c,8,'快速','P1')},{a:14500,
    trainAt(st,z0+150+((k*37)%40),o,1)}};
  for(const ii of[0,3]){const t=ST[ii],z0=-t.s-PSH;extraLine(z0,-1);extraLine(z0,1)}}
 /* 踏切 */
-function xgate(s,q){const[x,z,th]=pt(s-q*2.2,q*4.4),g=new T.Group();g.position.set(x,1+EL(s),z);g.rotation.order='YXZ';g.rotation.y=-th;
+function xgate(s,q){const[x,z,th]=pt(s-q*2.2,q*4.4),g=new T.Group();g.position.set(x,1,z);g.rotation.order='YXZ';g.rotation.y=-th;
  const a=new T.Mesh(box,mRr);a.scale.set(4.4,.14,.1);a.position.x=-q*2.2;g.add(a);
  for(let i=0;i<3;i++){const w=new T.Mesh(box,mWh);w.scale.set(.6,.16,.12);w.position.x=-q*(.9+i*1.3);g.add(w)}
  scene.add(g);b3(mPs,s-q*2.2,q*4.7,.5,[.3,1,.3]);return[g,q]}
@@ -404,7 +366,7 @@ const CR=[9000,10300,10900,12400,13200,14900,15600,16000].map((s,k)=>{b3(mAs,s,0
   arms.push(xgate(s,q));b3(M1(CC[(k+q+3)%6]),s-q*2.2,q*9,1.05,[4.2,1.3,1.9]);b3(M1(0x1a2430),s-q*2.2,q*9,1.95,[2.2,.6,1.75])}
  return{s,lm,arms,a:1.25}});
 /* 跨線橋 */
-[9950,12100,13800,15300].forEach(s=>{b3(mCo,s,0,8.6,[64,.9,8]);for(const q of[-1,1]){b3(mCo,s,q*6.4,4.1,[1.6,8.2,1.6]);b3(mCo,s,q*45.4,4.3,[28,.9,8]).rotation.z=-q*.3;b3(mWh,s+q*4,0,9.5,[64,.9,.15])}});
+[9950,12100,13800,15300].forEach(s=>{b3(mCo,s,0,8.6,[64,.9,8],1);for(const q of[-1,1]){b3(mCo,s,q*6.4,4.1,[1.6,8.2,1.6],1);b3(mCo,s,q*45.4,4.3,[28,.9,8],1).rotation.z=-q*.3;b3(mWh,s+q*4,0,9.5,[64,.9,.15],1)}});
 /* 高架下・並行道路・交差道路 */
 {const ng=Math.ceil((7500-S0)/30),sr=inst(box,mAs,ng*2,0,1),mkk=inst(box,mWh,ng*2,0,0),XR=[];
  for(let i=0;i<ng;i++)for(let j=0;j<2;j++){const s=S0+i*30,o=j?15:-15;pg(sr,i*2+j,s,o,-.42,[7,.1,32]);pg(mkk,i*2+j,s,o,-.36,[.2,.02,8])}
@@ -416,12 +378,7 @@ const CR=[9000,10300,10900,12400,13200,14900,15600,16000].map((s,k)=>{b3(mAs,s,0
 const CN=90,cars=inst(box,new T.MeshLambertMaterial({color:0xffffff}),CN,0,0),CD=[],cq=new T.Color();
 for(let i=0;i<CN;i++){const e=i<26,d=rng()<.5?1:-1,q=rng()<.5?-1:1;CD.push({e,d,sp:(e?22:9)*(.7+rng()*.6),s0:S0+rng()*7000,o:e?48+d*3.4:q*15+d*1.7,y:e?13.15:.2});cars.setColorAt(i,cq.setHex(CC[i%6]))}
 /* 途中の閉塞信号機 */
-for(let i=0;i<ST.length-1;i++){const A=ST[i].s+100,B=ST[i+1].s-450,n=Math.ceil((B-A)/650);for(let j=1;j<n;j++)signal(A+(B-A)*j/n,0,0)}
-sigs.sort((a,b)=>a.s-b.s);
-LTM=emu(0x2f9d47,8,'大網特快','先行');
-const gTx={},gradTex=g=>gTx[g]||(gTx[g]=tex(128,96,c=>{c.fillStyle='#f4f4f0';c.fillRect(0,0,128,96);c.strokeStyle='#111';c.lineWidth=5;c.strokeRect(3,3,122,90);c.fillStyle='#111';c.textAlign='center';c.textBaseline='middle';
- if(g===0){c.font='bold 40px '+F;c.fillText('水平',64,48)}else{c.font='bold 40px '+F;c.fillText(Math.abs(g)+'‰',64,70);c.lineWidth=9;c.beginPath();c.moveTo(16,g>0?40:14);c.lineTo(112,g>0?14:40);c.stroke()}}));
-for(const[a,b,k]of GRD){signAt(a,-2.7,1.6,gradTex(k),1.2,.9);signAt(b,-2.7,1.6,gradTex(0),1.2,.9)}
+for(let s=700;s<END-500;s+=650)if(ST.every(t=>Math.abs(s-t.s)>500))signal(s,0,0);
 function personFig(){const g=new T.Group(),sk=new T.MeshLambertMaterial({color:0xe0b48c}),jk=new T.MeshLambertMaterial({color:0x2255aa}),pt2=new T.MeshLambertMaterial({color:0x222222}),bg2=new T.MeshLambertMaterial({color:0xdd2222});
  const legL=new T.Mesh(box,pt2);legL.scale.set(.22,.9,.22);legL.position.set(-.13,.45,0);g.add(legL);
  const legR=new T.Mesh(box,pt2);legR.scale.set(.22,.9,.22);legR.position.set(.13,.45,0);g.add(legR);
@@ -434,39 +391,21 @@ function personFig(){const g=new T.Group(),sk=new T.MeshLambertMaterial({color:0
 const HZP=personFig(),HZTR=emu(0xd8d8d8,4,'回送','9');HZTR.forEach(u=>u.visible=false);
 function hazShow(kind,s){if(kind==='cross'){HZP.visible=true;HZTR.forEach(u=>u.visible=false)}else{HZP.visible=false;HZTR.forEach(u=>u.visible=true);trainAt(HZTR,s,0,1)}}
 function hazHide(){HZP.visible=false;HZTR.forEach(u=>u.visible=false)}
-const VN=['運転席','車外（三人称）','客席 右窓','客席 左窓','駅ホーム'];let view=0,wsh=0;
-const PT=emu(0x1f5fbf,8,'大網特快','大網');PT.forEach(u=>u.visible=false);
-function setView(n){view=n;const d=!n;$('cab').style.display=$('fr').style.display=d?'':'none';$('win').style.display=n===2||n===3?'block':'none';$('mini').style.display=d?'none':'block';document.body.classList.toggle('ext',!d);PT.forEach(u=>u.visible=n===1||n===4);say('視点: '+VN[n]+'　(Cで切替)',1600)}
-$('cv').addEventListener('pointerdown',e=>{e.preventDefault();setView((view+1)%5)});
-function camView(tt){if(!view)return;trainAt(PT,pos-9.85,0,1);const vib=Math.min(1,v/25);let x,z,th;
- const m=`<b>${Math.round(v*3.6)}</b> km/h　制限 <b>${Math.round(lim)}</b>　B<b>${Math.round(bc)}</b> / 力行<b>${P}</b>　${(hudX.h||'').replace('<br>','　')}`;if(m!==camView.m){camView.m=m;$('mini').innerHTML=m}
- if(view===1){[x,z]=pt(pos-32,8.5);cam.position.set(x,EL(pos-32)+4.4,z);const[a,b]=pt(pos+12,0);cam.lookAt(a,EL(pos+12)+2,b)}
- else if(view<4){const sd=view===2?1:-1;[x,z,th]=pt(pos-45,sd*1.4);cam.position.set(x,EL(pos-45)+2.25+Math.sin(tt*31)*.006*vib,z);cam.rotation.set(-.03,-th-sd*1.17,Math.sin(tt*2.1)*.004*vib)}
- else{const t=nxt(),sd=DS[idx+1]==='右'?1:-1,cs=t.s-8;[x,z,th]=pt(cs,sd*3.3);cam.position.set(x,EL(t.s)+2.65,z);cam.rotation.set(-.02,-th+Math.PI-sd*.14,0);
-  const c=pos-cs;if(v>6){if(camView.pc<0&&c>=0)windHit(1,v*1.3);wsh=Math.max(wsh,Math.exp(-((c-82)/90)**2)*Math.min(1,v/22)*.6)}camView.pc=c}}
 let nbl=0,pn=0,bp=0,nal=0,pas=0,jo=0;
 function urb(tt,now){const dt=Math.min(.1,(now-pn)/1000||0);pn=now;
  if(HZP.visible&&haz){const[x,z,th]=pt(haz.s,-1.4);HZP.position.set(x,EL(haz.s),z);HZP.rotation.y=-th+Math.PI/2;
   const sw=Math.sin(now/140)*.5;HZP.userData.legL.rotation.x=sw;HZP.userData.legR.rotation.x=-sw;HZP.userData.armR.rotation.x=-sw;HZP.userData.armL.rotation.x=sw}
- pas=0;for(const[g,o,d,sp,lo,hi,off]of TR){const h=wr(lo+off+d*sp*tt,lo-230,hi+230),tl=h-d*20.5*g.length;trainAt(g,h,o,d);g.forEach((u,i)=>{const c=h-d*i*20.5;u.visible=c>lo&&c<hi});
-   const a=Math.min(h,tl),b=Math.max(h,tl),dd=pos<a?a-pos:pos>b?pos-b:0,rel=Math.abs(v-d*sp),sh=Math.sign(pos-h),st=Math.sign(pos-tl);
-   pas=Math.max(pas,Math.exp(-(dd/40)**2)*Math.min(1,rel/40));
-   if(g.q1!==undefined&&rel>6){if(sh!==g.q1&&Math.abs(pos-h)<60&&h>lo&&h<hi)windHit(1,rel);if(st!==g.q2&&Math.abs(pos-tl)<60&&tl>lo&&tl<hi)windHit(.55,rel)}
-   g.q1=sh;g.q2=st}
-  for(const q of PAR){if(!q.on&&!q.dn&&pos>q.a&&pos<q.b){q.on=1;q.s=pos+q.i;say('右の線路を快速が並走しています',2600)}
-   if(q.on){q.s+=(v+q.r)*dt;trainAt(q.g,q.s,9.4,1);q.g.forEach((u,i)=>{const c=q.s-i*20.5;u.visible=c>12400&&c<END+300});
-    const a=q.s-20.5*q.g.length,dd=pos<a?a-pos:pos>q.s?pos-q.s:0;pas=Math.max(pas,Math.exp(-(dd/40)**2)*.35);
-    if(pos>q.b+300||Math.abs(q.s-pos)>500){q.on=0;q.dn=1;q.g.forEach(u=>u.visible=false)}}}
+ pas=0;for(const[g,o,d,sp,lo,hi,off]of TR){const h=wr(lo+off+d*sp*tt,lo,hi),tl=h-d*20.5*g.length;trainAt(g,h,o,d);if(pos>Math.min(h,tl)-40&&pos<Math.max(h,tl)+40)pas=Math.max(pas,Math.min(1,Math.abs(v-d*sp)/50))}
  CD.forEach((c,i)=>{const[x,z,th]=pt(wr(c.s0+c.d*c.sp*tt,S0,c.e?3600:7400),c.o);dm.position.set(x,c.y,z);dm.rotation.set(0,-th,0);dm.scale.set(1.85,1.3,4.4);dm.updateMatrix();cars.setMatrixAt(i,dm.matrix)});cars.instanceMatrix.needsUpdate=true;
  let bell=0,bs=1;const f=Math.floor(tt*2.2)%2;
- for(const c of CR){if(c.pp<c.s&&pos>=c.s&&v>1.5)xrumble();c.pp=pos;const dn=pos>c.s-450&&pos<c.s+6;c.a+=((dn?0:1.25)-c.a)*Math.min(1,dt*2.5);c.arms.forEach(([g,q])=>g.rotation.z=-q*c.a);
+ for(const c of CR){const dn=pos>c.s-450&&pos<c.s+6;c.a+=((dn?0:1.25)-c.a)*Math.min(1,dt*2.5);c.arms.forEach(([g,q])=>g.rotation.z=-q*c.a);
   const on=dn&&c.a<1.1;c.lm[0].color.setHex(on&&f?0xff2a1a:0x3a0d0a);c.lm[1].color.setHex(on&&!f?0xff2a1a:0x3a0d0a);
   if(on){const b=Math.max(0,1-Math.abs(pos-c.s)/450);if(b>bell){bell=b;bs=pos<c.s?1:-1}}}
  if(AC&&bell>.02&&tt>nbl){nbl=tt+.42;bp^=1;const q=(bp?1180:1040)*(1+bs*v/340);tone(q,0,.3,'sine',.16*bell);tone(q*2.7,0,.12,'sine',.05*bell)}
  if(AC&&run&&(ats||v*3.6-lim>5)&&tt>nal){nal=tt+(ats?.09:.6);tone(ats?2300:1500,0,ats?.07:.18,'square',ats?.05:.035)}}
 
 /* game state */
-let ys=false,yv=0,ysF=0,sigStopped=-1,prevPos=0,mel=false,clos=false,annApp=false,annMid=false,ann2=false,pB=8,idx=0,pos=0,v=0,P=0,B=8,pw=0,bc=8,ats=false,state='hold',dwell=0,score=0,time=0,moved=false,warnedOver=false,run=false,lim=100,lastK=0;
+let mel=false,clos=false,annApp=false,annMid=false,ann2=false,pB=8,idx=0,pos=0,v=0,P=0,B=8,pw=0,bc=8,ats=false,state='hold',dwell=0,score=0,time=0,moved=false,warnedOver=false,run=false,lim=100,lastK=0;
 const nxt=()=>ST[idx+1];
 const SA=k=>Math.round(ST[k].s/15.5+k*21),clk=x=>{const q=14*3600+180+Math.floor(x);return pad(Math.floor(q/3600))+':'+pad(Math.floor(q/60)%60)+':'+pad(q%60)};
 const DS=['右','左','右','左','右','左','右','左'],TRF=['','地下鉄半蔵門線は、お乗り換えです。','東武アーバンパークラインは、お乗り換えです。','モノレール、内房線、外房線は、お乗り換えです。','内房線は、お乗り換えです。','','','東金線は、お乗り換えです。'],
@@ -476,7 +415,6 @@ let at;function ann(t){$('ann').textContent=t;$('ann').style.opacity=1;clearTime
 let mt;function say(t,ms=2600){const m=$('msg');m.textContent=t;m.style.opacity=1;clearTimeout(mt);mt=setTimeout(()=>m.style.opacity=0,ms)}
 function route(){const a=Math.max(0,idx-1);$('route').innerHTML=ST.slice(a,a+5).map((t,j)=>{const i=a+j;return `<span class="${i<=idx?'on':''}${i==idx?' now':''}">${j?'─ ':'● '}${t.n}</span>`}).join(' ')+(a+5<ST.length?' <span>⋯ 大網</span>':'')}
 function onStop(){const t=nxt(),err=pos-t.s,a=Math.abs(err);
- if(err<-10&&nextSig&&nextSig.g.asp===0&&nextSig.d<150){if(sigStopped!==nextSig.g.s){sigStopped=nextSig.g.s;score+=100;say('停止信号の手前で停車\n+100点\n現示が変わるまでお待ちください',3200)}else say('停止信号 待機中\n現示が変わるまでお待ちください',2200);return}
  if(err<-10){if(err>-150)say(`停止位置まで あと ${(-err).toFixed(0)}m\n少し前進してください`);return}
  let pts=0,txt;
  if(err>10){txt=`行き過ぎ +${err.toFixed(1)}m\n-100点`;score-=100}
@@ -490,7 +428,7 @@ function step(dt){
  time+=dt;
  const tB=ats?9:B,tP=(B>0||ats||state!=='run')?0:P;
  pw+=(tP-pw)*Math.min(1,dt*3.5);bc+=(tB-bc)*Math.min(1,dt*(tB>bc?3:4));
- if(state==='dwell'){ys=false;ysF=0;v=0;dw+=dt;const t=ST[idx+1];
+ if(state==='dwell'){v=0;dw+=dt;const t=ST[idx+1];
   if(ph===0){ph=1;ann(`${t.n}、${t.n}、ご乗車ありがとうございます。`)}
   else if(ph===1&&dw>=3.5){ph=2;doorSnd('open')}
   else if(ph===2&&dw>=DWT){ph=3;melody();dq=dw+mlen()}
@@ -498,13 +436,10 @@ function step(dt){
   else if(ph===4&&dw>=dq){ph=5;doorSnd('close');dq=dw+2.4}
   else if(ph===5&&dw>=dq)depart()}
  else{const tr=pw/5*.9*Math.max(.12,1-v/38);let br=bc>=8.5?1.35:bc*.125;if(v<1.6)br*=.45+.55*v/1.6;
-  let yt=0;if(ys){if(P>0){ys=false;say('抑速ブレーキ 解除（力行）',1600)}else yt=Math.min(1,Math.max(0,(v-yv)*3.6/3))}ysF+=(yt-ysF)*Math.min(1,dt*2.5);br+=ysF*.26;
   const dr=v>.02?.012+.00005*v*v:0;v=Math.max(0,v+(tr-br-dr+(EL(pos-2)-EL(pos+2))/4*9.8)*dt);pos+=v*dt}
- lim=Math.min(limitAt(pos),sigLim);const over=v*3.6-lim;
-  if(state==='run'&&!ats){for(const g of sigs)if(g.s>prevPos&&g.s<=pos&&g.asp===0){ats=true;score-=300;if(haz)hazSafe=false;ann('停止信号です。急停車します。ご注意ください。');say('停止信号 冒進！\nATS 非常ブレーキ　-300点',3600);break}}
-  prevPos=pos;
+ lim=limitAt(pos);const over=v*3.6-lim;
  if(!ats&&over>12){ats=true;score-=100;if(haz)hazSafe=false;ann('急停車します。ご注意ください。');say('ATS 非常ブレーキ！\n速度超過 -100点',3200)}
- if(ats&&v<.05){ats=false;ys=false;B=8;P=0}
+ if(ats&&v<.05){ats=false;B=8;P=0}
  if(v>.5)moved=true;
  if(state==='run'&&!annMid&&pos-ST[idx].s>450&&nxt().s-pos>1300){annMid=true;ann(MSG[idx%MSG.length])}
  if(state==='run'&&!annApp&&nxt().s-pos<650){annApp=true;ann(`まもなく、${nxt().n}、${nxt().n}です。${TRF[idx+1]}`)}
@@ -536,7 +471,7 @@ addEventListener('keydown',e=>{const k=e.key;
  if(!run){if(k==='Enter'&&!/INPUT/.test(e.target.tagName)){if(state==='end')location.reload();else if($('ov').style.display!=='none'){$('go').click();e.preventDefault()}}return}
  if(k==='w'||k==='W'||k==='ArrowRight')P=Math.min(5,P+1);else if(k==='s'||k==='S'||k==='ArrowLeft')P=Math.max(0,P-1);
  else if(k==='ArrowUp'||k==='q'||k==='Q')B=Math.max(0,B-1);else if(k==='ArrowDown'||k==='a'||k==='A')B=Math.min(8,B+1);
- else if(k===' ')B=9;else if(k>='0'&&k<='5')P=+k;else if(k==='Home'||k==='z'||k==='Z')B=0;else if(k==='End'||k==='x'||k==='X')B=8;else if(k==='c'||k==='C'){if(!e.repeat)setView((view+1)%5)}else if(k==='e'||k==='E'){if(!e.repeat)toggleYs()}else if(k==='h'||k==='H'){if(!e.repeat)horn(true)}else return;e.preventDefault()});
+ else if(k===' ')B=9;else if(k>='0'&&k<='5')P=+k;else if(k==='Home'||k==='z'||k==='Z')B=0;else if(k==='End'||k==='x'||k==='X')B=8;else if(k==='h'||k==='H'){if(!e.repeat)horn(true)}else return;e.preventDefault()});
 /* audio */
 let cust=null,AC,mo,mg,ng,nf,sg,lp,o1,g1,o2,g2,o3,g3,o4,g4,o5,g5,vf,vg;
 function audio(){try{AC=new(window.AudioContext||window.webkitAudioContext)();const N=8,re=new Float32Array(N+1),im=new Float32Array(N+1);im[1]=1;im[2]=.14;im[3]=.24;im[5]=.09;im[7]=.04;const wv=AC.createPeriodicWave(re,im);
@@ -545,14 +480,14 @@ function audio(){try{AC=new(window.AudioContext||window.webkitAudioContext)();co
  [o1,g1]=mk(wv);[o2,g2]=mk(wv);[o3,g3]=mk(0);[o4,g4]=mk(wv);[o5,g5]=mk(0);o5.type='sine';o3.type='sawtooth';
  const nb=AC.createBufferSource(),bf=AC.createBuffer(1,88200,44100),d=bf.getChannelData(0);for(let i=0;i<88200;i++)d[i]=Math.random()*2-1;nb.buffer=bf;nb.loop=true;
  nf=AC.createBiquadFilter();nf.type='bandpass';nf.frequency.value=300;ng=AC.createGain();ng.gain.value=0;nb.connect(nf);nf.connect(ng);ng.connect(AC.destination);
- const sf=AC.createBiquadFilter();sf.type='bandpass';sf.frequency.value=3200;sf.Q.value=9;sg=AC.createGain();sg.gain.value=0;nb.connect(sf);sf.connect(sg);sg.connect(AC.destination);vf=AC.createBiquadFilter();vf.type='bandpass';vf.frequency.value=2400;vf.Q.value=1.2;vg=AC.createGain();vg.gain.value=0;nb.connect(vf);vf.connect(vg);vg.connect(lp);initSfx(nb);nb.start()}catch(e){AC=null}}
+ const sf=AC.createBiquadFilter();sf.type='bandpass';sf.frequency.value=3200;sf.Q.value=9;sg=AC.createGain();sg.gain.value=0;nb.connect(sf);sf.connect(sg);sg.connect(AC.destination);vf=AC.createBiquadFilter();vf.type='bandpass';vf.frequency.value=2400;vf.Q.value=1.2;vg=AC.createGain();vg.gain.value=0;nb.connect(vf);vf.connect(vg);vg.connect(lp);nb.start()}catch(e){AC=null}}
 function clack(vol,n=2205,k=260){if(!AC)return;const b=AC.createBuffer(1,n,44100),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/k);const s=AC.createBufferSource(),g=AC.createGain();g.gain.value=vol;s.buffer=b;s.connect(g);g.connect(AC.destination);s.start()}
 /* 三菱SiC-VVVF(E235系風): 非同期(低速でキャリア上昇→高止まり+ランダム変調)→同期パルス切替(段階的に音程が下がる)+モーター磁励音 */
 function vvvf(){const t=AC.currentTime,f=1.32*v*3.6;let fc,as=0;
  if(f<9){fc=200+f*30;as=1}else if(f<30){fc=470+(f-9)*2;as=1}
  else if(f<50)fc=10*f;else if(f<70)fc=7*f;else if(f<95)fc=5*f;else if(f<115)fc=4*f;else fc=3*f;
  if(as)fc*=1+(Math.random()-.5)*.03;
- const reg=Math.max((bc>.5&&bc<8.5&&v>3)?Math.min(1,bc/8)*.6:0,ysF*.5),a=Math.min(1,pw/5+reg)*Math.min(1,.25+v/4)*.05*(1-Math.min(.35,f/400));
+ const reg=(bc>.5&&bc<8.5&&v>3)?Math.min(1,bc/8)*.6:0,a=Math.min(1,pw/5+reg)*Math.min(1,.25+v/4)*.05*(1-Math.min(.35,f/400));
  o1.frequency.setTargetAtTime(fc,t,.012);o2.frequency.setTargetAtTime(fc*2.004,t,.012);o4.frequency.setTargetAtTime(fc+f*1.2,t,.012);
  o3.frequency.setTargetAtTime(42+f*1.6,t,.05);o5.frequency.setTargetAtTime(32+f*.9,t,.06);vf.frequency.setTargetAtTime(fc*2,t,.03);
  lp.frequency.setTargetAtTime(Math.min(2600,fc*4),t,.05);
@@ -560,19 +495,7 @@ function vvvf(){const t=AC.currentTime,f=1.32*v*3.6;let fc,as=0;
  g3.gain.setTargetAtTime(a*1.6,t,.08);g5.gain.setTargetAtTime(a*2.2,t,.08);vg.gain.setTargetAtTime(a*(as?.5:.3),t,.05)}
 const puff=v=>clack(v,22050,4500);
 function thump(vol,t0=0){if(!AC)return;const t=AC.currentTime+t0;[['triangle',130,44,.45,1],['sine',62,34,.9,.8]].forEach(([ty,f0,f1,d,k])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f1,t+d*.6);g.gain.setValueAtTime(vol*k,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.05)})}
-function sub(vol,t0){if(!AC)return;const t=AC.currentTime+t0,o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.setValueAtTime(58,t);o.frequency.exponentialRampToValueAtTime(26,t+.5);g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+.7);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+.75)}
-function clk(vol,t0,n,k){if(!AC)return;const b=AC.createBuffer(1,n,44100),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/k);const s=AC.createBufferSource(),g=AC.createGain();g.gain.value=vol;s.buffer=b;s.connect(g);g.connect(AC.destination);s.start(AC.currentTime+t0)}
-/* 継ぎ目: 台車の軸距2.1m・台車間13.8mで 4打(ガタン・ゴトン)。低音のうなりを追加 */
-function joint(vol){if(!AC)return;const u=Math.max(5,v);[[0,1],[2.1/u,.75],[13.8/u,.9],[15.9/u,.7]].forEach(([t,k])=>{t=Math.min(t,.9);thump(vol*1.1*k,t);sub(vol*.8*k,t);clk(vol*.22*k,t,2600,450)})}
-function windHit(k,rel){if(!AC)return;const a=Math.min(1,rel/45)*k;thump(.9*a,0);thump(.5*a,.09);clk(.25*a,0,8000,1800);wsh=Math.max(wsh,a)}
-function xrumble(){if(!AC)return;const k=Math.min(1,v/25);for(let i=0;i<7;i++)clk(.22*k*(1-i*.1),i*(.06+.02*Math.random()),2500,300);thump(.6*k,0);thump(.5*k,.12);thump(.4*k,.32);wsh=Math.max(wsh,.25*k)}
-let wf,wg,fo1,fo2,ff,fg,sqA=0;
-function initSfx(nb){wf=AC.createBiquadFilter();wf.type='bandpass';wf.frequency.value=500;wf.Q.value=.6;wg=AC.createGain();wg.gain.value=0;nb.connect(wf);wf.connect(wg);wg.connect(AC.destination);
- ff=AC.createBiquadFilter();ff.type='bandpass';ff.frequency.value=2200;ff.Q.value=6;fg=AC.createGain();fg.gain.value=0;ff.connect(fg);fg.connect(AC.destination);
- [fo1,fo2]=[1850,2470].map(f=>{const o=AC.createOscillator();o.type='sawtooth';o.frequency.value=f;o.connect(ff);o.start();return o})}
-function sfx(cv,tt){const q=Math.abs(cv)*v*v,z=v>4?Math.min(1,Math.max(0,(q-.05)/.22)):0;sqA+=(z-sqA)*.08;wsh*=.95;
- fo1.frequency.value=1850+v*6+Math.sin(tt*5.3)*40+(Math.random()-.5)*25;fo2.frequency.value=2470+v*7+Math.sin(tt*3.7)*55+(Math.random()-.5)*25;ff.frequency.value=2100+v*8+sqA*300;fg.gain.value=sqA*.03;
- wf.frequency.value=350+v*9+wsh*500;wg.gain.value=Math.min(.5,wsh*.5+pas*.1)}
+function joint(vol){if(!AC)return;thump(vol*1.7);thump(vol*1.3,.11+.03*Math.random());clack(vol*.35,3000,500)}
 function tone(f,t0,d,type='sine',g=.12){if(!AC)return;const o=AC.createOscillator(),a=AC.createGain(),t=AC.currentTime+t0;o.type=type;o.frequency.value=f;a.gain.setValueAtTime(0,t);a.gain.linearRampToValueAtTime(g,t+.02);a.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(a);a.connect(AC.destination);o.start(t);o.stop(t+d+.05)}
 let ms=null,dw=0,ph=0,dq=0,DWT=9.5,TR_ON=false,haz=null,hazSafe=true,lastHazClear=-1e9;const MEL={},MK=['open','close','all',0,1,2,3,4,5,6,7],PL=[1,2,3,4,1,2,1,2];
 const nm=k=>k==='all'?'全駅共通メロディー':k==='open'?'ドアが開く音':k==='close'?'ドアが閉まる音':ST[k].n+' 発メロディー',mlen=()=>{const m=MEL[idx+1]||MEL.all;return m&&m.buf?m.buf.duration+.6:2.8};
@@ -588,18 +511,6 @@ function horn(on){if(!AC)return;if(on&&!hn){const g=AC.createGain(),f=AC.createB
  else if(!on&&hn){const h=hn;hn=null;h.g.gain.setTargetAtTime(0,AC.currentTime,.05);setTimeout(()=>h.os.forEach(o=>o.stop()),400)}}
 $('hn').addEventListener('pointerdown',e=>{e.preventDefault();horn(true)});['pointerup','pointercancel','pointerleave'].forEach(ev=>$('hn').addEventListener(ev,()=>horn(false)));
 addEventListener('keyup',e=>{if(e.key==='h'||e.key==='H')horn(false)});
-function toggleYs(){if(!run||state!=='run')return;
- if(ys){ys=false;say('抑速ブレーキ 切',1400)}
- else{if(P>0){say('抑速は マスコンを「切」にしてから',1800);return}if(v*3.6<15){say('抑速は 15km/h以上で使えます',1800);return}
-  yv=Math.max(15,Math.round(v*3.6/5)*5)/3.6;ys=true;say(`抑速ブレーキ 入\n設定速度 ${Math.round(yv*3.6)} km/h`,1800)}}
-$('ys').addEventListener('pointerdown',e=>{e.preventDefault();toggleYs()});
-function hudX(){const n=nextSig;let s1='信号 なし';
- if(n){const a=n.g.asp;s1=`<span style="color:${ASC[a]}">●</span> 信号 <b style="color:${ASC[a]}">${ASN[a]}</b>${a>0&&a<3?' '+ASL[a]+'km/h':''}　${Math.round(n.d)}m`}
- const gl=x=>{const i=Math.round(x);return Math.abs(i)<2?'水平':i>0?`▲上り ${i}‰`:`▼下り ${-i}‰`},g0=(EL(pos+6)-EL(pos-6))/12*1000,g1=(EL(pos+256)-EL(pos+244))/12*1000;
- let s2=gl(g0);if(Math.abs(Math.round(g1)-Math.round(g0))>=4)s2+=` → ${gl(g1)}`;
- const h=s1+'<br>'+s2;if(h!==hudX.h){hudX.h=h;$('sgr').innerHTML=h}
- $('lYs').classList.toggle('on',ys);$('lYs').textContent=ys?'抑速 '+Math.round(yv*3.6):'抑速';
- const b=$('ys');b.classList.toggle('on',ys);b.textContent=ys?`抑速 ON ${Math.round(yv*3.6)}`:'抑速 OFF (E)'}
 /* gauge */
 const gc=$('gauge').getContext('2d'),A=k=>(135+k/120*270)*Math.PI/180;
 function gauge(kmh,L){const c=gc;c.clearRect(0,0,300,300);let g=c.createRadialGradient(150,140,20,150,150,150);g.addColorStop(0,'#232a35');g.addColorStop(1,'#050608');
@@ -618,14 +529,14 @@ function draw(now){
  const t=nxt(),rem=t.s-pos;
  $('nx').innerHTML=(state==='dwell'?`<b>${t.n}</b> 停車中`:`次は <b>${t.n}</b>`)+`<br>${state==='end'?'':'停止位置まで '+rem.toFixed(0)+' m　定刻 '+clk(SA(idx+1))}`;
  const ts=14*3600+3*60+Math.floor(time);$('tm').innerHTML=`${pad(Math.floor(ts/3600))}:${pad(Math.floor(ts/60)%60)}:${pad(ts%60)}<br>得点 <b>${Math.max(0,score)}</b>`;
- $('lm').textContent=Math.round(lim);$('bcv').textContent=bc>8.5?'EB':'B'+Math.round(bc);
+ $('lm').textContent=lim;$('bcv').textContent=bc>8.5?'EB':'B'+Math.round(bc);
  $('lAts').classList.toggle('on',ats||kmh-lim>5);$('lDr').classList.toggle('on',state!=='dwell'||ph>=5);
- hudX();dB();dP();
+ dB();dP();
  const th=yaw(pos),cv=(yaw(pos+8)-yaw(pos-8))/16,vib=Math.min(1,v/25),tt=now/1000;
  cam.position.set(tx(pos)+Math.sin(tt*23)*.004*vib,2.75+EL(pos)+Math.sin(tt*31)*.006*vib+(jo*=.9)*Math.sin(tt*70)+Math.sin(tt*7.3)*.004*vib,-pos);
- cam.rotation.set(-.1,-th,-cv*v*.8+Math.sin(tt*2.1)*.002*vib);camView(tt);
+ cam.rotation.set(-.1,-th,-cv*v*.8+Math.sin(tt*2.1)*.002*vib);
  sky.position.copy(cam.position);cp.copy(cam.position);dl.position.copy(cp).addScaledVector(sunDir,160);dl.target.position.copy(cp);
- if(AC){sfx(cv,tt);vvvf();ng.gain.value=Math.min(.2,v*.007)+pas*.3;nf.frequency.value=120+v*14;sg.gain.value=Math.min(.035,Math.abs(cv)*v*1.2)+(v<5&&v>.3&&bc>2?.012:0)}
+ if(AC){vvvf();ng.gain.value=Math.min(.2,v*.007)+pas*.3;nf.frequency.value=120+v*14;sg.gain.value=Math.min(.035,Math.abs(cv)*v*1.2)+(v<5&&v>.3&&bc>2?.012:0)}
  if(B<pB&&pB>0)puff(.1);pB=B;
  const k=Math.floor(pos/25);if(k!==lastK){lastK=k;if(v>1){joint(Math.min(.34,v*.015));jo=Math.min(.03,v*.0011)}}
  urb(tt,now);lamps();R.render(scene,cam)}
