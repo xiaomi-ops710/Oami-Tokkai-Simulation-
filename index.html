@@ -2,6 +2,8 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>電車でGO！ 大網特快</title>
+<meta name="theme-color" content="#000000"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="大網特快">
 <style>
 :root{--fg:#e9eef5;--acc:#ffb020;--red:#ff4d3d;--grn:#5fd07a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--fg:#e9eef5}}
@@ -76,8 +78,32 @@ kbd{background:#1b222c;border:1px solid #38424f;border-radius:4px;padding:0 6px;
 #limS.ov{background:#ffd9d4;color:#c00;animation:lb .5s steps(2) infinite}
 @keyframes lb{50%{background:#fff}}
 #ann{top:calc(env(safe-area-inset-top,0px) + 124px);font-size:15px}
+#vw{position:fixed;right:12px;top:calc(env(safe-area-inset-top,0px) + 132px);z-index:30;background:rgba(3,7,12,.86);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:10px;padding:8px 14px;font-size:15px;font-weight:700}
+#winF{position:fixed;inset:0;z-index:5;pointer-events:none;display:none}
+body.winv #winF{display:block}
+#winF::before{content:'';position:absolute;left:7%;right:7%;top:12%;bottom:30%;border-radius:18px;box-shadow:0 0 0 100vmax #32373d,inset 0 0 0 10px #c9ced2,inset 0 0 40px 6px rgba(0,0,0,.35)}
+#winF::after{content:'';position:absolute;left:0;right:0;bottom:0;height:30%;background:linear-gradient(#4a525c,#2b3138)}
+#hud{flex-wrap:wrap}
+#route{padding:6px 12px 8px;flex:1 1 380px;max-width:760px;min-width:0}
+.rt-h{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:14px;font-weight:700;color:#e6f0ff}
+.jbadge{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#0d72c9;color:#fff;font-size:12px;font-weight:900;border:2px solid #fff}
+.rt-d{display:flex;align-items:flex-start}
+.rt-st{flex:1;min-width:0;text-align:center;position:relative}
+.rt-st::before{content:'';position:absolute;top:9px;left:-50%;width:100%;height:6px;background:#2f8fe0;z-index:0}
+.rt-st:first-child::before{display:none}
+.rt-st.past::before{background:#7b8794}
+.rt-st .dot{display:block;position:relative;z-index:1;width:16px;height:16px;border-radius:50%;background:#fff;border:4px solid #0d72c9;margin:0 auto}
+.rt-st.past .dot{border-color:#7b8794;background:#cfd6dd}
+.rt-st.cur .dot{background:#0d72c9;border-color:#fff;box-shadow:0 0 0 3px #0d72c9}
+.rt-st.next .dot{background:#ffd23c;border-color:#fff;width:20px;height:20px;margin-top:-2px;box-shadow:0 0 0 3px #ffd23c88;animation:rtp 1s ease-in-out infinite}
+.rt-st b{display:block;margin-top:4px;font-size:16px;font-weight:800;white-space:nowrap}
+.rt-st small{display:block;font-size:10px;color:#9fb6cc;font-weight:600;line-height:1.3}
+.rt-st.past b{color:#9aa5b1}.rt-st.next b{color:#ffd23c}
+@keyframes rtp{50%{transform:scale(1.25)}}
+.jnum{display:inline-block;margin-left:8px;padding:0 7px;border:2px solid #0d72c9;border-radius:6px;background:#fff;color:#0d72c9;font-size:13px;font-weight:900;vertical-align:middle}
+#ann{top:calc(env(safe-area-inset-top,0px) + 150px)}
 </style></head><body>
-<canvas id="gl"></canvas><div id="fr"></div>
+<canvas id="gl"></canvas><div id="fr"></div><div id="winF"></div>
 <div id="hud">
  <div class="chip" id="nx">次は <b>-</b><br><span id="rem"></span></div>
  <div class="chip" id="route"></div>
@@ -89,7 +115,7 @@ kbd{background:#1b222c;border:1px solid #38424f;border-radius:4px;padding:0 6px;
   <div id="dig"><span>制限 <b id="lm">-</b></span><span>BC <b id="bcv">-</b></span><span class="lamp" id="lAts">ATS</span><span class="lamp g" id="lDr">戸閉</span></div></div>
  <div class="lv" id="ml"><h4>主幹制御器（マスコン）</h4><div class="trk"><div class="plate"></div><div class="kn"></div></div></div>
 </div>
-<button id="hn">警笛 (H)</button><div id="rain"></div><div id="fogv"></div><div id="ann"></div><div id="msg"></div>
+<button id="hn">警笛 (H)</button><button id="vw">視点: 運転席 (V)</button><div id="rain"></div><div id="fogv"></div><div id="ann"></div><div id="msg"></div>
 <div id="ov"><div class="card">
  <h1>電車でGO！</h1>
  <p style="font-size:18px;color:#fff;margin:0">大網特快　東京 → 大網</p>
@@ -112,7 +138,7 @@ kbd{background:#1b222c;border:1px solid #38424f;border-radius:4px;padding:0 6px;
 <script>
 (()=>{
 const T=THREE,$=i=>document.getElementById(i);
-const ST=[{n:'東京',k:'とうきょう',s:0},{n:'錦糸町',k:'きんしちょう',s:2400},{n:'船橋',k:'ふなばし',s:4900},{n:'千葉',k:'ちば',s:7400},{n:'蘇我',k:'そが',s:9600},{n:'鎌取',k:'かまとり',s:11800},{n:'土気',k:'とけ',s:14100},{n:'大網',k:'おおあみ',s:16500}];
+const ST=[{n:'東京',k:'とうきょう',s:0},{n:'錦糸町',k:'きんしちょう',s:2600},{n:'船橋',k:'ふなばし',s:6000},{n:'千葉',k:'ちば',s:8800},{n:'蘇我',k:'そが',s:11400},{n:'鎌取',k:'かまとり',s:14000},{n:'土気',k:'とけ',s:16800},{n:'大網',k:'おおあみ',s:19600}];
 const END=ST[ST.length-1].s,S0=-380,S1=END+700;
 const sm=(a,b,x)=>{x=Math.min(1,Math.max(0,(x-a)/(b-a)));return x*x*(3-2*x)};
 const hash=(x,y)=>{const n=Math.sin(x*127.1+y*311.7)*43758.5453;return n-Math.floor(n)};
@@ -122,8 +148,8 @@ let sd=7;const rng=()=>{sd=(sd*16807)%2147483647;return sd/2147483647};
 const gate=s=>{let g=1;for(const t of ST)g=Math.min(g,sm(230,520,Math.abs(s-t.s)));return g};
 const tx=s=>(46*Math.sin(s/620+1)+22*Math.sin(s/230))*gate(s);
 const yaw=s=>Math.atan2(tx(s+1)-tx(s-1),2);
-const EL=s=>8*(1-sm(7600,8600,s)),zn=s=>s<8300?0:s<13200?1:2;
-const amp=s=>4+34*sm(11600,13000,s)*(1-.75*sm(15200,16400,s));
+const EL=s=>8*(1-sm(9040,10220,s)),zn=s=>s<9860?0:s<15700?1:2;
+const amp=s=>4+34*sm(13760,15460,s)*(1-.75*sm(18080,19480,s));
 const H=(x,z)=>{const s=-z,d=Math.abs(x-tx(s));let h=Math.max(0,fbm(x*.006,z*.006)-.34)*1.7*amp(s)*sm(16,150,d);
  h+=sm(330,480,Math.abs(x))*110*(.6+fbm(x*.01,z*.01))+sm(END+900,END+1600,s)*110+(1-sm(-650,-450,s))*80;return -.45+h};
 
@@ -148,7 +174,7 @@ const tg=new T.PlaneGeometry(1000,TL,120,1000);tg.rotateX(-Math.PI/2);
  for(let i=0;i<pa.count;i++){const x=pa.getX(i),z=pa.getZ(i)+cz,y=H(x,z),s=-z,d=Math.abs(x-tx(s));pa.setY(i,y);pa.setZ(i,z);
   const c=hash(Math.floor(x/34),Math.floor(s/52)),f=.85+.3*fbm(x*.05,z*.05);
   let r,g,b;if(c<.33){r=.70;g=.62;b=.28}else if(c<.66){r=.42;g=.60;b=.22}else{r=.55;g=.47;b=.26}
-  const t=sm(3,16,y),k=sm(40,70,y),e=1-sm(4,11,d),u=(1-sm(7400,8200,s))*.85*(1-Math.min(1,t*2));
+  const t=sm(3,16,y),k=sm(40,70,y),e=1-sm(4,11,d),u=(1-sm(8800,9750,s))*.85*(1-Math.min(1,t*2));
   r+=(.13-r)*t;g+=(.30-g)*t;b+=(.13-b)*t;r+=(.35-r)*k;g+=(.32-g)*k;b+=(.26-b)*k;
   r+=(.46-r)*u;g+=(.46-g)*u;b+=(.45-b)*u;r+=(.40-r)*e;g+=(.37-g)*e;b+=(.31-b)*e;
   col[i*3]=r*f;col[i*3+1]=g*f;col[i*3+2]=b*f}
@@ -170,7 +196,7 @@ function put(im,i,s,off,y,sc,ry=0){const th=yaw(s);dm.position.set(tx(s)+off*Mat
  const p=[];for(let s=S0;s<S1;s+=8){for(const y of[5.4,6.3])p.push(tx(s),y+EL(s),-s,tx(s+8),y+EL(s+8),-(s+8))}
  const lg=new T.BufferGeometry();lg.setAttribute('position',new T.Float32BufferAttribute(p,3));
  scene.add(new T.LineSegments(lg,new T.LineBasicMaterial({color:0x1d2126})))}
-{const vs=[],fl=[],pr=[];for(let s=S0;s<8700;s+=3)if(EL(s)>.3){vs.push(s);if(EL(s)>1.3)fl.push(s)}for(let s=S0;s<7900;s+=15)pr.push(s);
+{const vs=[],fl=[],pr=[];for(let s=S0;s<10340;s+=3)if(EL(s)>.3){vs.push(s);if(EL(s)>1.3)fl.push(s)}for(let s=S0;s<9390;s+=15)pr.push(s);
  const cm=new T.MeshLambertMaterial({color:0x9a9a96}),sl=inst(box,cm,vs.length,1,1),fi=inst(box,cm,fl.length,0,1),pi=inst(box,cm,pr.length,1,1);
  vs.forEach((s,i)=>put(sl,i,s,0,-.9,[7,1.1,3.2]));fl.forEach((s,i)=>put(fi,i,s,0,-(EL(s)+1.9)/2,[6,EL(s)-1,3.2]));pr.forEach((s,i)=>put(pi,i,s,0,-(EL(s)+1.9)/2,[1.8,EL(s)-1,1.8]))}
 
@@ -192,7 +218,7 @@ const stopTex=tex(128,110,c=>{c.fillStyle='#d3221a';c.fillRect(0,0,128,110);c.st
 const tacT=()=>{const t=tex(64,64,c=>{c.fillStyle='#e6b800';c.fillRect(0,0,64,64);for(let y=8;y<64;y+=16)for(let x=8;x<64;x+=16){c.fillStyle='#a88400';c.beginPath();c.arc(x+1.5,y+1.5,4.5,0,7);c.fill();c.fillStyle='#f7d23c';c.beginPath();c.arc(x,y,4.5,0,7);c.fill()}});t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(1,380);return t};
 const mPl=new T.MeshLambertMaterial({color:0x8d9094}),mTa=new T.MeshLambertMaterial({map:tacT(),color:0xffffff}),mRf=new T.MeshLambertMaterial({color:0x4b5866}),mPs=new T.MeshLambertMaterial({color:0x8a949e}),mCe=new T.MeshLambertMaterial({color:0x8d9096}),mGl=new T.MeshStandardMaterial({color:0x9ec7e0,transparent:true,opacity:.28,roughness:.1,depthWrite:false}),mLt=new T.MeshBasicMaterial({color:0xfff2d0}),mBd=new T.MeshLambertMaterial({color:0xd8d2c4});
 let YO=0;function mesh(g,m,x,y,z,sc,shadow){const o=new T.Mesh(g,m);o.position.set(x,y+YO,z);o.scale.set(...sc);o.castShadow=!!shadow;o.receiveShadow=true;scene.add(o);return o}
-const PSH=-70,RIV=[[1150,60],[5900,80]],inRv=s=>RIV.some(r=>Math.abs(s-r[0])<r[1]/2+12);
+const PSH=-70,RIV=[[1250,60],[7150,80]],inRv=s=>RIV.some(r=>Math.abs(s-r[0])<r[1]/2+12);
 const mWp=new T.MeshLambertMaterial({color:0xf0f0ee}),mYb=new T.MeshLambertMaterial({color:0xe6c000}),mSt=new T.MeshLambertMaterial({map:tex(32,32,c=>{c.fillStyle='#fff';c.fillRect(0,0,32,32);c.strokeStyle='#d3221a';c.lineWidth=8;for(let x=-32;x<64;x+=16){c.beginPath();c.moveTo(x,32);c.lineTo(x+32,0);c.stroke()}})});
 for(const t of ST){const nt=nameTex(t),z0=-t.s-PSH,Z=zn(t.s),ur=Z===0,ii=ST.indexOf(t),mega=ii===0||ii===3;YO=EL(t.s);
  if(ur){const cw=mega?46:17;mesh(box,mPl,0,-1.6,z0+15,[cw,2.2,190]);for(let k=0;k<(mega?26:12);k++)mesh(box,mPs,k%2?(mega?21.5:4.5):-(mega?21.5:4.5),-YO/2-1.35,z0+95-k*(mega?7.6:16),[1.4,YO,1.4],1);
@@ -284,11 +310,11 @@ for(let i=0;i<ST.length;i++){const a=ST[i].s,b=i<ST.length-1?ST[i+1].s:null;
 {const nt=3800,tr=inst(new T.CylinderGeometry(.25,.35,3,5),new T.MeshLambertMaterial({color:0x5a4331}),nt+300,1,0),
  fo=inst(new T.ConeGeometry(2.4,7,7),new T.MeshLambertMaterial({color:0xffffff}),nt+300,1,0);const cc=new T.Color();let n=0;
  for(let i=0;i<nt*2&&n<nt;i++){const s=S0+rng()*(S1-S0),sdd=rng()<.5?-1:1,off=13+Math.pow(rng(),1.5)*220,x=tx(s)+sdd*off,z=-s,y=H(x,z);
-  if(y>60||(s<8000&&rng()<.75)||(sdd<0&&ST.slice(4).some(t=>Math.abs(s-t.s)<100&&off<110)))continue;const k=.8+rng()*.9;
+  if(y>60||(s<9510&&rng()<.75)||(sdd<0&&ST.slice(4).some(t=>Math.abs(s-t.s)<100&&off<110)))continue;const k=.8+rng()*.9;
   dm.position.set(x,y+1.5*k,z);dm.rotation.set(0,0,0);dm.scale.set(k,k,k);dm.updateMatrix();tr.setMatrixAt(n,dm.matrix);
   dm.position.set(x,y+5.5*k,z);dm.updateMatrix();fo.setMatrixAt(n,dm.matrix);
   cc.setHSL(.27+rng()*.06,.45+rng()*.15,.17+rng()*.12+(y>15?0:.03));fo.setColorAt(n,cc);n++}
- const parks=[];for(let i=0;i<14;i++){const s=8800+rng()*4200,q=rng()<.5?-1:1,x=tx(s)+q*(38+rng()*50),z=-s,y=H(x,z),r=18+rng()*16;if(y>3)continue;parks.push({x,z,r});
+ const parks=[];for(let i=0;i<14;i++){const s=10450+rng()*5010,q=rng()<.5?-1:1,x=tx(s)+q*(38+rng()*50),z=-s,y=H(x,z),r=18+rng()*16;if(y>3)continue;parks.push({x,z,r});
   const m=new T.Mesh(new T.CircleGeometry(r,28),new T.MeshLambertMaterial({color:0x86c85c}));m.rotation.x=-Math.PI/2;m.position.set(x,y+.3,z);m.receiveShadow=true;scene.add(m);
   if(rng()<.6){const w=new T.Mesh(new T.CircleGeometry(r*.35,20),new T.MeshStandardMaterial({color:0x3f86b8,roughness:.15,metalness:.2}));w.rotation.x=-Math.PI/2;w.position.set(x+r*.2,y+.4,z);scene.add(w)}}
  for(const pk of parks)for(let j=0;j<14;j++){const a=j/14*6.283+rng(),r=pk.r*(.6+rng()*.6),x=pk.x+Math.cos(a)*r,z=pk.z+Math.sin(a)*r,y=H(x,z),k=1+rng()*.6;
@@ -300,10 +326,10 @@ for(let i=0;i<ST.length;i++){const a=ST[i].s,b=i<ST.length-1?ST[i+1].s:null;
  else if(k===2){c.fillStyle='#e6dfd0';c.fillRect(0,0,128,128);for(let y=0;y<4;y++)for(let x=0;x<4;x++){c.fillStyle=(x+y*3)%5?'#2c3a4a':'#f3e2a4';c.fillRect(x*32+7,y*32+5,18,20);c.fillStyle='#fff';c.fillRect(x*32+2,y*32+25,28,4);c.fillStyle='#b9b2a2';c.fillRect(x*32+2,y*32+29,28,2)}}
  else if(k===3){c.fillStyle='#9a5a44';c.fillRect(0,0,128,128);for(let y=0;y<8;y++)for(let x=0;x<8;x++){c.fillStyle=(x*7+y*5)%6?'#26313d':'#f0dc9c';c.fillRect(x*16+4,y*16+3,8,10)}}
  else{c.fillStyle='#c9c6bd';c.fillRect(0,0,128,128);for(let y=0;y<4;y++){for(let x=0;x<4;x++){c.fillStyle=(x*3+y)%4?'#37485a':'#e9d99a';c.fillRect(x*32+6,y*32+6,22,20)}c.fillStyle='#8d8a82';c.fillRect(0,y*32+28,128,4)}for(let x=0;x<128;x+=32){c.fillStyle='#8d8a82';c.fillRect(x,0,3,128)}}});t.wrapS=t.wrapT=T.RepeatWrapping;return t};
- const NB=1000,ROWS=[1.2,2.4,4,5.7],BM=[0,1,2,3,4].map(k=>new T.MeshLambertMaterial({map:bt(k),color:0xffffff})),
+ const NB=1250,ROWS=[1.2,2.4,4,5.7],BM=[0,1,2,3,4].map(k=>new T.MeshLambertMaterial({map:bt(k),color:0xffffff})),
  BD=BM.map(m=>ROWS.map(rw=>{const g=new T.BoxGeometry(1,1,1),u=g.attributes.uv;for(let i=0;i<u.count;i++)u.setXY(i,u.getX(i)*2,u.getY(i)*rw);const im=inst(g,m,NB,1,1);im.n=0;return im})),
  rt=inst(box,new T.MeshLambertMaterial({color:0x6b6e72}),NB,0,0),bb=inst(box,new T.MeshBasicMaterial({color:0xffffff}),500,0,0),bcs=[0xff3fa4,0x35e0ff,0xffa62b,0xfff23a,0x6dff7a];let bn=0,bm=0;
- for(let i=0;i<NB*2&&bn<NB;i++){const s=S0+rng()*(8700-S0),q=rng()<.5?-1:1,w=10+rng()*16,d=10+rng()*16,off=Math.max(w/2+21,24+Math.pow(rng(),1.3)*130),hh=12+Math.pow(rng(),2)*75,x=tx(s)+q*off,z=-s,y=H(x,z);if(inRv(s)||ST.slice(0,4).some(t=>Math.abs(s-t.s)<80+w/2&&off>22))continue;
+ for(let i=0;i<NB*2&&bn<NB;i++){const s=S0+rng()*(10340-S0),q=rng()<.5?-1:1,w=10+rng()*16,d=10+rng()*16,off=Math.max(w/2+21,24+Math.pow(rng(),1.3)*130),hh=12+Math.pow(rng(),2)*75,x=tx(s)+q*off,z=-s,y=H(x,z);if(inRv(s)||ST.slice(0,4).some(t=>Math.abs(s-t.s)<(t===ST[0]?110:80)+w/2&&off>22))continue;
   const kd=Math.floor(rng()*5),cl=hh<22?0:hh<42?1:hh<68?2:3,bi=BD[kd][cl],kk=bi.n++;
   dm.position.set(x,y+hh/2-.3,z);dm.rotation.set(0,0,0);dm.scale.set(w,hh,d);dm.updateMatrix();bi.setMatrixAt(kk,dm.matrix);cc.setHSL(kd===1?.56:.08+rng()*.1,kd===1?.3:.08+rng()*.12,.62+rng()*.26);bi.setColorAt(kk,cc);
   dm.position.set(x+(rng()-.5)*w*.3,y+hh+.6,z);dm.scale.set(w*.35,1.6,d*.35);dm.updateMatrix();rt.setMatrixAt(bn,dm.matrix);
@@ -312,10 +338,10 @@ for(let i=0;i<ST.length;i++){const a=ST[i].s,b=i<ST.length-1?ST[i+1].s:null;
  const nh=900,hw=inst(box,new T.MeshLambertMaterial({color:0xffffff}),nh,1,1),cg=new T.ConeGeometry(.75,1,4);cg.rotateY(Math.PI/4);
  const hr=inst(cg,new T.MeshLambertMaterial({color:0xffffff}),nh,1,0),wc=[0xe8e2d4,0xd9d3c3,0xf0ede6,0xcfd6da,0xe2d3bd],rc=[0x3b4a5c,0x6a3f35,0x2f3a33,0x55606b];let h=0;
  for(let i=0;i<nh*3&&h<nh;i++){const s=S0+rng()*(S1-S0),sdd=rng()<.5?-1:1,x=tx(s)+sdd*(14+rng()*80),z=-s,y=H(x,z);
-  if(y>4||s<8300||(sdd<0&&ST.slice(4).some(t=>Math.abs(s-t.s)<100))||(zn(s)===2&&rng()<.7)||(Math.abs(s-ST[0].s)<130&&Math.abs(x)<9))continue;
-  const w=6+rng()*5,d=6+rng()*5,hh=(s<8000?8+rng()*16:4+rng()*3),ry=(rng()-.5)*.5-yaw(s);
+  if(y>4||s<9860||(sdd<0&&ST.slice(4).some(t=>Math.abs(s-t.s)<100))||(zn(s)===2&&rng()<.7)||(Math.abs(s-ST[0].s)<130&&Math.abs(x)<9))continue;
+  const w=6+rng()*5,d=6+rng()*5,hh=(s<9510?8+rng()*16:4+rng()*3),ry=(rng()-.5)*.5-yaw(s);
   dm.position.set(x,y+hh/2-.2,z);dm.rotation.set(0,ry,0);dm.scale.set(w,hh,d);dm.updateMatrix();hw.setMatrixAt(h,dm.matrix);hw.setColorAt(h,cc.setHex(wc[i%5]));
-  dm.position.set(x,y+hh+(s<8000?.2:1.1)-.2,z);dm.scale.set(w/1.06*1.08,(s<8000?.4:2.2),d/1.06*1.08);dm.updateMatrix();hr.setMatrixAt(h,dm.matrix);hr.setColorAt(h,cc.setHex(rc[i%4]));h++}
+  dm.position.set(x,y+hh+(s<9510?.2:1.1)-.2,z);dm.scale.set(w/1.06*1.08,(s<9510?.4:2.2),d/1.06*1.08);dm.updateMatrix();hr.setMatrixAt(h,dm.matrix);hr.setColorAt(h,cc.setHex(rc[i%4]));h++}
  hw.count=hr.count=h}
 
 /* urban details: 他路線・列車 / 踏切 / 跨線橋 / 高架下の道路 / 高架道路 / 信号 */
@@ -333,20 +359,20 @@ YO=0;
   mesh(box,mPs,0,yb,zc,[16,.35,3.2],1);mesh(box,mRf,0,yb+2.2,zc,[16.6,.25,3.8],1);
   for(const q of[-1,1]){mesh(box,mWl,0,yb+1.05,zc+q*1.5,[16,1.8,.15]);for(const p of[-1,1])mesh(box,mPs,p*6.8,Y+4.3,zc+q*1.3,[.3,6.6,.3],1)}}
  {const pg2=new T.PlaneGeometry(1,1);pg2.rotateX(-Math.PI/2);const pdT=tex(64,64,c=>{c.fillStyle='#dcecb0';c.fillRect(0,0,64,64);for(let x=0;x<64;x+=6){c.fillStyle='rgba(50,110,30,.5)';c.fillRect(x,0,2,64)}c.fillStyle='rgba(255,255,255,.12)';c.fillRect(0,0,64,3)});
-  const N=320,pi=inst(pg2,new T.MeshLambertMaterial({map:pdT}),N,0,1),cc=new T.Color();let n=0;
-  for(let i=0;i<N*6&&n<N;i++){const s=9200+r2()*(S1-9200),q=r2()<.5?-1:1,w=12+r2()*26,d=12+r2()*22,x=tx(s)+q*(22+w/2+r2()*90),z=-s;
+  const N=400,pi=inst(pg2,new T.MeshLambertMaterial({map:pdT}),N,0,1),cc=new T.Color();let n=0;
+  for(let i=0;i<N*6&&n<N;i++){const s=10930+r2()*(S1-10930),q=r2()<.5?-1:1,w=12+r2()*26,d=12+r2()*22,x=tx(s)+q*(22+w/2+r2()*90),z=-s;
    const ys=[H(x-w/2,z),H(x+w/2,z),H(x,z-d/2),H(x,z+d/2)],hi=Math.max(...ys);if(hi>2.5||hi-Math.min(...ys)>.9||(q<0&&ST.slice(4).some(t=>Math.abs(s-t.s)<110)))continue;
    dm.position.set(x,hi+.1,z);dm.rotation.set(0,0,0);dm.scale.set(w,1,d);dm.updateMatrix();pi.setMatrixAt(n,dm.matrix);pi.setColorAt(n,cc.setHSL(r2()<.25?.14:.24+r2()*.06,.5,.5+r2()*.12));n++}
   pi.count=n}
  {const g=new T.CylinderGeometry(.5,.5,1,3);g.rotateZ(Math.PI/2);g.rotateX(-Math.PI/2);
-  const N=170,hb=inst(box,L(0xffffff),N,1,1),hr=inst(g,L(0xffffff),N,1,0),wc=[0xf1e9d8,0xe2d8c3,0xd9ddd8,0xeee6cf],rc=[0x39424c,0x4a3b36,0x2f3a44,0x5a4a42],cc=new T.Color();let n=0;
-  for(let i=0;i<N*8&&n<N;i++){const s=13000+r2()*(S1-13000),q=r2()<.5?-1:1,w=8+r2()*4,d=6+r2()*3,x=tx(s)+q*(20+w/2+r2()*75),z=-s,y=H(x,z);if(y>2.5||y<-.5||(q<0&&ST.slice(4).some(t=>Math.abs(s-t.s)<110)))continue;
+  const N=210,hb=inst(box,L(0xffffff),N,1,1),hr=inst(g,L(0xffffff),N,1,0),wc=[0xf1e9d8,0xe2d8c3,0xd9ddd8,0xeee6cf],rc=[0x39424c,0x4a3b36,0x2f3a44,0x5a4a42],cc=new T.Color();let n=0;
+  for(let i=0;i<N*8&&n<N;i++){const s=15460+r2()*(S1-15460),q=r2()<.5?-1:1,w=8+r2()*4,d=6+r2()*3,x=tx(s)+q*(20+w/2+r2()*75),z=-s,y=H(x,z);if(y>2.5||y<-.5||(q<0&&ST.slice(4).some(t=>Math.abs(s-t.s)<110)))continue;
    const hh=3.4,rh=2.2;dm.rotation.set(0,-yaw(s),0);dm.position.set(x,y+hh/2-.2,z);dm.scale.set(w,hh,d);dm.updateMatrix();hb.setMatrixAt(n,dm.matrix);hb.setColorAt(n,cc.setHex(wc[n%4]));
    dm.position.set(x,y+hh-.2+rh/3,z);dm.scale.set(w+1.2,rh/.75,(d+1.2)/.866);dm.updateMatrix();hr.setMatrixAt(n,dm.matrix);hr.setColorAt(n,cc.setHex(rc[n%4]));n++}
   hb.count=hr.count=n}
- {const np=Math.floor((S1-8400)/50),po=inst(box,mPs,np*2,1,0),wp=[];
-  for(let i=0;i<np;i++){const s=8400+i*50;put(po,i*2,s,-18,4,[.3,8,.3]);put(po,i*2+1,s,-18,7.5,[2.6,.2,.2])}
-  for(let s=8400;s<S1-50;s+=50)for(const o of[-19.1,-18,-16.9]){const a=pt(s,o),b=pt(s+50,o);wp.push(a[0],7.6,a[1],b[0],7.6,b[1])}
+ {const np=Math.floor((S1-9980)/50),po=inst(box,mPs,np*2,1,0),wp=[];
+  for(let i=0;i<np;i++){const s=9980+i*50;put(po,i*2,s,-18,4,[.3,8,.3]);put(po,i*2+1,s,-18,7.5,[2.6,.2,.2])}
+  for(let s=9980;s<S1-50;s+=50)for(const o of[-19.1,-18,-16.9]){const a=pt(s,o),b=pt(s+50,o);wp.push(a[0],7.6,a[1],b[0],7.6,b[1])}
   const lg=new T.BufferGeometry();lg.setAttribute('position',new T.Float32BufferAttribute(wp,3));scene.add(new T.LineSegments(lg,new T.LineBasicMaterial({color:0x14181c})))}
 }
 
@@ -361,10 +387,10 @@ function line(o,s0,s1){const L=s1-s0,nb=Math.ceil(L/3),ns=Math.ceil(L/.9),nr=Mat
  for(let s=s0;s<s1;s+=3)if(EL(s)>.3){vs.push(s);if(EL(s)>1.3&&(s-s0)%15<3)fl.push(s)}
  const sv=inst(box,mCo,vs.length,0,1),pv=inst(box,mCo,fl.length,0,1);
  vs.forEach((s,i)=>put(sv,i,s,o*.55,-.92,[6+Math.abs(o)*.9,1.05,3.2]));fl.forEach((s,i)=>put(pv,i,s,o,-(EL(s)+1.9)/2,[1.8,EL(s)-1,1.8]))}
-line(9.4,S0,12400);line(-9.4,S0,3500);line(13.6,200,7150);line(-13.6,200,7150);line(17.1,200,7150);line(-17.1,200,7150);
+line(9.4,S0,14730);line(-9.4,S0,4100);line(13.6,200,8520);line(-13.6,200,8520);line(17.1,200,8520);line(-17.1,200,8520);
 
 /* ===== 都会景観 v3: 多彩なビル・タワー・川と橋・ショッピングセンター・大網特快の広告・街灯・駅前ロータリー ===== */
-{const r3=(()=>{let s=777;return()=>(s=(s*16807)%2147483647)/2147483647})(),Lm=c=>new T.MeshLambertMaterial({color:c}),UR=7500,BF='bold 60px '+F,
+{const r3=(()=>{let s=777;return()=>(s=(s*16807)%2147483647)/2147483647})(),Lm=c=>new T.MeshLambertMaterial({color:c}),UR=8920,BF='bold 60px '+F,
  gy=(x,z,r)=>Math.max(H(x,z),H(x+r,z),H(x-r,z),H(x,z+r),H(x,z-r))+.05,
  ZK=s=>ST.slice(0,4).some(t=>Math.abs(s-t.s)<95)||inRv(s),ZL=s=>ST.slice(0,4).some(t=>Math.abs(s-t.s)<140)||inRv(s);
  const gm=[0,1,2,3].map(k=>{const t=tex(128,256,c=>{c.fillStyle=['#2b4a66','#3b6f8f','#59606a','#20303f'][k];c.fillRect(0,0,128,256);for(let y=0;y<256;y+=8){c.fillStyle='rgba(255,255,255,.22)';c.fillRect(0,y,128,1)}for(let x=0;x<128;x+=16){c.fillStyle='rgba(0,0,0,.28)';c.fillRect(x,0,2,256)}for(let i=0;i<70;i++){c.fillStyle='rgba(255,230,150,.55)';c.fillRect((r3()*8|0)*16+3,(r3()*32|0)*8+2,10,4)}});t.wrapS=t.wrapT=T.RepeatWrapping;return new T.MeshLambertMaterial({map:t})});
@@ -373,13 +399,13 @@ line(9.4,S0,12400);line(-9.4,S0,3500);line(13.6,200,7150);line(-13.6,200,7150);l
  function tower(x,z,w,d,h,k,sh){const y=H(x,z)-.3,m=gm[k];
   if(sh===1){const r=Math.max(w,d)/2;mk(new T.CylinderGeometry(r,r,h,22),r*3,h,m,x,y+h/2,z)}else mk(new T.BoxGeometry(w,h,d),w,h,m,x,y+h/2,z);
   if(sh===2){const h2=h*.28;mk(new T.BoxGeometry(w*.6,h2,d*.6),w*.6,h2,m,x,y+h+h2/2,z);mast(x,y+h+h2+14,z,28)}else if(h>140)mast(x,y+h+10,z,20)}
- for(let i=0,n=0;i<400&&n<48;i++){const s=S0+r3()*(UR-S0),q=r3()<.5?-1:1,w=16+r3()*20,d=16+r3()*18;if(ZK(s))continue;tower(tx(s)+q*(66+w/2+r3()*150),-s,w,d,90+r3()*130,r3()*4|0,r3()*3|0);n++}
+ for(let i=0,n=0;i<400&&n<62;i++){const s=S0+r3()*(UR-S0),q=r3()<.5?-1:1,w=16+r3()*20,d=16+r3()*18;if(ZK(s))continue;tower(tx(s)+q*(66+w/2+r3()*150),-s,w,d,90+r3()*130,r3()*4|0,r3()*3|0);n++}
  for(let k=0;k<5;k++)tower(-(78+r3()*30),-(k*30-60),22+r3()*8,22+r3()*8,120+r3()*70,k%4,k%3);
  {const sx=tx(1550)-170,z=-1550,y0=H(sx,z)-.3,wm=Lm(0xdde5ee),dm2=Lm(0xc7d2de);
   const a=new T.Mesh(new T.CylinderGeometry(4,11,250,16),wm);a.position.set(sx,y0+125,z);a.castShadow=true;scene.add(a);
   for(const yy of[190,236]){const b=new T.Mesh(new T.SphereGeometry(13,16,10),dm2);b.scale.y=.5;b.position.set(sx,y0+yy,z);scene.add(b)}
   const c=new T.Mesh(new T.CylinderGeometry(.5,3,90,8),wm);c.position.set(sx,y0+295,z);scene.add(c);
-  const tzx=tx(3950)+150,tzz=-3950,ty=H(tzx,tzz)-.3;let yy=ty;
+  const tzx=tx(4400)+150,tzz=-4400,ty=H(tzx,tzz)-.3;let yy=ty;
   [[30,17,70],[17,9,55],[9,4,45],[4,1.2,45]].forEach(([r0,r1,h],k)=>{const g=new T.CylinderGeometry(r1,r0,h,4);g.rotateY(Math.PI/4);const m=new T.Mesh(g,Lm(k%2?0xf3f3f3:0xd8402a));m.position.set(tzx,yy+h/2,tzz);m.castShadow=true;scene.add(m);yy+=h});mast(tzx,yy+8,tzz,16)}
  /* 川と橋 */
  const wM=new T.MeshStandardMaterial({color:0x2f6f96,roughness:.12,metalness:.25});
@@ -397,7 +423,7 @@ line(9.4,S0,12400);line(-9.4,S0,3500);line(13.6,200,7150);line(-13.6,200,7150);l
   else if(k===1){g.addColorStop(0,'#ff9a3c');g.addColorStop(1,'#ff4f8b');c.fillStyle=g;c.fillRect(0,0,512,160);c.fillStyle='#fff';c.textAlign='center';c.font='bold 58px '+F;c.fillText('海へ、山へ。',256,76);c.font='bold 40px '+F;c.fillText('大網特快',256,130)}
   else{c.fillStyle='#10233f';c.fillRect(0,0,512,160);c.fillStyle='#ffd23c';c.textAlign='center';c.font='bold 46px '+F;c.fillText('停まる駅は、8つ。',256,70);c.fillStyle='#fff';c.font='bold 34px '+F;c.fillText('大網特快　東京〜大網',256,124)}}),
  adM=[0,1,2].map(k=>new T.MeshBasicMaterial({map:adT(k),side:T.DoubleSide})),adG=new T.PlaneGeometry(22,7);
- for(let i=0;i<14;i++){const s=380+i*500;if(ZL(s))continue;const q=i%2?1:-1,[x,z,th]=pt(s,q*(27+(i%3)*3)),fr=new T.Mesh(box,Lm(0x22272d));fr.scale.set(22.6,7.6,.3);fr.position.set(x,24,z);fr.rotation.y=-th;scene.add(fr);
+ for(let i=0;i<17;i++){const s=380+i*500;if(ZL(s))continue;const q=i%2?1:-1,[x,z,th]=pt(s,q*(27+(i%3)*3)),fr=new T.Mesh(box,Lm(0x22272d));fr.scale.set(22.6,7.6,.3);fr.position.set(x,24,z);fr.rotation.y=-th;scene.add(fr);
   const b=new T.Mesh(adG,adM[i%3]);b.position.set(x,24,z+.2);b.rotation.y=-th;scene.add(b);
   for(const e of[-8,8]){const p=new T.Mesh(box,mPs);p.scale.set(.7,24,.7);p.position.set(x+e*Math.cos(th),12,z+e*Math.sin(th));scene.add(p)}}
  /* 駅前ロータリー・ショッピングセンター・駐車場 */
@@ -410,7 +436,7 @@ line(9.4,S0,12400);line(-9.4,S0,3500);line(13.6,200,7150);line(-13.6,200,7150);l
   const rg=fl(new T.Mesh(new T.RingGeometry(22.6,23.1,40),new T.MeshBasicMaterial({color:0xffffff})),g+.03);rg.position.set(cx,g+.03,cz);scene.add(rg);
   const isl=fl(new T.Mesh(new T.CircleGeometry(9,28),Lm(0x6fae4a)),g+.06);isl.position.set(cx,g+.06,cz);scene.add(isl);
   const cu=fl(new T.Mesh(new T.RingGeometry(9,9.7,28),new T.MeshBasicMaterial({color:0xcfcfcf})),g+.08);cu.position.set(cx,g+.08,cz);scene.add(cu);
-  for(let k=0;k<6;k++){const a=k/6*6.283,tx2=cx+Math.cos(a)*5.2,tz2=cz+Math.sin(a)*5.2,tr=new T.Mesh(new T.CylinderGeometry(.25,.3,3,6),Lm(0x5a4030));tr.position.set(tx2,g+1.5,tz2);scene.add(tr);const lv=new T.Mesh(new T.SphereGeometry(2.1,10,8),Lm(0x2f7a3a));lv.position.set(tx2,g+4.2,tz2);lv.castShadow=true;scene.add(lv)}
+  for(let k=0;k<(i===1?0:6);k++){const a=k/6*6.283,tx2=cx+Math.cos(a)*5.2,tz2=cz+Math.sin(a)*5.2,tr=new T.Mesh(new T.CylinderGeometry(.25,.3,3,6),Lm(0x5a4030));tr.position.set(tx2,g+1.5,tz2);scene.add(tr);const lv=new T.Mesh(new T.SphereGeometry(2.1,10,8),Lm(0x2f7a3a));lv.position.set(tx2,g+4.2,tz2);lv.castShadow=true;scene.add(lv)}
   const cn2=b3(mAs,t.s,45,gy(...pt(t.s,45).slice(0,2),28)-.05,[60,.12,9],1);
   const pl=new T.Mesh(box,mPs);pl.scale.set(.3,7,.3);pl.position.set(cx,g+3.5,cz);scene.add(pl);
   const sb=new T.Mesh(new T.PlaneGeometry(8.2,2.4),new T.MeshBasicMaterial({map:nameTex(t),side:T.DoubleSide}));sb.position.set(cx,g+8,cz);sb.rotation.y=-Math.PI/2;scene.add(sb);
@@ -418,14 +444,28 @@ line(9.4,S0,12400);line(-9.4,S0,3500);line(13.6,200,7150);line(-13.6,200,7150);l
    const br=new T.Mesh(box,Lm(0xeeeeee));br.scale.set(3.05,.8,11.05);br.position.set(cx+Math.cos(a)*19,g+2.9,cz+Math.sin(a)*19);br.rotation.y=-a;scene.add(br)}
   for(let k=0;k<4;k++){const a=1.4+k*.35;car(cx+Math.cos(a)*15.5,cz+Math.sin(a)*15.5,-a,0xf2c200,g)}
   for(let k=0;k<6;k++){const a=k/6*6.283+.3,lx=cx+Math.cos(a)*21.5,lz=cz+Math.sin(a)*21.5,lp2=new T.Mesh(box,mPs);lp2.scale.set(.16,8,.16);lp2.position.set(lx,g+4,lz);scene.add(lp2);const lh2=new T.Mesh(box,new T.MeshBasicMaterial({color:0xfff0c0}));lh2.scale.set(.8,.15,.5);lh2.position.set(lx,g+8,lz);scene.add(lh2)}
-  if(i===0)continue;
-  const[mx,mz]=pt(t.s,-88),gm2=gy(mx,mz,30),nmS=['','キンシ・モール','フナバシ ショッピングセンター','CHIBA CENTRAL MALL'][i],
-  ft=tex(640,136,c=>{c.fillStyle='#e9e6de';c.fillRect(0,0,640,136);c.fillStyle=['','#c8322a','#1c6fb0','#2f8f4a'][i];c.fillRect(0,0,640,52);c.fillStyle='#fff';c.font='bold 34px '+F;c.textAlign='center';c.fillText(nmS,320,38);
+  if(i<2)continue;
+  const[mx,mz]=pt(t.s,-88),gm2=gy(mx,mz,30),nmS=['','','東武百貨店 船橋店','ペリエ千葉'][i],
+  ft=tex(640,136,c=>{c.fillStyle='#e9e6de';c.fillRect(0,0,640,136);c.fillStyle=['','','#7a5a2a','#d63b7a'][i];c.fillRect(0,0,640,52);c.fillStyle='#fff';c.font='bold 34px '+F;c.textAlign='center';c.fillText(nmS,320,38);
    c.fillStyle='#3c586e';c.fillRect(0,64,640,60);c.fillStyle='rgba(255,255,255,.5)';for(let x=0;x<640;x+=40)c.fillRect(x,64,3,60);c.fillStyle='rgba(255,255,255,.18)';c.fillRect(0,64,640,14)}),
-  mw=Lm(0xd9d5cc),mall=new T.Mesh(box,[new T.MeshBasicMaterial({map:ft}),mw,Lm(0x6b6e72),mw,mw,mw]);mall.scale.set(44,14,66);mall.position.set(mx,gm2+7,mz);mall.castShadow=mall.receiveShadow=true;scene.add(mall);
+  mw=Lm(0xd9d5cc),mall=new T.Mesh(box,[new T.MeshBasicMaterial({map:ft}),mw,Lm(0x6b6e72),mw,mw,mw]);const mh=i===2?30:i===3?22:14;mall.scale.set(44,mh,66);mall.position.set(mx,gm2+mh/2,mz);mall.castShadow=mall.receiveShadow=true;scene.add(mall);
   const lot=new T.Mesh(new T.PlaneGeometry(28,66),new T.MeshLambertMaterial({map:lotT}));lot.rotation.x=-Math.PI/2;lot.position.set(mx+36,gm2+.03,mz);scene.add(lot);
   for(const lx of[-23.5,-19.5,-13.5,-9.5])for(let zz=-30;zz<=30;zz+=6)if(r3()<.62)car(mx+lx+36+(r3()-.5)*.4,mz+zz,r3()<.5?0:Math.PI,CCs[r3()*6|0],gm2)}
  cB.count=cR.count=cn}
+
+const MARU=tex(2048,320,c=>{c.fillStyle='#b4533a';c.fillRect(0,0,2048,320);for(let i=0;i<3000;i++){c.fillStyle=Math.random()<.5?'rgba(120,40,30,.12)':'rgba(230,130,100,.1)';c.fillRect(Math.random()*2048,Math.random()*320,7,3)}
+ c.fillStyle='#e6dfcd';c.fillRect(0,0,2048,16);c.fillStyle='#cfc7b2';c.fillRect(0,16,2048,6);for(const y of[74,154,236])c.fillRect(0,y,2048,10);c.fillStyle='#e6dfcd';for(let x=0;x<2048;x+=384)c.fillRect(x,22,14,296);
+ for(const y of[92,172])for(let x=20;x<2048;x+=48){c.fillStyle='#eee7d4';c.fillRect(x-2,y-2,30,54);c.fillStyle='#35434f';c.fillRect(x,y,26,50);c.fillStyle='rgba(255,255,255,.25)';c.fillRect(x,y,8,50);c.fillStyle='#eee7d4';c.fillRect(x+12,y,2,50);c.fillRect(x,y+24,26,2)}
+ for(let x=20;x<2048;x+=64){c.fillStyle='#e6dfcd';c.fillRect(x-3,250,40,68);c.fillStyle='#2a2d31';c.fillRect(x,256,34,62);c.beginPath();c.arc(x+17,256,17,Math.PI,0);c.fill()}});
+const TERMINA=tex(1024,320,c=>{c.fillStyle='#ecebe7';c.fillRect(0,0,1024,320);
+ for(const[y,col]of[[56,'#c7c3b8'],[112,'#ecebe7'],[168,'#c7c3b8'],[224,'#ecebe7']]){c.fillStyle=col;c.fillRect(0,y,1024,56);c.strokeStyle=col==='#ecebe7'?'rgba(150,146,138,.45)':'rgba(255,255,255,.7)';c.lineWidth=1.5;for(let x=0;x<1024;x+=28)for(let yy=y+14;yy<y+56;yy+=28){c.beginPath();c.arc(x+(yy-y>28?14:0),yy,14,0,6.283);c.stroke()}}
+ c.fillStyle='#2a2e32';[[560,152,190,12],[560,196,190,12],[760,100,140,12],[60,108,150,10],[300,232,120,12]].forEach(([x,y,w,h])=>c.fillRect(x,y,w,h));
+ c.fillStyle='#9fb0a8';c.fillRect(0,0,1024,50);c.fillStyle='#7d8b85';for(let x=0;x<1024;x+=24)c.fillRect(x,30,2,20);
+ c.fillStyle='#e8422a';c.font='italic bold 92px '+F;c.textAlign='center';c.textBaseline='middle';c.fillText('TERMINA',590,196);
+ c.fillStyle='#d3221a';c.font='bold 54px '+F;c.fillText('ヨドバシ',930,110);c.fillStyle='#222';c.font='bold 30px '+F;c.fillText('よみうりカルチャー',860,30);
+ [[300,'#5d8c3a','5F レストラン'],[330,'#e3efd2','JRE POINT']].forEach(([x,col,s0])=>{c.fillStyle=col;c.fillRect(x,118,24,170);c.fillStyle=col==='#5d8c3a'?'#fff':'#2c5a25';c.font='bold 15px '+F;for(let k=0;k<s0.length;k++)c.fillText(s0[k],x+12,134+k*15)});
+ c.fillStyle='#23272b';c.fillRect(0,280,1024,40);c.fillStyle='#ffe9a8';for(let x=30;x<1024;x+=120)c.fillRect(x,286,84,26);
+ c.fillStyle='#fff';c.fillRect(380,286,250,30);c.fillStyle='#00934f';c.fillRect(386,289,36,24);c.fillStyle='#fff';c.font='italic bold 16px '+F;c.fillText('JR',404,301);c.fillStyle='#222';c.font='bold 18px '+F;c.textAlign='left';c.fillText('錦糸町駅 Kinshicho Station',432,301)});
 
 /* ===== 駅の外観・内装 v4: ガラス屋根・駅ビル・売店・柱・時計 ===== */
 {const Lm=c=>new T.MeshLambertMaterial({color:c}),gy=(x,z,r)=>Math.max(H(x,z),H(x+r,z),H(x-r,z),H(x,z+r),H(x,z-r))+.05,fnt=(w,z)=>w+' '+z+'px '+F;
@@ -439,11 +479,11 @@ line(9.4,S0,12400);line(-9.4,S0,3500);line(13.6,200,7150);line(-13.6,200,7150);l
   for(const q of[-1,1]){const b=new T.Mesh(box,mPs);b.scale.set(.5,.5,190);b.position.set(q*R,y0,z0+15);scene.add(b)}}
  /* 駅ビル（東京・錦糸町・船橋・千葉） */
  for(let i=0;i<4;i++){const t=ST[i],
-  ft=tex(1024,320,c=>{c.fillStyle='#d8d4ca';c.fillRect(0,0,1024,320);c.fillStyle=['#8a1f1f','#c8322a','#1c6fb0','#2f8f4a'][i];c.fillRect(0,0,1024,74);c.fillStyle='#fff';c.textAlign='center';c.textBaseline='middle';c.font=fnt('bold',52);c.fillText(t.n+' ステーションビル',512,40);
+  ft=tex(1024,320,c=>{c.fillStyle='#d8d4ca';c.fillRect(0,0,1024,320);c.fillStyle=['#8a1f1f','#c8322a','#1c6fb0','#d63b7a'][i];c.fillRect(0,0,1024,74);c.fillStyle='#fff';c.textAlign='center';c.textBaseline='middle';c.font=fnt('bold',52);c.fillText(['','','シャポー船橋','ペリエ千葉'][i]||t.n+' ステーションビル',512,40);
    for(let r=0;r<4;r++)for(let x=0;x<1024;x+=64){c.fillStyle=(x/64+r*5)%7?'#37536b':'#f6e7a8';c.fillRect(x+6,90+r*46,52,34);c.fillStyle='rgba(255,255,255,.28)';c.fillRect(x+8,92+r*46,20,8)}
    c.fillStyle='#22303c';c.fillRect(0,282,1024,38);c.fillStyle='#f6e7a8';for(let x=40;x<1024;x+=160)c.fillRect(x,286,110,26)});
-  for(const q of[-1,1]){const[x,z]=pt(t.s,q*32),g=gy(x,z,8),h=i%3?30:38,mw=Lm(0xcfcac0),fm=new T.MeshLambertMaterial({map:ft}),
-   b=new T.Mesh(box,q<0?[fm,mw,mw,mw,mw,mw]:[mw,fm,mw,mw,mw,mw]);b.scale.set(14,h,100);b.position.set(x,g+h/2-.3,z);b.castShadow=b.receiveShadow=true;scene.add(b)}}
+  for(const q of[-1,1]){const[x,z]=pt(t.s,q*32),g=gy(x,z,8),TM=(i===0||i===1)&&q<0,h=TM?(i===0?24:44):(i%3?30:38),mw=Lm(0xcfcac0),fm=new T.MeshLambertMaterial({map:TM?(i===0?MARU:TERMINA):ft}),
+   b=new T.Mesh(box,q<0?[fm,mw,mw,mw,mw,mw]:[mw,fm,mw,mw,mw,mw]);b.scale.set(TM?16:14,h,TM?(i===0?180:140):100);b.position.set(x,g+h/2-.3,z);b.castShadow=b.receiveShadow=true;scene.add(b)}}
  /* ホームの売店・柱・時計 */
  const km=[Lm(0xf1f1f1),Lm(0x2a6f4a)];
  for(let i=0;i<4;i++){const t=ST[i],z0=-t.s-PSH,Y=EL(t.s)+1;
@@ -488,6 +528,71 @@ line(9.4,S0,12400);line(-9.4,S0,3500);line(13.6,200,7150);line(-13.6,200,7150);l
   {const[lx,lz]=pt(t.s,-88),ly=gy(lx,lz,12);flat(new T.PlaneGeometry(22,34),Lm(0x3a3d41),lx,ly+.02,lz-38);for(let k=0;k<10;k++)if(r5()<.7)car(lx-8+(k%2)*8+(r5()-.5)*.4,lz-52+Math.floor(k/2)*6.5,Math.PI/2*(r5()<.5?0:2),CCs[r5()*6|0],ly)}}
  cB.count=cR.count=cn}
 
+/* ===== 錦糸町らしさ(モニュメント広場・バスターミナル・雑居ビル) と 線路沿いの景観(架線柱・電線・擁壁・大型ビル) ===== */
+{const Lm=c=>new T.MeshLambertMaterial({color:c}),gy=(x,z,r)=>Math.max(H(x,z),H(x+r,z),H(x-r,z),H(x,z+r),H(x,z-r))+.05,fnt=(w,z)=>w+' '+z+'px '+F,
+ r6=(()=>{let s=2468;return()=>(s=(s*16807)%2147483647)/2147483647})(),
+ uvs=(g,a,b)=>{const u=g.attributes.uv;for(let i=0;i<u.count;i++)u.setXY(i,u.getX(i)*a,u.getY(i)*b);return g},
+ bx=(x,y,z,w,h,d,m,sh)=>{const o=new T.Mesh(box,m);o.scale.set(w,h,d);o.position.set(x,y,z);if(sh)o.castShadow=true;scene.add(o);return o},
+ ZK=s=>ST.slice(0,4).some(t=>Math.abs(s-t.s)<110)||inRv(s);
+ /* --- 錦糸町南口: 2本の柱と金の輪のモニュメント・バスターミナル --- */
+ {const t1=ST[1],[cx,cz]=pt(t1.s,75),g=gy(cx,cz,24),brown=Lm(0x5a3a2a),wb=0xfff0c0,
+  tl=tex(128,256,c=>{c.fillStyle='#b9b8b2';c.fillRect(0,0,128,256);c.fillStyle='rgba(60,60,55,.28)';for(let y=0;y<256;y+=16)c.fillRect(0,y,128,1);for(let x=0;x<128;x+=16)c.fillRect(x,0,1,256);for(let i=0;i<40;i++){c.fillStyle='rgba(40,40,40,.5)';c.fillRect((r6()*8|0)*16+6,(r6()*16|0)*16+6,4,4)}});
+  tl.wrapS=tl.wrapT=T.RepeatWrapping;
+  for(const e of[-8.5,8.5]){const p=new T.Mesh(uvs(new T.BoxGeometry(3.4,24,3.4),2,6),new T.MeshLambertMaterial({map:tl}));p.position.set(cx+e,g+11.7,cz);p.castShadow=true;scene.add(p)}
+  const ring=new T.Mesh(new T.TorusGeometry(4.2,1.7,20,40),new T.MeshStandardMaterial({color:0xd9a93a,metalness:.65,roughness:.3}));ring.position.set(cx,g+13,cz);ring.rotation.y=.45;ring.castShadow=true;scene.add(ring);
+  bx(cx,g+.5,cz,7,1,5,Lm(0x8f8a80));
+  for(const s of[-1,1]){bx(cx+s*17,g+3.9,cz,3.2,.22,28,Lm(0x3a2a22),1);for(let k=-2;k<=2;k++)bx(cx+s*18.2,g+1.9,cz+k*6,.25,3.8,.25,Lm(0x2a2a2a))}
+  const bus=(x,z,col)=>{bx(x,g+1.65,z,2.5,3,10.5,Lm(col),1);bx(x,g+2.45,z,2.54,1,9.6,Lm(0x1c2833));bx(x,g+3.2,z,2.4,.3,10.4,Lm(0xeeeeee))};
+  bus(cx-15.8,cz-6,0x2e8b57);bus(cx+15.8,cz-2,0xe0569a);bus(cx+15.8,cz+9,0x2e8b57);
+  [[-6,-17],[-2,-17.6],[2,-18],[20,13],[20,18]].forEach(([dx,dz])=>{bx(cx+dx,g+.7,cz+dz,1.85,1.2,4.3,Lm(0xf08a30),1);bx(cx+dx,g+1.5,cz+dz,1.6,.55,2.3,Lm(0x1a2430));bx(cx+dx,g+1.95,cz+dz,.6,.22,.3,Lm(0xfff4c0))});
+  for(let k=0;k<5;k++){const a=k*1.25+.3,lx=cx+Math.cos(a)*21,lz=cz+Math.sin(a)*21;bx(lx,g+4.5,lz,.22,9,.22,brown);for(const e of[-1.3,1.3]){bx(lx,g+8.7,lz+e*.5,.12,.12,2.6,brown);bx(lx,g+8.55,lz+e,.5,.14,.9,new T.MeshBasicMaterial({color:wb}))}}
+  const tenT=k=>tex(256,512,c=>{c.fillStyle=['#c8c2b4','#b9bdc0','#cdbfb0'][k];c.fillRect(0,0,256,512);c.fillStyle='rgba(40,50,60,.55)';for(let y=20;y<512;y+=56)for(let x=16;x<256;x+=60)c.fillRect(x,y,44,28);
+   [['#2a66c2','カラオケ'],['#d3221a','居酒屋'],['#1f8f4a','ドラッグ'],['#f2c200','ラーメン'],['#ffffff','歯科']].forEach(([col,tx0],i)=>{const y=40+((i+k)%5)*92;c.fillStyle=col;c.fillRect(i%2?130:10,y,116,36);c.fillStyle=col==='#ffffff'||col==='#f2c200'?'#222':'#fff';c.font='bold 24px '+F;c.textAlign='center';c.textBaseline='middle';c.fillText(tx0,(i%2?130:10)+58,y+19)})});
+  const tm=[0,1,2].map(k=>new T.MeshLambertMaterial({map:tenT(k)})),mw=Lm(0xc9c4b8);
+  for(let k=0;k<7;k++){const[x,z]=pt(t1.s+(k-3)*15,108+(k%2)*6),h=16+r6()*14,b=new T.Mesh(box,[mw,tm[k%3],mw,mw,mw,mw]);b.scale.set(10,h,12);b.position.set(x,gy(x,z,6)+h/2-.3,z);b.castShadow=true;scene.add(b)}}
+ /* --- 線路沿い: 鉄骨の門型架線柱・トラス梁・多数の電線 --- */
+ const trT=tex(256,32,c=>{c.fillStyle='#d9dcde';c.fillRect(0,0,256,32);c.strokeStyle='#6d7278';c.lineWidth=3;c.strokeRect(1,1,254,30);c.beginPath();for(let x=0;x<256;x+=32){c.moveTo(x,31);c.lineTo(x+16,1);c.lineTo(x+32,31)}c.stroke()}),mTr=new T.MeshLambertMaterial({map:trT});
+ const gs=[];for(let s=260;s<8460;s+=80)if(!ST.slice(0,4).some(t=>Math.abs(s-t.s)<(t===ST[0]||t===ST[3]?210:130))&&!inRv(s))gs.push(s);
+ const gp=inst(box,mTr,gs.length*2,1,0),gb=inst(box,mTr,gs.length*2,1,0);
+ gs.forEach((s,i)=>{put(gb,i,s,0,8.7,[41,.9,.7]);put(gb,gs.length+i,s,0,7.6,[41,.35,.35]);put(gp,i*2,s,-19.5,4.5,[.55,9.2,.55]);put(gp,i*2+1,s,19.5,4.5,[.55,9.2,.55])});
+ {const P=[];[-18,-14.5,-11,-6,6,11,14.5,18].forEach((o,k)=>{const y=15+k*.22;for(const s of gs)if(gs.includes(s+80)){const a=pt(s,o),b=pt(s+80,o);P.push(a[0],y,a[1],b[0],y,b[1])}});
+  const lg=new T.BufferGeometry();lg.setAttribute('position',new T.Float32BufferAttribute(P,3));scene.add(new T.LineSegments(lg,new T.LineBasicMaterial({color:0x15171a})))}
+ /* --- 高架端の擁壁（錆色・ピンク色の柵） --- */
+ {const pr=[];for(let s=200;s<8490;s+=40)if(!ST.slice(0,4).some(t=>Math.abs(s-t.s)<(t===ST[0]||t===ST[3]?220:120))&&!inRv(s))pr.push(s);
+  const pw=inst(box,Lm(0xffffff),pr.length*2,0,1),cw=new T.Color();pr.forEach((s,i)=>{put(pw,i*2,s,-20.6,1.15,[.3,1.6,40]);put(pw,i*2+1,s,20.6,1.15,[.3,1.6,40]);pw.setColorAt(i*2,cw.setHex(0xb98a80));pw.setColorAt(i*2+1,cw.setHex(0x7a4a36))})}
+ /* --- 横帯の大型ビル（ガラス頂部付き） --- */
+ {const bdT=tex(256,256,c=>{c.fillStyle='#b3b6b6';c.fillRect(0,0,256,256);for(let y=0;y<256;y+=18){c.fillStyle=(y/18)%2?'#a4a8a9':'#c2c5c5';c.fillRect(0,y,256,16);c.fillStyle='rgba(0,0,0,.25)';c.fillRect(0,y+16,256,2)}for(let i=0;i<8;i++){c.fillStyle='rgba(40,50,60,.5)';c.fillRect(i*32+4,0,1,256)}}),
+  glT=tex(128,128,c=>{c.fillStyle='#4f7a96';c.fillRect(0,0,128,128);c.fillStyle='rgba(255,255,255,.25)';for(let y=0;y<128;y+=10)c.fillRect(0,y,128,1);for(let x=0;x<128;x+=12){c.fillStyle='rgba(20,40,60,.4)';c.fillRect(x,0,1,128)}for(let i=0;i<30;i++){c.fillStyle='rgba(255,215,140,.6)';c.fillRect((r6()*10|0)*12+2,(r6()*12|0)*10+2,8,6)}});
+  bdT.wrapS=bdT.wrapT=T.RepeatWrapping;glT.wrapS=glT.wrapT=T.RepeatWrapping;
+  const mb=new T.MeshLambertMaterial({map:bdT}),mg=new T.MeshLambertMaterial({map:glT});
+  for(let i=0,n=0;i<300&&n<18;i++){const s=400+r6()*8100,q=r6()<.5?-1:1,w=34+r6()*22,d=40+r6()*30,h=40+r6()*36;if(ZK(s))continue;
+   const x=tx(s)+q*(72+w/2+r6()*80),z=-s,y=H(x,z)-.3,m=new T.Mesh(uvs(new T.BoxGeometry(w,h,d),Math.round(w/14),Math.round(h/10)),mb);m.position.set(x,y+h/2,z);m.castShadow=true;scene.add(m);
+   const h2=h*.22,m2=new T.Mesh(uvs(new T.BoxGeometry(w*.96,h2,d*.96),3,2),mg);m2.position.set(x,y+h+h2/2,z);scene.add(m2);n++}}
+}
+
+/* ===== 東京駅(丸の内駅舎風)・船橋/千葉の歩行者デッキ・千葉モノレール ===== */
+{const Lm=c=>new T.MeshLambertMaterial({color:c}),gy=(x,z,r)=>Math.max(H(x,z),H(x+r,z),H(x-r,z),H(x,z+r),H(x,z-r))+.05,
+ bx=(x,y,z,w,h,d,m,sh)=>{const o=new T.Mesh(box,m);o.scale.set(w,h,d);o.position.set(x,y,z);if(sh)o.castShadow=true;scene.add(o);return o};
+ {const t0=ST[0],[x0,z0]=pt(t0.s,-32),g=gy(x0,z0,10),top=g+23.7,gab=new T.CylinderGeometry(.5,.5,1,3),slate=Lm(0x4d5660),stone=Lm(0xe3dcc8);gab.rotateZ(Math.PI/2);gab.rotateX(-Math.PI/2);
+  const ro=new T.Mesh(gab,slate);ro.scale.set(182,4.5/.75,17.5/.866);ro.position.set(x0,top+1.5,z0);ro.rotation.y=Math.PI/2;ro.castShadow=true;scene.add(ro);
+  const pg2=new T.BoxGeometry(20,27,34),u=pg2.attributes.uv;for(let i=0;i<u.count;i++)u.setX(i,u.getX(i)*.19);
+  const pv=new T.Mesh(pg2,new T.MeshLambertMaterial({map:MARU}));pv.position.set(x0+1.5,g+13.2,z0);pv.castShadow=true;scene.add(pv);
+  const r2=new T.Mesh(gab,slate);r2.scale.set(21,5.4/.75,35/.866);r2.position.set(x0+1.5,g+26.7+1.8,z0);scene.add(r2);
+  for(const zz of[-72,72]){const[dx,dz]=pt(t0.s+zz,-32),cy=new T.Mesh(new T.CylinderGeometry(5.2,5.6,6,8),stone);cy.position.set(dx,top+3,dz);cy.castShadow=true;scene.add(cy);
+   const dm2=new T.Mesh(new T.SphereGeometry(4.7,20,12,0,6.283,0,1.571),new T.MeshStandardMaterial({color:0x56636f,metalness:.4,roughness:.5}));dm2.position.set(dx,top+6,dz);dm2.castShadow=true;scene.add(dm2);
+   const sp=new T.Mesh(new T.CylinderGeometry(.12,.3,4,6),Lm(0x333a40));sp.position.set(dx,top+6+4.7+1.6,dz);scene.add(sp)}
+  const fl=tex(64,42,c=>{c.fillStyle='#fff';c.fillRect(0,0,64,42);c.fillStyle='#d3221a';c.beginPath();c.arc(32,21,12,0,6.283);c.fill()});
+  for(const e of[-7,7]){const[px,pz]=pt(t0.s+e,-19);bx(px,g+7.5,pz,.14,15,.14,mPs);const f=new T.Mesh(new T.PlaneGeometry(3.2,2.1),new T.MeshBasicMaterial({map:fl,side:T.DoubleSide}));f.position.set(px,g+13.6,pz+1.7);f.rotation.y=Math.PI/2;scene.add(f)}
+  const[px0,pz0]=pt(t0.s,-56);const pl=new T.Mesh(new T.PlaneGeometry(22,170),Lm(0xb8b3a8));pl.rotation.x=-Math.PI/2;pl.position.set(px0,g+.03,pz0);scene.add(pl);
+  for(let k=0;k<8;k++){const[tx3,tz3]=pt(t0.s+k*24-84,-48),tr=new T.Mesh(new T.CylinderGeometry(.3,.4,3.4,8),Lm(0x5a4030));tr.position.set(tx3,g+1.7,tz3);scene.add(tr);const lv=new T.Mesh(new T.SphereGeometry(2.6,12,9),Lm(0x3f8a3a));lv.position.set(tx3,g+5,tz3);lv.castShadow=true;scene.add(lv)}}
+ for(const i of[2,3]){const t=ST[i],[dx,dz]=pt(t.s,58),g=gy(dx,dz,10);bx(dx,g+6.3,dz,38,.5,8,Lm(0xbfc2c4),1);
+  for(const e of[-4,4])bx(dx,g+7.1,dz+e,38,1.1,.15,new T.MeshLambertMaterial({color:0x9ec7e0,transparent:true,opacity:.55}));
+  for(const o of[46,58,70])for(const e of[-3,3]){const[px,pz]=pt(t.s+e,o);bx(px,g+3,pz,1.1,6.1,1.1,Lm(0xbfc2c4))}}
+ {const t=ST[3],[mx,mz]=pt(t.s,108),g=gy(mx,mz,10),beam=Lm(0xcfd2d4);bx(mx,g+13,mz,2.6,1.5,600,beam,1);
+  for(let k=-7;k<=7;k++){const[px,pz]=pt(t.s+k*40,108);bx(px,g+6.3,pz,1.7,12.6,1.7,beam,1)}
+  for(const dz of[-9,9]){const[px,pz]=pt(t.s+dz,108);bx(px,g+10.2,pz,2.7,3.2,14.5,Lm(0xf4f4f4),1);bx(px,g+9.4,pz,2.74,.55,14.6,Lm(0x2a6fb5));bx(px,g+10.7,pz,2.76,1,13,Lm(0x1c2833))}}
+}
+
 const _noseCache={};
 function noseTex(c,label,no){const key=c+'|'+label+'|'+no;if(_noseCache[key])return _noseCache[key];
  const col='#'+c.toString(16).padStart(6,'0'),t=tex(512,444,g=>{const W=512,Hh=444;
@@ -525,11 +630,15 @@ const sideMats=c=>_sideC[c]||(_sideC[c]=(()=>{const col='#'+c.toString(16).padSt
   g.fillStyle='rgba(0,0,0,.18)';g.fillRect(0,19,1024,1);g.fillRect(0,88,1024,1);g.fillStyle='rgba(255,255,255,.25)';g.fillRect(0,90,1024,2);g.fillStyle='#00934f';g.fillRect(494,92,48,18);g.fillStyle='#fff';g.font='italic bold 15px '+F;g.textAlign='center';g.textBaseline='middle';g.fillText('JR',518,102);
   g.fillStyle='#8c9297';g.fillRect(0,0,1024,4);g.fillRect(0,124,1024,16);g.fillStyle='#5c6166';g.fillRect(0,134,1024,6)});
  t.anisotropy=8;const me=M1(0xc4c9ce),mr=M1(0x8f959b),mu=M1(0x2a2e33),ms=new T.MeshLambertMaterial({map:t});return[ms,ms,mr,mu,me,me]})());
-const _mg=parts=>{const P=[],N=[];for(const[g0,x,y,z,rz]of parts){const g=g0.index?g0.toNonIndexed():g0;if(rz)g.rotateZ(rz);g.translate(x,y,z);P.push(...g.attributes.position.array);N.push(...g.attributes.normal.array)}const G=new T.BufferGeometry();G.setAttribute('position',new T.Float32BufferAttribute(P,3));G.setAttribute('normal',new T.Float32BufferAttribute(N,3));return G};
+const _mg=parts=>{const P=[],N=[];for(const[g0,x,y,z,rz,rx]of parts){const g=g0.index?g0.toNonIndexed():g0;if(rz)g.rotateZ(rz);if(rx)g.rotateX(rx);g.translate(x,y,z);P.push(...g.attributes.position.array);N.push(...g.attributes.normal.array)}const G=new T.BufferGeometry();G.setAttribute('position',new T.Float32BufferAttribute(P,3));G.setAttribute('normal',new T.Float32BufferAttribute(N,3));return G};
 const _ax=()=>new T.CylinderGeometry(.43,.43,1.5,12),
  ROOFG=_mg([[new T.BoxGeometry(2.6,.25,19),0,3.75,0],[new T.BoxGeometry(1.5,.5,3.2),0,4.05,-5],[new T.BoxGeometry(1.5,.5,3.2),0,4.05,5]]),
  UNDERG=_mg([[new T.BoxGeometry(2,.32,2.7),0,.8,6.9],[new T.BoxGeometry(2,.32,2.7),0,.8,-6.9],[_ax(),0,.87,5.95,Math.PI/2],[_ax(),0,.87,7.85,Math.PI/2],[_ax(),0,.87,-5.95,Math.PI/2],[_ax(),0,.87,-7.85,Math.PI/2],
   [new T.BoxGeometry(2,.5,3),0,.72,-1.8],[new T.BoxGeometry(1.9,.45,2.2),0,.75,2.8],[new T.BoxGeometry(.9,.4,1.4),0,.7,-5]]),
+ ROOFP=_mg([[new T.BoxGeometry(2.6,.25,19),0,3.75,0],[new T.BoxGeometry(1.5,.5,3.2),0,4.05,-5],[new T.BoxGeometry(1.5,.5,3.2),0,4.05,5],
+  [new T.BoxGeometry(1.4,.12,.8),0,3.95,.4],[new T.BoxGeometry(.16,.3,.16),-.5,4.05,.6],[new T.BoxGeometry(.16,.3,.16),.5,4.05,.6],
+  [new T.BoxGeometry(.1,.1,1.31),0,4.4,.03,0,.756],[new T.BoxGeometry(.09,.09,1.12),0,5.1,.05,0,-.462],
+  [new T.BoxGeometry(1.9,.07,.14),0,5.38,.55],[new T.BoxGeometry(.06,.06,.5),-.88,5.3,.55],[new T.BoxGeometry(.06,.06,.5),.88,5.3,.55]]),
  MROOF=M1(0x8f959b),MUND=M1(0x25292e);
 
 function emu(c,n,label,no){label=label||'普通';no=no||'B'+(1+Math.floor(Math.random()*30));
@@ -541,12 +650,24 @@ function emu(c,n,label,no){label=label||'普通';no=no||'B'+(1+Math.floor(Math.r
   [].forEach(x=>{const hl=new T.Mesh(new T.CylinderGeometry(.16,.16,.12,10),mHl);hl.rotation.x=Math.PI/2;hl.position.set(x,1.05,zz);u.add(hl);
    const tl=new T.Mesh(new T.CylinderGeometry(.09,.09,.1,8),mTl);tl.rotation.x=Math.PI/2;tl.position.set(x*.55,1.7,zz);u.add(tl)});
   };
- for(let i=0;i<n;i++){const u=new T.Group();{const bd=new T.Mesh(box,sideMats(c));bd.scale.set(3,2.6,19.4);bd.position.y=2.3;u.add(bd);u.add(new T.Mesh(ROOFG,MROOF));u.add(new T.Mesh(UNDERG,MUND))}
+ for(let i=0;i<n;i++){const u=new T.Group();{const bd=new T.Mesh(box,sideMats(c));bd.scale.set(3,2.6,19.4);bd.position.y=2.3;u.add(bd);u.add(new T.Mesh((i===2||i===n-3||(n<5&&i===1))?ROOFP:ROOFG,MROOF));u.add(new T.Mesh(UNDERG,MUND))}
   if(i===0)cab(u,1);if(i===n-1&&n>1)cab(u,-1);if(i===0&&n===1)cab(u,-1);
   scene.add(u);g.push(u)}return g}
 function trainAt(g,s,o,d){g.forEach((u,i)=>{const cs=s-d*i*20.5,[x,z,th]=pt(cs,o);u.position.set(x,EL(cs),z);u.rotation.y=-th})}
-const TR=[[emu(0x00b1e7,10,'京浜東北線','K'),9.4,-1,24,S0+230,12100,0],[emu(0x9acd32,8,'山手線','G'),9.4,-1,24,S0+230,12100,5800],[emu(0xffd400,10,'中央・総武線','B'),-9.4,1,17,S0+230,3300,0],[emu(0xffd400,10,'中央・総武線','B'),-9.4,1,17,S0+230,3300,1500]];
-[[0xffd400,'中央・総武線','B',13.6,1,20,0],[0xe8752c,'中央線快速','H',13.6,-1,26,2400],[0x00b1e7,'京浜東北線','K',-13.6,1,22,900],[0x9acd32,'山手線','G',-13.6,-1,21,3900],[0xffd400,'中央・総武線','B',17.1,1,18,1700],[0xd3221a,'京葉線','E',17.1,-1,25,5200],[0x0f8a5a,'湘南新宿ライン','S',-17.1,1,27,3100],[0x1f5fbf,'京浜東北線','K',-17.1,-1,23,600]].forEach(([c,lb,no,o,d,sp,off])=>TR.push([emu(c,10,lb,no),o,d,sp,200,7150,off]));
+const TR=[[emu(0x00b1e7,10,'京浜東北線','K'),9.4,-1,24,S0+230,14370,0],[emu(0x9acd32,8,'山手線','G'),9.4,-1,24,S0+230,14370,5800],[emu(0xffd400,10,'中央・総武線','B'),-9.4,1,17,S0+230,3820,0],[emu(0xffd400,10,'中央・総武線','B'),-9.4,1,17,S0+230,3820,1500]];
+[[0xffd400,'中央・総武線','B',13.6,1,20,0],[0xe8752c,'中央線快速','H',13.6,-1,26,2400],[0x00b1e7,'京浜東北線','K',-13.6,1,22,900],[0x9acd32,'山手線','G',-13.6,-1,21,3900],[0xffd400,'中央・総武線','B',17.1,1,18,1700],[0xd3221a,'京葉線','E',17.1,-1,25,5200],[0x0f8a5a,'湘南新宿ライン','S',-17.1,1,27,3100],[0x1f5fbf,'京浜東北線','K',-17.1,-1,23,600]].forEach(([c,lb,no,o,d,sp,off])=>TR.push([emu(c,10,lb,no),o,d,sp,200,8520,off]));
+/* ===== 視点切替（V キー／ボタン）: 運転席・屋根上・横から・車窓・後方上空 ===== */
+let VIEW=0;const PT=emu(0x1f9d55,10,'大網特快','OA');PT.forEach(u=>u.visible=false);
+const VN=['運転席','屋根上','横から','車窓','後方上空'];
+function setView(k){VIEW=(k+5)%5;PT.forEach(u=>u.visible=VIEW!==0);const b=document.getElementById('vw');if(b)b.textContent='視点: '+VN[VIEW]+' (V)';document.body.classList.toggle('winv',VIEW===3);const fr=document.getElementById('fr');if(fr)fr.style.display=VIEW?'none':''}
+function camV(tt,th){trainAt(PT,pos-8.2,0,1);let p,ry,rx=-.12,y=EL(pos);
+ if(VIEW===1){p=pt(pos-6,0);y+=5.5;ry=-th;rx=-.15}
+ else if(VIEW===2){p=pt(pos-18,5.4);y+=2.3;ry=-th+Math.PI/2;rx=-.03}
+ else if(VIEW===3){p=pt(pos-28.7,.9);y+=2.35;ry=-th-Math.PI/2+.42;rx=-.02}
+ else{p=pt(pos-44,0);y+=11;ry=-th;rx=-.27}
+ cam.position.set(p[0],y,p[1]);cam.rotation.set(rx,ry,0)}
+addEventListener('keydown',e=>{if(e.code==='KeyV')setView(VIEW+1)});
+document.getElementById('vw').onclick=()=>setView(VIEW+1);
 /* 東京・千葉: 多数の並行ホーム・線路(装飾のみ・列車は静止) */
 {const mBa=M1(0x54524c),mRz=M1(0x2c2c2c),mRPl=M1(0x9a9d9f),mRTa=M1(0xd8d2c0),CN2=[0x00b1e7,0x9acd32,0xffd400,0xe8752c];
  const extraLine=(z0,side)=>{const offs=[11.4,14.9,18.4];
@@ -568,7 +689,7 @@ function xgate(s,q){const[x,z,th]=pt(s-q*2.2,q*4.4),g=new T.Group();g.position.s
  const wb=new T.Mesh(new T.PlaneGeometry(.95,.36),new T.MeshBasicMaterial({map:waitT,side:T.DoubleSide}));wb.position.set(-q*3.4,-.28,0);wb.rotation.y=Math.PI/2;g.add(wb);
  scene.add(g);b3(mPs,s-q*2.2,q*4.7,.5,[.3,1,.3]);return[g,q]}
 const CC=[0xf2f2f2,0x1c1c1e,0xb32020,0x2a4f8f,0xd8c060,0x777b80];
-const CR=[9000,10300,10900,12400,13200,14900,15600,16000].map((s,k)=>{b3(mAs,s,0,-.1,[70,.9,6.5]);
+const CR=[10700,12100,12800,15000,15600,17600,18400,18900].map((s,k)=>{b3(mAs,s,0,-.1,[70,.9,6.5]);
  b3(M1(0x45484c),s,0,.44,[3.8,.05,6.5]);for(const e of[-3.1,3.1])b3(M1(0xf2c200),s+e,0,.375,[70,.03,.22]);b3(M1(0xeeeeea),s,0,.375,[70,.03,.14]);
  const lm=[0,1].map(()=>new T.MeshBasicMaterial({color:0x3a0d0a})),arms=[];
  for(const q of[-1,1]){const[px,pz,th]=pt(s+q*4.2,q*4.7),P=new T.Group();P.position.set(px,0,pz);P.rotation.y=-th;scene.add(P);
@@ -582,17 +703,17 @@ const CR=[9000,10300,10900,12400,13200,14900,15600,16000].map((s,k)=>{b3(mAs,s,0
   arms.push(xgate(s,q));b3(M1(CC[(k+q+3)%6]),s-q*2.2,q*9,1.05,[4.2,1.3,1.9]);b3(M1(0x1a2430),s-q*2.2,q*9,1.95,[2.2,.6,1.75])}
  return{s,lm,arms,a:1.25}});
 /* 跨線橋 */
-[9950,12100,13800,15300].forEach(s=>{b3(mCo,s,0,8.6,[64,.9,8],1);for(const q of[-1,1]){b3(mCo,s,q*6.4,4.1,[1.6,8.2,1.6],1);b3(mCo,s,q*45.4,4.3,[28,.9,8],1).rotation.z=-q*.3;b3(mWh,s+q*4,0,9.5,[64,.9,.15],1)}});
+[11810,14370,16430,18200].forEach(s=>{b3(mCo,s,0,8.6,[64,.9,8],1);for(const q of[-1,1]){b3(mCo,s,q*6.4,4.1,[1.6,8.2,1.6],1);b3(mCo,s,q*45.4,4.3,[28,.9,8],1).rotation.z=-q*.3;b3(mWh,s+q*4,0,9.5,[64,.9,.15],1)}});
 /* 高架下・並行道路・交差道路 */
-{const ng=Math.ceil((7500-S0)/30),sr=inst(box,mAs,ng*2,0,1),mkk=inst(box,mWh,ng*2,0,0),XR=[];
+{const ng=Math.ceil((8920-S0)/30),sr=inst(box,mAs,ng*2,0,1),mkk=inst(box,mWh,ng*2,0,0),XR=[];
  for(let i=0;i<ng;i++)for(let j=0;j<2;j++){const s=S0+i*30,o=j?15:-15;pg(sr,i*2+j,s,o,-.42,[7,.1,32]);pg(mkk,i*2+j,s,o,-.36,[.2,.02,8])}
- for(let s=S0+100;s<7500;s+=260)if(ST.every(t=>Math.abs(s-t.s)>140))XR.push(s);
+ for(let s=S0+100;s<8920;s+=260)if(ST.every(t=>Math.abs(s-t.s)>140))XR.push(s);
  const xr=inst(box,mAs,XR.length,0,1);XR.forEach((s,i)=>pg(xr,i,s,0,-.42,[70,.1,8.5]));
- const ex=[];for(let s=S0;s<3600;s+=12)ex.push(s);const ed=inst(box,mCo,ex.length,1,1),ep=inst(box,mCo,Math.ceil(ex.length/3),1,1),eb=inst(box,mWh,ex.length*2,0,0);
+ const ex=[];for(let s=S0;s<4230;s+=12)ex.push(s);const ed=inst(box,mCo,ex.length,1,1),ep=inst(box,mCo,Math.ceil(ex.length/3),1,1),eb=inst(box,mWh,ex.length*2,0,0);
  ex.forEach((s,i)=>{pg(ed,i,s,48,12,[16,1,12.4]);pg(eb,i*2,s,48-7.6,12.8,[.4,.8,12.4]);pg(eb,i*2+1,s,48+7.6,12.8,[.4,.8,12.4]);if(i%3==0)pg(ep,i/3,s,48,5.6,[2.6,11.6,2.6])})}
 /* 通行する自動車 */
 const CN=90,cars=inst(box,new T.MeshLambertMaterial({color:0xffffff}),CN,0,0),CD=[],cq=new T.Color();
-for(let i=0;i<CN;i++){const e=i<26,d=rng()<.5?1:-1,q=rng()<.5?-1:1;CD.push({e,d,sp:(e?22:9)*(.7+rng()*.6),s0:S0+rng()*7000,o:e?48+d*3.4:q*15+d*1.7,y:e?13.15:.2});cars.setColorAt(i,cq.setHex(CC[i%6]))}
+for(let i=0;i<CN;i++){const e=i<26,d=rng()<.5?1:-1,q=rng()<.5?-1:1;CD.push({e,d,sp:(e?22:9)*(.7+rng()*.6),s0:S0+rng()*8500,o:e?48+d*3.4:q*15+d*1.7,y:e?13.15:.2});cars.setColorAt(i,cq.setHex(CC[i%6]))}
 /* 途中の閉塞信号機 */
 function nextStIdx(s){let k=0;while(k<ST.length&&ST[k].s<=s)k++;return Math.min(k,ST.length-1)}
 for(let s=700;s<END-500;s+=650)if(ST.every(t=>Math.abs(s-t.s)>500))signal(s,2,nextStIdx(s));
@@ -608,12 +729,12 @@ function personFig(){const g=new T.Group(),sk=new T.MeshLambertMaterial({color:0
 const HZP=personFig(),HZTR=emu(0xd8d8d8,4,'回送','9');HZTR.forEach(u=>u.visible=false);
 function hazShow(kind,s){if(kind==='cross'){HZP.visible=true;HZTR.forEach(u=>u.visible=false)}else{HZP.visible=false;HZTR.forEach(u=>u.visible=true);trainAt(HZTR,s,0,1)}}
 function hazHide(){HZP.visible=false;HZTR.forEach(u=>u.visible=false)}
-let nbl=0,pn=0,bp=0,nal=0,pas=0,jo=0,xsrc=null,xg=null,BELLT=0;
+let nbl=0,pn=0,bp=0,nal=0,pas=0,jo=0,xsrc=null,xg=null,BELLT=0,pasV=0,pasO=9.4,pasAcc=0,lastA=0;
 function urb(tt,now){const dt=Math.min(.1,(now-pn)/1000||0);pn=now;
  if(HZP.visible&&haz){const[x,z,th]=pt(haz.s,-1.4);HZP.position.set(x,EL(haz.s),z);HZP.rotation.y=-th+Math.PI/2;
   const sw=Math.sin(now/140)*.5;HZP.userData.legL.rotation.x=sw;HZP.userData.legR.rotation.x=-sw;HZP.userData.armR.rotation.x=-sw;HZP.userData.armL.rotation.x=sw}
- pas=0;for(const[g,o,d,sp,lo,hi,off]of TR){const h=wr(lo+off+d*sp*tt,lo,hi),tl=h-d*20.5*g.length;trainAt(g,h,o,d);if(pos>Math.min(h,tl)-40&&pos<Math.max(h,tl)+40)pas=Math.max(pas,Math.min(1,Math.abs(v-d*sp)/50))}
- CD.forEach((c,i)=>{const[x,z,th]=pt(wr(c.s0+c.d*c.sp*tt,S0,c.e?3600:7400),c.o);dm.position.set(x,c.y,z);dm.rotation.set(0,-th,0);dm.scale.set(1.85,1.3,4.4);dm.updateMatrix();cars.setMatrixAt(i,dm.matrix)});cars.instanceMatrix.needsUpdate=true;
+ pas=0;for(const[g,o,d,sp,lo,hi,off]of TR){const h=wr(lo+off+d*sp*tt,lo,hi),tl=h-d*20.5*g.length;trainAt(g,h,o,d);if(pos>Math.min(h,tl)-40&&pos<Math.max(h,tl)+40){const pv=Math.min(1,Math.abs(v-d*sp)/50);if(pv>=pas){pas=pv;pasV=v-d*sp;pasO=o}}}
+ CD.forEach((c,i)=>{const[x,z,th]=pt(wr(c.s0+c.d*c.sp*tt,S0,c.e?4230:8800),c.o);dm.position.set(x,c.y,z);dm.rotation.set(0,-th,0);dm.scale.set(1.85,1.3,4.4);dm.updateMatrix();cars.setMatrixAt(i,dm.matrix)});cars.instanceMatrix.needsUpdate=true;
  let bell=0,bs=1;const f=Math.floor(tt*2.2)%2;
  for(const c of CR){const dn=pos>c.s-450&&pos<c.s+6;c.a+=((dn?0:1.25)-c.a)*Math.min(1,dt*2.5);c.arms.forEach(([g,q])=>g.rotation.z=-q*c.a);
   const on=dn&&c.a<1.1;c.lm[0].color.setHex(on&&f?0xff2a1a:0x3a0d0a);c.lm[1].color.setHex(on&&!f?0xff2a1a:0x3a0d0a);
@@ -633,7 +754,9 @@ MSG=['携帯電話は、マナーモードに設定のうえ、通話はお控�
 const limitAt=p=>{const d=nxt().s-p;let L=100;if(d<120)L=45;else if(d<350)L=70;else if(d<700)L=90;if(p-ST[idx].s<250)L=Math.min(L,65);if(haz&&p<haz.s+40&&p>haz.s-280)L=Math.min(L,15);return L};
 let at;function ann(t){$('ann').textContent=t;$('ann').style.opacity=1;clearTimeout(at);at=setTimeout(()=>$('ann').style.opacity=0,6500);try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='ja-JP';u.rate=1.05;speechSynthesis.speak(u)}catch(e){}}
 let mt;function say(t,ms=2600){const m=$('msg');m.textContent=t;m.style.opacity=1;clearTimeout(mt);mt=setTimeout(()=>m.style.opacity=0,ms)}
-function route(){const a=Math.max(0,idx-1);$('route').innerHTML=ST.slice(a,a+5).map((t,j)=>{const i=a+j;return `<span class="${i<=idx?'on':''}${i==idx?' now':''}">${j?'─ ':'● '}${t.n}</span>`}).join(' ')+(a+5<ST.length?' <span>⋯ 大網</span>':'')}
+function route(){const a=Math.max(0,Math.min(idx-1,ST.length-5)),end=Math.min(ST.length,a+5),it=[],box=i=>`<div class="rt-st ${i<idx?'past':i===idx?'cur':i===idx+1?'next':''}"><i class="dot"></i><b>${ST[i].n}</b><small>${CODE[i]}</small><small>${RJ[i]}</small></div>`;
+ for(let i=a;i<end;i++)it.push(box(i));if(end<ST.length){it.push('<div class="rt-st"><i class="dot" style="visibility:hidden"></i><b style="color:#9aa5b1">⋯</b></div>');it.push(box(ST.length-1))}
+ $('route').innerHTML=`<div class="rt-h"><span class="jbadge">JO</span><span>総武快速線　大網特快　大網行き</span></div><div class="rt-d">${it.join('')}</div>`}
 function onStop(){const t=nxt(),err=pos-t.s,a=Math.abs(err);
  if(err<-10){if(err>-150)say(`停止位置まで あと ${(-err).toFixed(0)}m\n少し前進してください`);return}
  let pts=0,txt;
@@ -700,28 +823,50 @@ addEventListener('keydown',e=>{const k=e.key;
  else if(k===' ')B=9;else if(k>='0'&&k<='5')P=+k;else if(k==='Home'||k==='z'||k==='Z')B=0;else if(k==='End'||k==='x'||k==='X')B=8;else if(k==='h'||k==='H'){if(!e.repeat)horn(true)}else return;e.preventDefault()});
 /* audio */
 let cust=null,AC,mo,mg,ng,nf,sg,lp,o1,g1,o2,g2,o3,g3,o4,g4,o5,g5,vf,vg;
+/* ===== 走行音のリアル化: 車軸ごとのレール継ぎ目音・低音の唸り・シャー音・残響・他列車の通過音 ===== */
+let CLB=null,RVI=null,RVG=null,rbg=null,whg=null,whf=null,pasPrev=0,VA=0,fng=null,fnf=null;
+function mkBufs(){if(CLB||!AC)return;const sr=44100,mkc=(f1,f2,dec)=>{const n=4410,b=AC.createBuffer(1,n,sr),d=b.getChannelData(0);for(let i=0;i<n;i++){const e=Math.exp(-i/dec);d[i]=(Math.random()*2-1)*.55*Math.exp(-i/90)+Math.sin(i*6.283*f1/sr)*.35*e+Math.sin(i*6.283*f2/sr)*.22*e}return b};
+ const w=AC.createBuffer(1,66150,sr),wd=w.getChannelData(0);for(let i=0;i<66150;i++)wd[i]=Math.random()*2-1;
+ CLB=[mkc(1650,3120,700),mkc(1180,2480,900),mkc(2100,3700,600),w];
+ const len=sr*2.2|0,ir=AC.createBuffer(2,len,sr);for(let c=0;c<2;c++){const d=ir.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.8)}
+ const cv=AC.createConvolver();cv.buffer=ir;RVI=AC.createGain();RVG=AC.createGain();RVG.gain.value=.05;RVI.connect(cv);cv.connect(RVG);RVG.connect(AC.destination)}
+function axleHit(vol,t0,k){if(!AC||!CLB)return;const t=AC.currentTime+t0,s=AC.createBufferSource(),g=AC.createGain(),f=AC.createBiquadFilter();f.type='bandpass';f.frequency.value=320+Math.random()*420;f.Q.value=.9;s.buffer=CLB[k];s.playbackRate.value=.88+Math.random()*.25;g.gain.value=vol;s.connect(f);f.connect(g);g.connect(AC.destination);if(RVI)g.connect(RVI);s.start(t)}
+function thud(vol,t0,f,d){if(!AC)return;const t=AC.currentTime+t0,o=AC.createOscillator(),g=AC.createGain(),l=AC.createBiquadFilter();o.type='triangle';l.type='lowpass';l.frequency.value=320;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*.55,t+d*.7);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.008);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(l);l.connect(g);g.connect(AC.destination);if(RVI)g.connect(RVI);o.start(t);o.stop(t+d+.05)}
+/* 台車ごとに「ド・ド・ン」(車軸2本の低い打音＋長く響く重低音) を繰り返す */
+function joint(vol){if(!AC)return;mkBufs();const sp=Math.max(v,3);[0,14.4,20,34.4,40,54.4].forEach((b,i)=>{const d=b/sp;if(d>1.8)return;const a=vol*Math.pow(.84,i)*2.4,ax=2.1/sp;thud(a*.8,d,118,.16);thud(a*.9,d+ax,104,.17);thud(a*1.15,d+ax+.085,58,.5);axleHit(a*.05,d,i%3)})}
+function whoosh(a){if(!AC||!CLB)return;const t=AC.currentTime,s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=CLB[3];f.type='bandpass';f.Q.value=.8;f.frequency.setValueAtTime(2200,t);f.frequency.exponentialRampToValueAtTime(500,t+1.1);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(Math.min(.3,a*.35),t+.15);g.gain.exponentialRampToValueAtTime(.001,t+1.3);s.connect(f);f.connect(g);g.connect(AC.destination);if(RVI)g.connect(RVI);s.start(t)}
+function extraAudio(){try{mkBufs();mg.connect(RVI);ng.connect(RVI);sg.connect(RVI);
+ const br=AC.createBuffer(1,88200,44100),d=br.getChannelData(0);let l=0;for(let i=0;i<88200;i++){l=(l+.02*(Math.random()*2-1))/1.02;d[i]=l*3.5}
+ const s1=AC.createBufferSource();s1.buffer=br;s1.loop=true;const f1=AC.createBiquadFilter();f1.type='lowpass';f1.frequency.value=170;rbg=AC.createGain();rbg.gain.value=0;s1.connect(f1);f1.connect(rbg);rbg.connect(AC.destination);rbg.connect(RVI);s1.start();
+ const s2=AC.createBufferSource();s2.buffer=CLB[3];s2.loop=true;whf=AC.createBiquadFilter();whf.type='bandpass';whf.frequency.value=1800;whf.Q.value=.6;whg=AC.createGain();whg.gain.value=0;s2.connect(whf);whf.connect(whg);whg.connect(AC.destination);whg.connect(RVI);s2.start();const s3=AC.createBufferSource();s3.buffer=CLB[3];s3.loop=true;fnf=AC.createBiquadFilter();fnf.type='bandpass';fnf.frequency.value=650;fnf.Q.value=1.4;fng=AC.createGain();fng.gain.value=0;s3.connect(fnf);fnf.connect(fng);fng.connect(AC.destination);s3.start()}catch(e){}}
+function audioX(){if(!AC||!rbg)return;const t=AC.currentTime,n2=performance.now(),dt=Math.min(.1,(n2-lastA)/1000||0);lastA=n2;
+ rbg.gain.setTargetAtTime(Math.min(.2,v*.0055),t,.1);if(fng){fng.gain.setTargetAtTime(Math.min(.06,VA*1.1)*(.4+v/30),t,.2);fnf.frequency.setTargetAtTime(520+v*9,t,.2)}whg.gain.setTargetAtTime(Math.min(.06,v*v*.00007),t,.1);whf.frequency.setTargetAtTime(1300+v*38,t,.1);
+ let wet=pos<9040?.05:.015;for(let i=0;i<4;i++)if(Math.abs(pos-ST[i].s)<(i%3?100:140))wet=i%3?.16:.3;RVG.gain.setTargetAtTime(wet,t,.4);
+ const pa=pas*(1-Math.min(.8,Math.abs(pasO)/30));
+ if(pas>.05&&pasPrev<=.05&&pa>.04)whoosh(pa);pasPrev=pas;
+ if(pas>.05){pasAcc+=Math.abs(pasV)*dt;let n=0;while(pasAcc>7.3&&n<2){pasAcc-=7.3;n++;axleHit(Math.min(.22,pa*.3),0,Math.random()*3|0)}}else pasAcc=0}
 function audio(){try{AC=new(window.AudioContext||window.webkitAudioContext)();const N=8,re=new Float32Array(N+1),im=new Float32Array(N+1);im[1]=1;im[2]=.14;im[3]=.24;im[5]=.09;im[7]=.04;const wv=AC.createPeriodicWave(re,im);
  lp=AC.createBiquadFilter();lp.type='lowpass';lp.Q.value=.8;mg=AC.createGain();lp.connect(mg);mg.connect(AC.destination);
  const mk=w=>{const o=AC.createOscillator();if(w)o.setPeriodicWave(w);else o.type='triangle';const g=AC.createGain();g.gain.value=0;o.connect(g);g.connect(lp);o.start();return[o,g]};
  [o1,g1]=mk(wv);[o2,g2]=mk(wv);[o3,g3]=mk(0);[o4,g4]=mk(wv);[o5,g5]=mk(0);o5.type='sine';o3.type='sawtooth';
  const nb=AC.createBufferSource(),bf=AC.createBuffer(1,88200,44100),d=bf.getChannelData(0);for(let i=0;i<88200;i++)d[i]=Math.random()*2-1;nb.buffer=bf;nb.loop=true;
  nf=AC.createBiquadFilter();nf.type='bandpass';nf.frequency.value=300;ng=AC.createGain();ng.gain.value=0;nb.connect(nf);nf.connect(ng);ng.connect(AC.destination);
- const sf=AC.createBiquadFilter();sf.type='bandpass';sf.frequency.value=3200;sf.Q.value=9;sg=AC.createGain();sg.gain.value=0;nb.connect(sf);sf.connect(sg);sg.connect(AC.destination);vf=AC.createBiquadFilter();vf.type='bandpass';vf.frequency.value=2400;vf.Q.value=1.2;vg=AC.createGain();vg.gain.value=0;nb.connect(vf);vf.connect(vg);vg.connect(lp);nb.start()}catch(e){AC=null}}
+ const sf=AC.createBiquadFilter();sf.type='bandpass';sf.frequency.value=3200;sf.Q.value=9;sg=AC.createGain();sg.gain.value=0;nb.connect(sf);sf.connect(sg);sg.connect(AC.destination);vf=AC.createBiquadFilter();vf.type='bandpass';vf.frequency.value=2400;vf.Q.value=1.2;vg=AC.createGain();vg.gain.value=0;nb.connect(vf);vf.connect(vg);vg.connect(lp);nb.start();extraAudio()}catch(e){AC=null}}
 function clack(vol,n=2205,k=260){if(!AC)return;const b=AC.createBuffer(1,n,44100),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/k);const s=AC.createBufferSource(),g=AC.createGain();g.gain.value=vol;s.buffer=b;s.connect(g);g.connect(AC.destination);s.start()}
 /* 三菱SiC-VVVF(E235系風): 非同期(低速でキャリア上昇→高止まり+ランダム変調)→同期パルス切替(段階的に音程が下がる)+モーター磁励音 */
 function vvvf(){const t=AC.currentTime,f=1.32*v*3.6;let fc,as=0;
- if(f<9){fc=200+f*30;as=1}else if(f<30){fc=470+(f-9)*2;as=1}
- else if(f<50)fc=10*f;else if(f<70)fc=7*f;else if(f<95)fc=5*f;else if(f<115)fc=4*f;else fc=3*f;
- if(as)fc*=1+(Math.random()-.5)*.03;
- const reg=(bc>.5&&bc<8.5&&v>3)?Math.min(1,bc/8)*.6:0,a=Math.min(1,pw/5+reg)*Math.min(1,.25+v/4)*.05*(1-Math.min(.35,f/400));
- o1.frequency.setTargetAtTime(fc,t,.012);o2.frequency.setTargetAtTime(fc*2.004,t,.012);o4.frequency.setTargetAtTime(fc+f*1.2,t,.012);
+ /* 非同期(低速: キャリア周波数が上昇)→同期パルスモードの切替(音程が階段状に下がる)→高速域 */
+ if(f<7){fc=380+f*58;as=1}else if(f<30){fc=786+(f-7)*1.6;as=1}
+ else if(f<42)fc=11*f;else if(f<56)fc=9*f;else if(f<70)fc=7*f;else if(f<85)fc=5.2*f;else if(f<100)fc=4.2*f;else if(f<115)fc=3.4*f;else fc=2.8*f;
+ if(as)fc*=1+(Math.random()-.5)*.035+Math.sin(t*7.3)*.008;else fc*=1+Math.sin(t*5.1)*.003;
+ const reg=(bc>.5&&bc<8.5&&v>3)?Math.min(1,bc/8)*.6:0,a=Math.min(1,pw/5+reg)*Math.min(1,.25+v/4)*.05*(1-Math.min(.35,f/400));VA=a;
+ o1.frequency.setTargetAtTime(fc,t,.008);o2.frequency.setTargetAtTime(fc*2.004,t,.008);o4.frequency.setTargetAtTime(fc+f*1.2+(as?fc*.012:0),t,.01);
  o3.frequency.setTargetAtTime(42+f*1.6,t,.05);o5.frequency.setTargetAtTime(32+f*.9,t,.06);vf.frequency.setTargetAtTime(fc*2,t,.03);
- lp.frequency.setTargetAtTime(Math.min(2600,fc*4),t,.05);
- g1.gain.setTargetAtTime(a*.9,t,.05);g2.gain.setTargetAtTime(a*.2,t,.05);g4.gain.setTargetAtTime(a*.4,t,.05);
- g3.gain.setTargetAtTime(a*1.6,t,.08);g5.gain.setTargetAtTime(a*2.2,t,.08);vg.gain.setTargetAtTime(a*(as?.5:.3),t,.05)}
+ lp.frequency.setTargetAtTime(Math.min(3600,fc*(as?5:3.6)),t,.05);
+ g1.gain.setTargetAtTime(a*(as?.7:1),t,.04);g2.gain.setTargetAtTime(a*(as?.42:.18),t,.04);g4.gain.setTargetAtTime(a*(as?.55:.3),t,.04);
+ g3.gain.setTargetAtTime(a*1.5,t,.08);g5.gain.setTargetAtTime(a*2.4,t,.08);vg.gain.setTargetAtTime(a*(as?.7:.3),t,.05)}
 const puff=v=>clack(v,22050,4500);
 function thump(vol,t0=0){if(!AC)return;const t=AC.currentTime+t0;[['triangle',130,44,.45,1],['sine',62,34,.9,.8]].forEach(([ty,f0,f1,d,k])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f1,t+d*.6);g.gain.setValueAtTime(vol*k,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.05)})}
-function joint(vol){if(!AC)return;thump(vol*1.7);thump(vol*1.3,.11+.03*Math.random());clack(vol*.35,3000,500)}
 function tone(f,t0,d,type='sine',g=.12){if(!AC)return;const o=AC.createOscillator(),a=AC.createGain(),t=AC.currentTime+t0;o.type=type;o.frequency.value=f;a.gain.setValueAtTime(0,t);a.gain.linearRampToValueAtTime(g,t+.02);a.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(a);a.connect(AC.destination);o.start(t);o.stop(t+d+.05)}
 let ms=null,dw=0,ph=0,dq=0,DWT=9.5,TR_ON=false,haz=null,hazSafe=true,lastHazClear=-1e9,WX='clear',slip=0,pPrev=0,slipT=0;const MEL={},MK=['open','close','all','cross',0,1,2,3,4,5,6,7],PL=[1,2,3,4,1,2,1,2];
 const nm=k=>k==='cross'?'踏切の警報音（ループ再生）':k==='all'?'全駅共通メロディー':k==='open'?'ドアが開く音':k==='close'?'ドアが閉まる音':ST[k].n+' 発メロディー',mlen=()=>{const m=MEL[idx+1]||MEL.all;return m&&m.buf?m.buf.duration+.6:2.8};
@@ -753,18 +898,18 @@ const pad=n=>String(n).padStart(2,'0'),cp=new T.Vector3();
 function draw(now){
  const kmh=v*3.6;gauge(kmh,lim);
  const t=nxt(),rem=t.s-pos;
- $('nx').innerHTML=`<span class="st">${state==='dwell'?t.n+' 停車中':'次は '+t.n}</span>`+(state==='end'?'':`<br><span class="dist">${rem>=100?rem.toFixed(0):rem.toFixed(1)}<small style="font-size:16px"> m</small></span> <span class="sub">停止位置まで<br>定刻 ${clk(SA(idx+1))}</span>`);
+ $('nx').innerHTML=`<span class="st">${state==='dwell'?t.n+' 停車中':'次は '+t.n}<span class="jnum">${CODE[ST.indexOf(t)]}</span></span>`+(state==='end'?'':`<br><span class="dist">${rem>=100?rem.toFixed(0):rem.toFixed(1)}<small style="font-size:16px"> m</small></span> <span class="sub">停止位置まで<br>定刻 ${clk(SA(idx+1))}</span>`);
  const ts=14*3600+3*60+Math.floor(time);$('tm').innerHTML=`<span class="big">${pad(Math.floor(ts/3600))}:${pad(Math.floor(ts/60)%60)}:${pad(ts%60)}</span><br>得点 <b>${Math.max(0,score)}</b>`;
  $('lm').textContent=lim;$('limS').textContent=lim;$('limS').classList.toggle('ov',kmh>lim+.5);$('bcv').textContent=bc>8.5?'EB':'B'+Math.round(bc);
  $('lAts').classList.toggle('on',ats||kmh-lim>5);$('lDr').classList.toggle('on',state!=='dwell'||ph>=5);
  dB();dP();
  const th=yaw(pos),cv=(yaw(pos+8)-yaw(pos-8))/16,vib=Math.min(1,v/25),tt=now/1000;
- cam.position.set(tx(pos)+Math.sin(tt*23)*.004*vib,2.75+EL(pos)+Math.sin(tt*31)*.006*vib+(jo*=.9)*Math.sin(tt*70)+Math.sin(tt*7.3)*.004*vib,-pos);
- cam.rotation.set(-.1,-th,-cv*v*.8+Math.sin(tt*2.1)*.002*vib);
+ if(VIEW===0){cam.position.set(tx(pos)+Math.sin(tt*23)*.004*vib,2.75+EL(pos)+Math.sin(tt*31)*.006*vib+(jo*=.9)*Math.sin(tt*70)+Math.sin(tt*7.3)*.004*vib,-pos);
+ cam.rotation.set(-.1,-th,-cv*v*.8+Math.sin(tt*2.1)*.002*vib)}else camV(tt,th);
  sky.position.copy(cam.position);cp.copy(cam.position);dl.position.copy(cp).addScaledVector(sunDir,160);dl.target.position.copy(cp);
- if(AC){vvvf();ng.gain.value=Math.min(.2,v*.007)+pas*.3;nf.frequency.value=120+v*14;sg.gain.value=Math.min(.035,Math.abs(cv)*v*1.2)+(v<5&&v>.3&&bc>2?.012:0)}
+ if(AC){vvvf();audioX();ng.gain.value=Math.min(.2,v*.007)+pas*.3;nf.frequency.value=120+v*14;sg.gain.value=Math.min(.035,Math.abs(cv)*v*1.2)+(v<5&&v>.3&&bc>2?.012:0)}
  if(B<pB&&pB>0)puff(.1);pB=B;
- const k=Math.floor(pos/25);if(k!==lastK){lastK=k;if(v>1){joint(Math.min(.34,v*.015));jo=Math.min(.03,v*.0011)}}
+ const k=Math.floor(pos/25);if(k!==lastK){lastK=k;if(v>1){joint(Math.min(.3,v*.013)*(k%16===0?1.7:1));jo=Math.min(.03,v*.0011)}}
  urb(tt,now);lamps();R.render(scene,cam)}
 function size(){const w=innerWidth,h=innerHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}
 addEventListener('resize',size);size();route();
@@ -787,4 +932,5 @@ if(WX==='rain'){const rc=$('rain');rc.innerHTML='';for(let i=0;i<70;i++){const d
 else if(WX==='fog'){$('fogv').style.display='block';scene.fog.far=520;scene.fog.near=20}
 if(WX!=='clear')say(WX==='rain'?'☔ 雨天\nブレーキ制動距離が伸びます。空転にも注意':'🌫 濃霧\n視界不良のため速度に注意',3400);ann(`この電車は、大網特快、大網行きです。次は、${nxt().n}、${nxt().n}です。`);say('ブレーキを緩め、マスコンを入れて発車！',3600)};
 })();
-</script></body></html>
+</script>
+<script>if("serviceWorker"in navigator&&location.protocol!=="file:"){addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}))}</script></body></html>
