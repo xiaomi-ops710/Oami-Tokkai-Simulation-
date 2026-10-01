@@ -109,6 +109,13 @@ body.winv #winF{display:block}
 #am{position:fixed;right:12px;top:calc(env(safe-area-inset-top,0px) + 176px);z-index:30;background:rgba(3,7,12,.86);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:10px;padding:8px 14px;font-size:15px;font-weight:700;text-align:left;max-width:260px}
 #am small{display:block;font-size:11px;color:#ffd23c;font-weight:600}
 #am.on{border-color:#ffd23c}
+#ps,#ph{position:fixed;left:12px;z-index:30;background:rgba(3,7,12,.86);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:10px;padding:8px 12px;font-size:14px;font-weight:700}
+#ps{top:calc(env(safe-area-inset-top,0px) + 132px)}#ph{top:calc(env(safe-area-inset-top,0px) + 176px)}
+#pz{position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(0,0,0,.45);color:#fff;font-size:34px;font-weight:900;text-align:center;pointer-events:none}
+body.paused #pz{display:flex}
+body.shot #hud,body.shot #cab,body.shot #vw,body.shot #am,body.shot #hn,body.shot #ps,body.shot #ann,body.shot #msg,body.shot #limS{display:none!important}
+body.shot #ph{opacity:.25}
+.lg{width:100%;border-collapse:collapse;font-size:13px;margin:6px 0}.lg th,.lg td{border-bottom:1px solid #2a3a4c;padding:4px 6px;text-align:left}.lg th{color:#9fb6cc}
 </style></head><body>
 <canvas id="gl"></canvas><div id="fr"></div><div id="winF"></div>
 <div id="hud">
@@ -122,17 +129,19 @@ body.winv #winF{display:block}
   <div id="dig"><span>制限 <b id="lm">-</b></span><span>BC <b id="bcv">-</b></span><span class="lamp" id="lAts">ATS</span><span class="lamp g" id="lDr">戸閉</span></div></div>
  <div class="lv" id="ml"><h4>主幹制御器（マスコン）</h4><div class="trk"><div class="plate"></div><div class="kn"></div></div></div>
 </div>
-<button id="hn">警笛 (H)</button><button id="vw">視点: 運転席 (V)</button><button id="am">運転: 手動 (T)</button><div id="rain"></div><div id="fogv"></div><div id="ann"></div><div id="msg"></div>
+<button id="hn">警笛 (H)</button><button id="vw">視点: 運転席 (V)</button><button id="am">運転: 手動 (T)</button><button id="ps">⏸ 一時停止 (P)</button><button id="ph">📷 撮影 (U)</button><div id="pz">⏸ 一時停止中<br><small style="font-size:16px">P / Esc / ボタンで再開</small></div><div id="rain"></div><div id="fogv"></div><div id="ann"></div><div id="msg"></div>
 <div id="ov"><div class="card">
  <h1>電車でGO！</h1>
  <p style="font-size:18px;color:#fff;margin:0">大網特快　東京 → 大網</p>
- <div id="verbox"></div>
+ <div id="verbox"></div><div id="bestbox" style="color:#ffd23c;font-size:13px;margin:4px 0"></div>
  <p>停止位置に合わせて各駅に止め、ATSを鳴らさずに大網まで運転しよう。<br>
  マスコン <kbd>W</kbd>/<kbd>S</kbd>（<kbd>←</kbd><kbd>→</kbd>、<kbd>0</kbd>〜<kbd>5</kbd>で直接）<br>ブレーキ <kbd>↑</kbd>/<kbd>Q</kbd>緩め　<kbd>↓</kbd>/<kbd>A</kbd>込め　<kbd>Z</kbd>全緩め　<kbd>X</kbd>B8　非常 <kbd>Space</kbd>　開始 <kbd>Enter</kbd>　警笛 <kbd>H</kbd><br>画面のレバーもドラッグ・タップで操作できます。<br>ブレーキを「緩め」にしてからマスコンを入れて発車。</p>
  <div class="mr" style="justify-content:center;gap:14px"><span style="flex:0">モード</span><b id="mNorm" style="border-color:#ffcf5a">通常運転</b><b id="mTrain">訓練モード</b></div>
 <div class="mr" style="justify-content:center;gap:14px"><span style="flex:0">停車時間</span><b data-d="5">短め(5秒)</b><b data-d="9.5" style="border-color:#ffcf5a">標準(9.5秒)</b><b data-d="16">長め(16秒)</b><b data-d="25">じっくり(25秒)</b></div>
 <p id="trdesc" style="display:none;color:#ffb45a">訓練モード: 走行中、前方に踏切内の人や停止中の列車などの支障が不意に現れます。十分に減速・停止して安全確認できれば加点、間に合わずATSが動作すると減点されます。</p>
 <div class="mr" style="justify-content:center;gap:14px"><span style="flex:0">運転支援</span><b data-m="0" style="border-color:#ffcf5a">手動</b><b data-m="1">自動停車(TASC)</b><b data-m="2">自動運転(ATO)</b></div>
+<div class="mr" style="justify-content:center;gap:14px"><span style="flex:0">ATOの運転</span><b data-y="0">定時</b><b data-y="1" style="border-color:#ffcf5a">標準</b><b data-y="2">最速</b></div>
+<div class="mr" style="justify-content:center;gap:14px"><span style="flex:0">天候</span><b data-w="auto" style="border-color:#ffcf5a">おまかせ</b><b data-w="clear">晴れ</b><b data-w="rain">雨</b><b data-w="fog">霧</b></div>
 <div class="mr" style="justify-content:center;gap:14px"><span style="flex:0">踏切音</span><b data-b="0" style="border-color:#ffcf5a">標準(カンカン)</b><b data-b="1">電子式</b><b data-b="2">低音</b></div>
 <details id="mlist"><summary>♪ 音の設定（VVVF以外のすべての音／mp3・m4a・wav・ogg）</summary><p style="font-size:12px;color:#9fb6cc;margin:6px 0">優先順位: この端末で選んだ音 ＞ GitHub Pagesの <b>audio</b> フォルダの音(📁) ＞ 内蔵音。audio フォルダの使い方は audio/README.txt を参照。</p><div id="mrows"></div></details><button id="go">運転開始</button></div></div>
 <script>
@@ -846,64 +855,91 @@ function onStop(){const t=nxt(),err=pos-t.s,a=Math.abs(err);
  let pts=0,txt;
  if(err>10){txt=`行き過ぎ +${err.toFixed(1)}m\n-100点`;score-=100}
  else{pts=a<=.5?500:a<=1?400:a<=2?300:a<=5?200:100;txt=(a<=.5?'パーフェクト！ ':'停車 ')+`${err>=0?'+':''}${err.toFixed(2)}m  +${pts}点`;score+=pts}
- {const df=Math.round(time-SA(idx+1)),ad=Math.abs(df),tp=ad<=5?200:-Math.min(200,(ad-5)*4);score+=tp;txt+=`\n${ad<=5?'定時':df>0?df+'秒 遅れ':-df+'秒 早着'} ${tp>=0?'+':''}${tp}点`}
+ {const df=Math.round(time-SA(idx+1)),ad=Math.abs(df),tp=ad<=5?200:-Math.min(200,(ad-5)*4);score+=tp;LOG.push({n:t.n,err,pts:err>10?-100:pts,df,tp});txt+=`\n${ad<=5?'定時':df>0?df+'秒 遅れ':-df+'秒 早着'} ${tp>=0?'+':''}${tp}点`}
  state='dwell';dw=0;ph=0;say(`${t.n} 到着\n${txt}`,4200)}
 function depart(){stopMel();if(idx+1===ST.length-1){finish();return}idx++;state='run';warnedOver=false;annApp=annMid=ann2=false;route();ann(`次は、${nxt().n}、${nxt().n}です。`,'a_next',idx+1);say(`出発進行！\n次は ${nxt().n}`,3000)}
 function finish(){state='end';run=false;const s=Math.max(0,score),mx=(ST.length-1)*700,r=s>=mx*.85?'S':s>=mx*.65?'A':s>=mx*.4?'B':'C';
- $('ov').style.display='flex';$('ov').innerHTML=`<div class="card"><h1>大網 到着</h1><p style="font-size:20px;color:#fff">得点 ${s}　評価 ${r}</p><p>お疲れさまでした。</p><button onclick="location.reload()">もう一度運転する</button></div>`}
+ $('ov').style.display='flex';$('ov').innerHTML=`<div class="card"><h1>大網 到着</h1><p style="font-size:20px;color:#fff">得点 ${s}　評価 ${r}</p>${finishExtra(s)}<button onclick="location.reload()">もう一度運転する</button></div>`}
 /* ===== 自動停車(TASC)・自動運転(ATO) =====
-   mode 0:手動 / 1:自動停車(TASC: 停止パターンに乗ったらブレーキを自動制御) / 2:自動運転(ATO: 力行・惰行・ブレーキ・定位置停止・定時運転・発車まで自動) */
-const ATO={mode:0,tasc:false,vcap:27,capT:0,holdT:0,tB:0,tP:0,rT:0,vt:0,va:0,txt:''};
+   mode 0:手動 / 1:自動停車(TASC: 停止パターンに乗ったら力行を切りブレーキを自動制御。レバー操作は無効) / 2:自動運転(ATO) */
+const STY=[{n:'定時',mg:4,ac:.72,cap:1,r:.4,k:.45,am:.75},{n:'標準',mg:2,ac:.8,cap:0,r:.25,k:.9,am:1},{n:'最速',mg:3.5,ac:.95,cap:0,r:.12,k:1.6,am:1.2}];
+const ATO={mode:0,sty:1,tasc:false,vcap:27.8,capT:0,holdT:0,rT:0,vt:0,va:0,txt:''};
+const LOG=[];let USED=0,paused=false,WSEL='auto';
+function inpBlock(){return ATO.mode===1&&ATO.tasc}
 function atoStep(dt){
+ if(ATO.mode)USED=Math.max(USED,ATO.mode);
  if(!ATO.mode||state==='end')return;
  if(ats){P=0;B=8;return}
- if(state==='dwell'){if(ATO.mode===2){P=0;B=8}ATO.tasc=false;ATO.holdT=0;ATO.tB=8;ATO.tP=0;ATO.txt=ATO.mode===2?'停車中（扉扱い・発車待ち）':'';return}
+ if(state==='dwell'){P=0;B=8;ATO.tasc=false;ATO.holdT=0;ATO.txt=ATO.mode===2?'停車中（発車待ち）':'停車中（ブレーキ保持）';return}
  if(state==='hold'){if(ATO.mode===2){ATO.holdT+=dt;P=0;B=8;ATO.txt='発車待ち';if(ATO.holdT>2.5){B=0;P=1}}return}
- const t=nxt(),kb=WX==='rain'?.72:1,ac=.72*kb,lag=.4,d=t.s-pos,pp=v;
+ const sy=STY[ATO.sty],t=nxt(),kb=WX==='rain'?.72:1,ac=(ATO.mode===2?sy.ac:.72)*kb,lag=.4,d=t.s-pos;
  const ds=Math.max(0,d-.25-v*lag),vs=Math.sqrt(2*ac*ds);
+ if(ATO.mode===2&&typeof CR!=='undefined')for(const c of CR){const dd=c.s-pos;if(dd>45&&dd<140&&!c.hz){c.hz=1;horn(true);setTimeout(()=>horn(false),1100)}else if(dd<-30)c.hz=0}
  if(ATO.mode===1){
-  if(!ATO.tasc&&v>2&&v>vs-.3&&d<1600)ATO.tasc=true;
+  if(!ATO.tasc&&d<1600&&((v>2&&v>vs-.3)||(d<450&&v>3))){ATO.tasc=true;say('自動停車(TASC) 作動\n停止位置まで自動でブレーキを制御します',2600)}
   if(ATO.tasc&&v<.3&&d>4)ATO.tasc=false;
   if(!ATO.tasc){ATO.txt='自動停車: 待機（停止パターン手前）';ATO.vt=0;return}
  }
- let va=(ATO.mode===2?Math.max(0,limitAt(pos)-4)/3.6:99),vtgt;
+ let va=(ATO.mode===2?Math.max(0,limitAt(pos)-sy.mg)/3.6:99),vtgt;
  va=Math.min(va,vs);
- if(ATO.mode===2)for(let x=pos+25;x<t.s-1;x+=25){const lx=Math.max(0,limitAt(x)-4)/3.6;va=Math.min(va,Math.sqrt(lx*lx+2*ac*Math.max(0,x-pos-v*lag)))}
+ if(ATO.mode===2)for(let x=pos+25;x<t.s-1;x+=25){const lx=Math.max(0,limitAt(x)-sy.mg)/3.6;va=Math.min(va,Math.sqrt(lx*lx+2*ac*Math.max(0,x-pos-v*lag)))}
  if(ATO.mode===2){
-  ATO.capT-=dt;if(ATO.capT<=0){ATO.capT=.5;
-   const tr=SA(idx+1)-time,aA=.35,aB=.72*kb;let vc=27;
-   for(let c=27;c>=8;c-=.5){const dA=Math.max(0,(c*c-v*v)/(2*aA)),dB=c*c/(2*aB),dC=Math.max(0,d-dA-dB),T=Math.max(0,(c-v)/aA)+c/aB+dC/c;vc=c;if(T>=tr)break}
-   ATO.vcap=vc}
+  if(!sy.cap)ATO.vcap=27.8;else{
+   ATO.capT-=dt;if(ATO.capT<=0){ATO.capT=.5;
+    const tr=SA(idx+1)-time,aA=.35,aB=.72*kb;let vc=27;
+    for(let c=27;c>=8;c-=.5){const dA=Math.max(0,(c*c-v*v)/(2*aA)),dB=c*c/(2*aB),dC=Math.max(0,d-dA-dB),T=Math.max(0,(c-v)/aA)+c/aB+dC/c;vc=c;if(T>=tr)break}
+    ATO.vcap=vc}}
   vtgt=Math.min(va,ATO.vcap)}else vtgt=va;
  ATO.vt=vtgt;ATO.va=va;
+ const dr=.012+.00005*v*v,gr=(EL(pos-2)-EL(pos+2))/4*9.8,f=.9*Math.max(.12,1-v/38)/5;
  let nB=0,nP=0;
  if(v>va+.1){nB=Math.min(8,Math.max(1,Math.round((ac+(v-va)*1.5)/(.125*kb))));ATO.txt=ATO.mode===2?'ブレーキ（停止／速度パターン）':'自動停車: ブレーキ制御'}
  else if(ATO.mode===2){
   if(v>vtgt+1.2){nB=1;ATO.txt='ブレーキ（定時調整）'}
   else if(v>vtgt+.1){ATO.txt='惰行'}
-  else if(v<vtgt-.3){const dr=.012+.00005*v*v,gr=(EL(pos-2)-EL(pos+2))/4*9.8,need=Math.min(.75,(vtgt-v)*.45)+dr-gr,f=.9*Math.max(.12,1-v/38)/5;nP=Math.max(1,Math.min(5,Math.ceil(need/f)));ATO.txt='力行 P'+nP}
+  else if(v<vtgt-.3){const need=Math.min(sy.am,(vtgt-v)*sy.k)+dr-gr;nP=Math.max(1,Math.min(5,Math.ceil(need/f)));ATO.txt='力行 P'+nP}
   else ATO.txt='惰行'
- }else{ATO.txt='自動停車: ブレーキ緩め'}
- /* ノッチの変化は緩やかに（ブレーキ緩めは0.25秒に1段、力行は0.4秒に1段） */
+ }else{
+  /* TASC: パターンより遅いときは、手前で止まらないよう補助力行（制限速度−6km/hまで） */
+  const tg=Math.min(va-.5,Math.max(0,limitAt(pos)-6)/3.6);
+  if(v<tg-1&&d>12){const need=Math.min(.5,(tg-v)*.5)+dr-gr;nP=Math.max(1,Math.min(3,Math.ceil(need/f)));ATO.txt='自動停車: 補助力行 P'+nP}else ATO.txt='自動停車: 惰行'
+ }
  ATO.rT-=dt;
- if(nB>B||(ATO.tasc&&ATO.mode===1&&nB>B)){B=nB;ATO.rT=.25}else if(nB<B&&ATO.rT<=0){B=Math.max(nB,B-1);ATO.rT=.25}
- if(ATO.mode===2){if(B===0){if(nP>P&&ATO.rT<=0){P=P+1;ATO.rT=.4}else if(nP<P){P=nP}}else{P=0}}
- else{if(B>0)P=0}
+ if(nB>B){B=nB;ATO.rT=.25}else if(nB<B&&ATO.rT<=0){B=Math.max(nB,B-1);ATO.rT=.25}
+ const rr=ATO.mode===2?sy.r:.4;
+ if(B===0){if(nP>P&&ATO.rT<=0){P=P+1;ATO.rT=rr}else if(nP<P){P=nP}}else{P=0}
 }
-/* ===== 運転支援UI・バージョン表示・拡大防止 ===== */
-const VERSION='3.1',CHANGELOG=[
- {v:'3.1',d:'2026-10-01',n:['自動停車(TASC)・自動運転(ATO)を追加（T キー／画面右上のボタンで切替。定位置停止・定時運転・速度制限パターンに対応）','ダブルタップ・ピンチでの画面拡大を無効化','バージョン表示と更新履歴を開始画面に追加','音声の差し替え対象を整理（すれ違い音・走行音は内蔵の合成音のまま）']},
+/* ===== 運転支援UI・バージョン表示・拡大防止・一時停止・撮影モード・設定の記憶 ===== */
+const VERSION='3.2',CHANGELOG=[
+ {v:'3.2',d:'2026-10-02',n:['自動停車(TASC)を修正：レバー・キー操作で解除されず、停止パターンに乗ると確実に作動（手前で止まらないよう補助力行つき）','自動運転(ATO)に運転スタイルを追加：定時／標準（制限速度いっぱい）／最速（Y キーで切替）。標準で従来より約15％短縮','ATOが踏切の手前で自動的に警笛を鳴らす','一時停止（P／Esc）、撮影モード（U：画面の表示を隠す）を追加','到着ごとの成績（停止位置・定時・得点）を終了画面に一覧表示、ハイスコアを保存','天候を選択可能（おまかせ／晴れ／雨／霧）、設定を次回に引き継ぎ']},
+ {v:'3.1',d:'2026-10-01',n:['自動停車(TASC)・自動運転(ATO)を追加（定位置停止・定時運転・速度制限パターンに対応）','ダブルタップ・ピンチでの画面拡大を無効化','バージョン表示と更新履歴を開始画面に追加','音声の差し替え対象を整理（すれ違い音・走行音は内蔵の合成音のまま）']},
  {v:'3.0',d:'〜2026-10-01',n:['景色・駅の大幅リアル化（都会：錦糸町ほか／地方：蘇我・土気・大網）','視点切替（運転席・屋根上・横・車窓・後方上空／V キー）','VVVF以外の全音声を差し替え可能に（アプリ内＋GitHub Pagesの audio フォルダ）','JR風の路線表示・駅間距離の拡大・VVVF加速音の改良','踏切・電車の前面・パンタグラフ・走行音のリアル化／PWA対応']}];
 {let seen='';try{seen=localStorage.getItem('seenVer')||''}catch(e){}
  const c=CHANGELOG[0],nw=seen!==VERSION;
- $('verbox').innerHTML=`<span class="vbadge">Ver ${VERSION}</span>${nw?'<span class="vnew">NEW 更新あり</span>':''}<ul>${c.n.map(x=>'<li>'+x+'</li>').join('')}</ul><details><summary>更新履歴</summary>${CHANGELOG.slice(1).map(h=>`<div style="margin-top:6px"><b>Ver ${h.v}</b>（${h.d}）<ul>${h.n.map(x=>'<li>'+x+'</li>').join('')}</ul></div>`).join('')}</details>`}
+ $('verbox').innerHTML=`<span class="vbadge">Ver ${VERSION}</span>${nw?'<span class="vnew">NEW 更新あり</span>':''}<ul>${c.n.map(x=>'<li>'+x+'</li>').join('')}</ul><details><summary>更新履歴</summary>${CHANGELOG.slice(1).map(h=>`<div style="margin-top:6px"><b>Ver ${h.v}</b>（${h.d}）<ul>${h.n.map(x=>'<li>'+x+'</li>').join('')}</ul></div>`).join('')}</details>`;
+ let b={};try{b=JSON.parse(localStorage.getItem('best')||'{}')}catch(e){}
+ if(b.m||b.a)$('bestbox').innerHTML=`ハイスコア　手動 ${b.m||0}点　／　運転支援 ${b.a||0}点`}
 const MLAB=['手動','自動停車(TASC)','自動運転(ATO)'];let amTxt='';
-function amUI(f){const b=document.getElementById('am');if(!b)return;let tx='運転: '+MLAB[ATO.mode]+' (T)';if(ATO.mode){tx+='<small>'+(ATO.txt||'')+(ATO.mode===2&&ATO.vt?` ／目標 ${Math.round(ATO.vt*3.6)}km/h`:'')+'</small>'}if(f||tx!==amTxt){amTxt=tx;b.innerHTML=tx;b.classList.toggle('on',!!ATO.mode)}}
+function amUI(f){const b=document.getElementById('am');if(!b)return;let tx='運転: '+MLAB[ATO.mode]+(ATO.mode===2?'・'+STY[ATO.sty].n:'')+' (T)';if(ATO.mode){tx+='<small>'+(ATO.txt||'')+(ATO.mode===2&&ATO.vt?` ／目標 ${Math.round(ATO.vt*3.6)}km/h`:'')+'</small>'}if(f||tx!==amTxt){amTxt=tx;b.innerHTML=tx;b.classList.toggle('on',!!ATO.mode)}}
 function setMode(m){ATO.mode=m;ATO.tasc=false;ATO.txt='';ATO.holdT=0;amUI(true);if(run&&m)say(m===1?'自動停車(TASC) ON\n停止パターンに乗るとブレーキを自動制御します':'自動運転(ATO) ON\n力行・ブレーキ・定位置停止まで自動で運転します',3200)}
-function userIn(){if(ATO.mode===2||(ATO.mode===1&&ATO.tasc)){const o=ATO.mode;setMode(0);say(o===2?'自動運転を解除\n手動運転に切り替えました':'自動停車を解除\n手動運転に切り替えました',2600)}}
+function userIn(){if(ATO.mode===2){setMode(0);say('自動運転を解除\n手動運転に切り替えました',2600)}}
 document.getElementById('am').onclick=()=>{if(run)setMode((ATO.mode+1)%3)};
-addEventListener('keydown',e=>{if((e.key==='t'||e.key==='T')&&run&&!/INPUT/.test(e.target.tagName))setMode((ATO.mode+1)%3)});
-document.querySelectorAll('#ov .mr b[data-m]').forEach(b=>b.onclick=()=>{ATO.mode=+b.dataset.m;document.querySelectorAll('#ov .mr b[data-m]').forEach(x=>x.style.borderColor='');b.style.borderColor='#ffcf5a';amUI(true)});
+const selB=(sel,fn)=>document.querySelectorAll(sel).forEach(b=>b.onclick=()=>{fn(b);document.querySelectorAll(sel).forEach(x=>x.style.borderColor='');b.style.borderColor='#ffcf5a'});
+selB('#ov .mr b[data-m]',b=>{ATO.mode=+b.dataset.m;amUI(true)});
+selB('#ov .mr b[data-y]',b=>{ATO.sty=+b.dataset.y;amUI(true)});
+selB('#ov .mr b[data-w]',b=>{WSEL=b.dataset.w});
+function setPause(p){if(!run)return;paused=p;document.body.classList.toggle('paused',p);try{if(AC)p?AC.suspend():AC.resume()}catch(e){}}
+document.getElementById('ps').onclick=()=>setPause(!paused);
+document.getElementById('ph').onclick=()=>document.body.classList.toggle('shot');
+addEventListener('keydown',e=>{if(!run||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;const k=e.key;
+ if(k==='t'||k==='T')setMode((ATO.mode+1)%3);
+ else if(k==='p'||k==='P'||k==='Escape')setPause(!paused);
+ else if(k==='u'||k==='U')document.body.classList.toggle('shot');
+ else if(k==='y'||k==='Y'){ATO.sty=(ATO.sty+1)%3;say('ATOの運転スタイル: '+STY[ATO.sty].n,2200);amUI(true)}});
+function saveCfg(){try{localStorage.setItem('cfg',JSON.stringify({m:ATO.mode,y:ATO.sty,w:WSEL,d:DWT,b:BELLT,t:TR_ON}))}catch(e){}}
+function loadCfg(){try{const c=JSON.parse(localStorage.getItem('cfg')||'null');if(!c)return;const q=s=>{const e=document.querySelector(s);if(e)e.click()};q(`#ov .mr b[data-m="${c.m}"]`);q(`#ov .mr b[data-y="${c.y}"]`);q(`#ov .mr b[data-w="${c.w}"]`);q(`#ov .mr b[data-d="${c.d}"]`);q(`#ov .mr b[data-b="${c.b}"]`);if(c.t)$('mTrain').click()}catch(e){}}
+function finishExtra(s){let b={};try{b=JSON.parse(localStorage.getItem('best')||'{}')}catch(e){}const k=USED?'a':'m',old=b[k]||0,nw=s>old;if(nw){b[k]=s;try{localStorage.setItem('best',JSON.stringify(b))}catch(e){}}
+ return `<p style="color:#ffd23c">${USED?'運転支援を使用':'手動運転'}　ハイスコア ${Math.max(old,s)}点${nw&&s>0?'　🎉 更新！':''}</p><table class="lg"><tr><th>駅</th><th>停止位置</th><th>定時</th><th>点</th></tr>${LOG.map(r=>`<tr><td>${r.n}</td><td>${r.err>=0?'+':''}${r.err.toFixed(2)}m</td><td>${Math.abs(r.df)<=5?'定時':r.df>0?r.df+'秒遅れ':-r.df+'秒早着'}</td><td>${r.pts+r.tp}</td></tr>`).join('')}</table>`}
 /* ダブルタップ・ピンチ拡大の防止（iOS Safari / Android） */
 addEventListener('gesturestart',e=>e.preventDefault());addEventListener('gesturechange',e=>e.preventDefault());
 addEventListener('dblclick',e=>{if(!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))e.preventDefault()});
@@ -956,11 +992,12 @@ function mk(id,labels,inv,get,set){const el=$(id),t=el.querySelector('.trk'),k=e
  t.addEventListener('pointerup',dragOff);t.addEventListener('pointercancel',dragOff);
  t.addEventListener('wheel',e=>{e.preventDefault();set(Math.max(0,Math.min(n-1,get()+(e.deltaY>0?(inv?1:-1):(inv?-1:1)))))},{passive:false});
  return()=>{const g=get();k.style.top=fr(g)+'%';ls.forEach((d,i)=>d.classList.toggle('cur',i===g))}}
-const dB=mk('bl',['緩め','B1','B2','B3','B4','B5','B6','B7','B8','非常'],false,()=>B,i=>{B=i;userIn()}),
- dP=mk('ml',['切','1','2','3','4','5'],true,()=>P,i=>{P=i;userIn()});
+const dB=mk('bl',['緩め','B1','B2','B3','B4','B5','B6','B7','B8','非常'],false,()=>B,i=>{if(inpBlock())return;B=i;userIn()}),
+ dP=mk('ml',['切','1','2','3','4','5'],true,()=>P,i=>{if(inpBlock())return;P=i;userIn()});
 addEventListener('keydown',e=>{const k=e.key;
  if(!run){if(k==='Enter'&&!/INPUT/.test(e.target.tagName)){if(state==='end')location.reload();else if($('ov').style.display!=='none'){$('go').click();e.preventDefault()}}return}
-  if(k.length===1&&'wWsSqQaAzZxX 012345'.includes(k)||k.startsWith('Arrow')||k==='Home'||k==='End')userIn();
+  if(paused&&!(k==='p'||k==='P'||k==='Escape'))return;
+  if(k.length===1&&'wWsSqQaAzZxX 012345'.includes(k)||k.startsWith('Arrow')||k==='Home'||k==='End'){if(inpBlock()&&k!==' '){e.preventDefault();return}userIn()}
  if(k==='w'||k==='W'||k==='ArrowRight')P=Math.min(5,P+1);else if(k==='s'||k==='S'||k==='ArrowLeft')P=Math.max(0,P-1);
  else if(k==='ArrowUp'||k==='q'||k==='Q')B=Math.max(0,B-1);else if(k==='ArrowDown'||k==='a'||k==='A')B=Math.min(8,B+1);
  else if(k===' ')B=9;else if(k>='0'&&k<='5')P=+k;else if(k==='Home'||k==='z'||k==='Z')B=0;else if(k==='End'||k==='x'||k==='X')B=8;else if(k==='h'||k==='H'){if(!e.repeat)horn(true)}else return;e.preventDefault()});
@@ -1061,7 +1098,7 @@ function draw(now){
 function size(){const w=innerWidth,h=innerHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}
 addEventListener('resize',size);size();route();
 let last=performance.now();
-(function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000);last=now;if(run)step(dt);draw(now);amUI()})(last);
+(function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000);last=now;if(run&&!paused)step(dt);draw(now);amUI()})(last);
 const idb=(m,k,v)=>new Promise(r=>{try{const q=indexedDB.open('ohami',1);q.onupgradeneeded=()=>q.result.createObjectStore('m');q.onsuccess=()=>{const t=q.result.transaction('m',m==='get'?'readonly':'readwrite').objectStore('m'),x=m==='get'?t.get(k):m==='put'?t.put(v,k):t.delete(k);x.onsuccess=()=>r(x.result);x.onerror=()=>r()};q.onerror=()=>r()}catch(e){r()}});
 function dec(k){const m=MEL[k];if(AC&&m&&!m.buf)AC.decodeAudioData(m.ab.slice(0),b=>{m.buf=b},()=>{})}
 const ANNK=['a_next','a_mid','a_approach','a_exit','a_arrive','a_door'],ALLK=MK.concat(ANNK.flatMap(a=>ST.map((_,i)=>a+'_'+i))),FK=k=>typeof k==='number'?'melody_'+k:k==='all'?'melody_all':k;
@@ -1079,8 +1116,9 @@ $('mNorm').onclick=()=>{TR_ON=false;$('mNorm').style.borderColor='#ffcf5a';$('mT
 $('mTrain').onclick=()=>{TR_ON=true;$('mTrain').style.borderColor='#ffcf5a';$('mNorm').style.borderColor='';$('trdesc').style.display='block'};
 document.querySelectorAll('#ov .mr b[data-d]').forEach(b=>b.onclick=()=>{DWT=+b.dataset.d;document.querySelectorAll('#ov .mr b[data-d]').forEach(x=>x.style.borderColor='');b.style.borderColor='#ffcf5a'});
 document.querySelectorAll('#ov .mr b[data-b]').forEach(b=>b.onclick=()=>{BELLT=+b.dataset.b;document.querySelectorAll('#ov .mr b[data-b]').forEach(x=>x.style.borderColor='');b.style.borderColor='#ffcf5a'});
-$('go').onclick=()=>{try{localStorage.setItem('seenVer',VERSION)}catch(e){}$('ov').style.display='none';run=true;audio();try{AC.resume()}catch(e){}ALLK.forEach(dec);
-WX=Math.random()<0.3?'rain':Math.random()<0.18?'fog':'clear';
+loadCfg();
+$('go').onclick=()=>{try{localStorage.setItem('seenVer',VERSION)}catch(e){}saveCfg();$('ov').style.display='none';run=true;audio();try{AC.resume()}catch(e){}ALLK.forEach(dec);
+WX=WSEL!=='auto'?WSEL:(Math.random()<0.3?'rain':Math.random()<0.18?'fog':'clear');
 if(WX==='rain'){const rc=$('rain');rc.innerHTML='';for(let i=0;i<70;i++){const d=document.createElement('i');d.style.left=Math.random()*100+'%';d.style.animationDuration=(.35+Math.random()*.3)+'s';d.style.animationDelay=Math.random()*1+'s';d.style.opacity=.4+Math.random()*.5;rc.appendChild(d)}rc.style.display='block';scene.fog.far=1250;scene.fog.near=80}
 else if(WX==='fog'){$('fogv').style.display='block';scene.fog.far=520;scene.fog.near=20}
 if(WX!=='clear')say(WX==='rain'?'☔ 雨天\nブレーキ制動距離が伸びます。空転にも注意':'🌫 濃霧\n視界不良のため速度に注意',3400);ann(`この電車は、大網特快、大網行きです。次は、${nxt().n}、${nxt().n}です。`,'a_start');say('ブレーキを緩め、マスコンを入れて発車！',3600)};
