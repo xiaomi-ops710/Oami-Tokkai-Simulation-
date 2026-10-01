@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>電車でGO！ 大網特快</title>
 <meta name="theme-color" content="#000000"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="大網特快">
@@ -103,6 +103,12 @@ body.winv #winF{display:block}
 .jnum{display:inline-block;margin-left:8px;padding:0 7px;border:2px solid #0d72c9;border-radius:6px;background:#fff;color:#0d72c9;font-size:13px;font-weight:900;vertical-align:middle}
 #ann{top:calc(env(safe-area-inset-top,0px) + 150px)}
 .mg{margin:12px 0 4px;font-size:13px;color:#ffd23c;font-weight:700}
+#verbox{margin:8px 0;text-align:left}.vbadge{display:inline-block;background:#0d72c9;color:#fff;font-weight:900;border-radius:8px;padding:2px 10px}
+.vnew{display:inline-block;background:#ffd23c;color:#222;font-weight:900;border-radius:6px;padding:0 6px;margin-left:8px;font-size:12px;animation:rtp 1s ease-in-out infinite}
+#verbox ul{margin:6px 0 0 18px;padding:0;font-size:13px;color:#d6e2ee}
+#am{position:fixed;right:12px;top:calc(env(safe-area-inset-top,0px) + 176px);z-index:30;background:rgba(3,7,12,.86);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:10px;padding:8px 14px;font-size:15px;font-weight:700;text-align:left;max-width:260px}
+#am small{display:block;font-size:11px;color:#ffd23c;font-weight:600}
+#am.on{border-color:#ffd23c}
 </style></head><body>
 <canvas id="gl"></canvas><div id="fr"></div><div id="winF"></div>
 <div id="hud">
@@ -116,15 +122,17 @@ body.winv #winF{display:block}
   <div id="dig"><span>制限 <b id="lm">-</b></span><span>BC <b id="bcv">-</b></span><span class="lamp" id="lAts">ATS</span><span class="lamp g" id="lDr">戸閉</span></div></div>
  <div class="lv" id="ml"><h4>主幹制御器（マスコン）</h4><div class="trk"><div class="plate"></div><div class="kn"></div></div></div>
 </div>
-<button id="hn">警笛 (H)</button><button id="vw">視点: 運転席 (V)</button><div id="rain"></div><div id="fogv"></div><div id="ann"></div><div id="msg"></div>
+<button id="hn">警笛 (H)</button><button id="vw">視点: 運転席 (V)</button><button id="am">運転: 手動 (T)</button><div id="rain"></div><div id="fogv"></div><div id="ann"></div><div id="msg"></div>
 <div id="ov"><div class="card">
  <h1>電車でGO！</h1>
  <p style="font-size:18px;color:#fff;margin:0">大網特快　東京 → 大網</p>
+ <div id="verbox"></div>
  <p>停止位置に合わせて各駅に止め、ATSを鳴らさずに大網まで運転しよう。<br>
  マスコン <kbd>W</kbd>/<kbd>S</kbd>（<kbd>←</kbd><kbd>→</kbd>、<kbd>0</kbd>〜<kbd>5</kbd>で直接）<br>ブレーキ <kbd>↑</kbd>/<kbd>Q</kbd>緩め　<kbd>↓</kbd>/<kbd>A</kbd>込め　<kbd>Z</kbd>全緩め　<kbd>X</kbd>B8　非常 <kbd>Space</kbd>　開始 <kbd>Enter</kbd>　警笛 <kbd>H</kbd><br>画面のレバーもドラッグ・タップで操作できます。<br>ブレーキを「緩め」にしてからマスコンを入れて発車。</p>
  <div class="mr" style="justify-content:center;gap:14px"><span style="flex:0">モード</span><b id="mNorm" style="border-color:#ffcf5a">通常運転</b><b id="mTrain">訓練モード</b></div>
 <div class="mr" style="justify-content:center;gap:14px"><span style="flex:0">停車時間</span><b data-d="5">短め(5秒)</b><b data-d="9.5" style="border-color:#ffcf5a">標準(9.5秒)</b><b data-d="16">長め(16秒)</b><b data-d="25">じっくり(25秒)</b></div>
 <p id="trdesc" style="display:none;color:#ffb45a">訓練モード: 走行中、前方に踏切内の人や停止中の列車などの支障が不意に現れます。十分に減速・停止して安全確認できれば加点、間に合わずATSが動作すると減点されます。</p>
+<div class="mr" style="justify-content:center;gap:14px"><span style="flex:0">運転支援</span><b data-m="0" style="border-color:#ffcf5a">手動</b><b data-m="1">自動停車(TASC)</b><b data-m="2">自動運転(ATO)</b></div>
 <div class="mr" style="justify-content:center;gap:14px"><span style="flex:0">踏切音</span><b data-b="0" style="border-color:#ffcf5a">標準(カンカン)</b><b data-b="1">電子式</b><b data-b="2">低音</b></div>
 <details id="mlist"><summary>♪ 音の設定（VVVF以外のすべての音／mp3・m4a・wav・ogg）</summary><p style="font-size:12px;color:#9fb6cc;margin:6px 0">優先順位: この端末で選んだ音 ＞ GitHub Pagesの <b>audio</b> フォルダの音(📁) ＞ 内蔵音。audio フォルダの使い方は audio/README.txt を参照。</p><div id="mrows"></div></details><button id="go">運転開始</button></div></div>
 <script>
@@ -843,8 +851,66 @@ function onStop(){const t=nxt(),err=pos-t.s,a=Math.abs(err);
 function depart(){stopMel();if(idx+1===ST.length-1){finish();return}idx++;state='run';warnedOver=false;annApp=annMid=ann2=false;route();ann(`次は、${nxt().n}、${nxt().n}です。`,'a_next',idx+1);say(`出発進行！\n次は ${nxt().n}`,3000)}
 function finish(){state='end';run=false;const s=Math.max(0,score),mx=(ST.length-1)*700,r=s>=mx*.85?'S':s>=mx*.65?'A':s>=mx*.4?'B':'C';
  $('ov').style.display='flex';$('ov').innerHTML=`<div class="card"><h1>大網 到着</h1><p style="font-size:20px;color:#fff">得点 ${s}　評価 ${r}</p><p>お疲れさまでした。</p><button onclick="location.reload()">もう一度運転する</button></div>`}
+/* ===== 自動停車(TASC)・自動運転(ATO) =====
+   mode 0:手動 / 1:自動停車(TASC: 停止パターンに乗ったらブレーキを自動制御) / 2:自動運転(ATO: 力行・惰行・ブレーキ・定位置停止・定時運転・発車まで自動) */
+const ATO={mode:0,tasc:false,vcap:27,capT:0,holdT:0,tB:0,tP:0,rT:0,vt:0,va:0,txt:''};
+function atoStep(dt){
+ if(!ATO.mode||state==='end')return;
+ if(ats){P=0;B=8;return}
+ if(state==='dwell'){if(ATO.mode===2){P=0;B=8}ATO.tasc=false;ATO.holdT=0;ATO.tB=8;ATO.tP=0;ATO.txt=ATO.mode===2?'停車中（扉扱い・発車待ち）':'';return}
+ if(state==='hold'){if(ATO.mode===2){ATO.holdT+=dt;P=0;B=8;ATO.txt='発車待ち';if(ATO.holdT>2.5){B=0;P=1}}return}
+ const t=nxt(),kb=WX==='rain'?.72:1,ac=.72*kb,lag=.4,d=t.s-pos,pp=v;
+ const ds=Math.max(0,d-.25-v*lag),vs=Math.sqrt(2*ac*ds);
+ if(ATO.mode===1){
+  if(!ATO.tasc&&v>2&&v>vs-.3&&d<1600)ATO.tasc=true;
+  if(ATO.tasc&&v<.3&&d>4)ATO.tasc=false;
+  if(!ATO.tasc){ATO.txt='自動停車: 待機（停止パターン手前）';ATO.vt=0;return}
+ }
+ let va=(ATO.mode===2?Math.max(0,limitAt(pos)-4)/3.6:99),vtgt;
+ va=Math.min(va,vs);
+ if(ATO.mode===2)for(let x=pos+25;x<t.s-1;x+=25){const lx=Math.max(0,limitAt(x)-4)/3.6;va=Math.min(va,Math.sqrt(lx*lx+2*ac*Math.max(0,x-pos-v*lag)))}
+ if(ATO.mode===2){
+  ATO.capT-=dt;if(ATO.capT<=0){ATO.capT=.5;
+   const tr=SA(idx+1)-time,aA=.35,aB=.72*kb;let vc=27;
+   for(let c=27;c>=8;c-=.5){const dA=Math.max(0,(c*c-v*v)/(2*aA)),dB=c*c/(2*aB),dC=Math.max(0,d-dA-dB),T=Math.max(0,(c-v)/aA)+c/aB+dC/c;vc=c;if(T>=tr)break}
+   ATO.vcap=vc}
+  vtgt=Math.min(va,ATO.vcap)}else vtgt=va;
+ ATO.vt=vtgt;ATO.va=va;
+ let nB=0,nP=0;
+ if(v>va+.1){nB=Math.min(8,Math.max(1,Math.round((ac+(v-va)*1.5)/(.125*kb))));ATO.txt=ATO.mode===2?'ブレーキ（停止／速度パターン）':'自動停車: ブレーキ制御'}
+ else if(ATO.mode===2){
+  if(v>vtgt+1.2){nB=1;ATO.txt='ブレーキ（定時調整）'}
+  else if(v>vtgt+.1){ATO.txt='惰行'}
+  else if(v<vtgt-.3){const dr=.012+.00005*v*v,gr=(EL(pos-2)-EL(pos+2))/4*9.8,need=Math.min(.75,(vtgt-v)*.45)+dr-gr,f=.9*Math.max(.12,1-v/38)/5;nP=Math.max(1,Math.min(5,Math.ceil(need/f)));ATO.txt='力行 P'+nP}
+  else ATO.txt='惰行'
+ }else{ATO.txt='自動停車: ブレーキ緩め'}
+ /* ノッチの変化は緩やかに（ブレーキ緩めは0.25秒に1段、力行は0.4秒に1段） */
+ ATO.rT-=dt;
+ if(nB>B||(ATO.tasc&&ATO.mode===1&&nB>B)){B=nB;ATO.rT=.25}else if(nB<B&&ATO.rT<=0){B=Math.max(nB,B-1);ATO.rT=.25}
+ if(ATO.mode===2){if(B===0){if(nP>P&&ATO.rT<=0){P=P+1;ATO.rT=.4}else if(nP<P){P=nP}}else{P=0}}
+ else{if(B>0)P=0}
+}
+/* ===== 運転支援UI・バージョン表示・拡大防止 ===== */
+const VERSION='3.1',CHANGELOG=[
+ {v:'3.1',d:'2026-10-01',n:['自動停車(TASC)・自動運転(ATO)を追加（T キー／画面右上のボタンで切替。定位置停止・定時運転・速度制限パターンに対応）','ダブルタップ・ピンチでの画面拡大を無効化','バージョン表示と更新履歴を開始画面に追加','音声の差し替え対象を整理（すれ違い音・走行音は内蔵の合成音のまま）']},
+ {v:'3.0',d:'〜2026-10-01',n:['景色・駅の大幅リアル化（都会：錦糸町ほか／地方：蘇我・土気・大網）','視点切替（運転席・屋根上・横・車窓・後方上空／V キー）','VVVF以外の全音声を差し替え可能に（アプリ内＋GitHub Pagesの audio フォルダ）','JR風の路線表示・駅間距離の拡大・VVVF加速音の改良','踏切・電車の前面・パンタグラフ・走行音のリアル化／PWA対応']}];
+{let seen='';try{seen=localStorage.getItem('seenVer')||''}catch(e){}
+ const c=CHANGELOG[0],nw=seen!==VERSION;
+ $('verbox').innerHTML=`<span class="vbadge">Ver ${VERSION}</span>${nw?'<span class="vnew">NEW 更新あり</span>':''}<ul>${c.n.map(x=>'<li>'+x+'</li>').join('')}</ul><details><summary>更新履歴</summary>${CHANGELOG.slice(1).map(h=>`<div style="margin-top:6px"><b>Ver ${h.v}</b>（${h.d}）<ul>${h.n.map(x=>'<li>'+x+'</li>').join('')}</ul></div>`).join('')}</details>`}
+const MLAB=['手動','自動停車(TASC)','自動運転(ATO)'];let amTxt='';
+function amUI(f){const b=document.getElementById('am');if(!b)return;let tx='運転: '+MLAB[ATO.mode]+' (T)';if(ATO.mode){tx+='<small>'+(ATO.txt||'')+(ATO.mode===2&&ATO.vt?` ／目標 ${Math.round(ATO.vt*3.6)}km/h`:'')+'</small>'}if(f||tx!==amTxt){amTxt=tx;b.innerHTML=tx;b.classList.toggle('on',!!ATO.mode)}}
+function setMode(m){ATO.mode=m;ATO.tasc=false;ATO.txt='';ATO.holdT=0;amUI(true);if(run&&m)say(m===1?'自動停車(TASC) ON\n停止パターンに乗るとブレーキを自動制御します':'自動運転(ATO) ON\n力行・ブレーキ・定位置停止まで自動で運転します',3200)}
+function userIn(){if(ATO.mode===2||(ATO.mode===1&&ATO.tasc)){const o=ATO.mode;setMode(0);say(o===2?'自動運転を解除\n手動運転に切り替えました':'自動停車を解除\n手動運転に切り替えました',2600)}}
+document.getElementById('am').onclick=()=>{if(run)setMode((ATO.mode+1)%3)};
+addEventListener('keydown',e=>{if((e.key==='t'||e.key==='T')&&run&&!/INPUT/.test(e.target.tagName))setMode((ATO.mode+1)%3)});
+document.querySelectorAll('#ov .mr b[data-m]').forEach(b=>b.onclick=()=>{ATO.mode=+b.dataset.m;document.querySelectorAll('#ov .mr b[data-m]').forEach(x=>x.style.borderColor='');b.style.borderColor='#ffcf5a';amUI(true)});
+/* ダブルタップ・ピンチ拡大の防止（iOS Safari / Android） */
+addEventListener('gesturestart',e=>e.preventDefault());addEventListener('gesturechange',e=>e.preventDefault());
+addEventListener('dblclick',e=>{if(!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))e.preventDefault()});
+{let lt=0;document.addEventListener('touchend',e=>{const n=Date.now();if(n-lt<350&&!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))e.preventDefault();lt=n},{passive:false})}
+
 function step(dt){
- time+=dt;
+ time+=dt;atoStep(dt);
  const tB=ats?9:B,tP=(B>0||ats||state!=='run')?0:P;
  pw+=(tP-pw)*Math.min(1,dt*3.5);bc+=(tB-bc)*Math.min(1,dt*(tB>bc?3:4));
  if(state==='dwell'){v=0;dw+=dt;const t=ST[idx+1];
@@ -890,17 +956,18 @@ function mk(id,labels,inv,get,set){const el=$(id),t=el.querySelector('.trk'),k=e
  t.addEventListener('pointerup',dragOff);t.addEventListener('pointercancel',dragOff);
  t.addEventListener('wheel',e=>{e.preventDefault();set(Math.max(0,Math.min(n-1,get()+(e.deltaY>0?(inv?1:-1):(inv?-1:1)))))},{passive:false});
  return()=>{const g=get();k.style.top=fr(g)+'%';ls.forEach((d,i)=>d.classList.toggle('cur',i===g))}}
-const dB=mk('bl',['緩め','B1','B2','B3','B4','B5','B6','B7','B8','非常'],false,()=>B,i=>{B=i}),
- dP=mk('ml',['切','1','2','3','4','5'],true,()=>P,i=>{P=i});
+const dB=mk('bl',['緩め','B1','B2','B3','B4','B5','B6','B7','B8','非常'],false,()=>B,i=>{B=i;userIn()}),
+ dP=mk('ml',['切','1','2','3','4','5'],true,()=>P,i=>{P=i;userIn()});
 addEventListener('keydown',e=>{const k=e.key;
  if(!run){if(k==='Enter'&&!/INPUT/.test(e.target.tagName)){if(state==='end')location.reload();else if($('ov').style.display!=='none'){$('go').click();e.preventDefault()}}return}
+  if(k.length===1&&'wWsSqQaAzZxX 012345'.includes(k)||k.startsWith('Arrow')||k==='Home'||k==='End')userIn();
  if(k==='w'||k==='W'||k==='ArrowRight')P=Math.min(5,P+1);else if(k==='s'||k==='S'||k==='ArrowLeft')P=Math.max(0,P-1);
  else if(k==='ArrowUp'||k==='q'||k==='Q')B=Math.max(0,B-1);else if(k==='ArrowDown'||k==='a'||k==='A')B=Math.min(8,B+1);
  else if(k===' ')B=9;else if(k>='0'&&k<='5')P=+k;else if(k==='Home'||k==='z'||k==='Z')B=0;else if(k==='End'||k==='x'||k==='X')B=8;else if(k==='h'||k==='H'){if(!e.repeat)horn(true)}else return;e.preventDefault()});
 /* audio */
 let cust=null,AC,mo,mg,ng,nf,sg,lp,o1,g1,o2,g2,o3,g3,o4,g4,o5,g5,vf,vg;
 /* ===== 走行音のリアル化: 車軸ごとのレール継ぎ目音・低音の唸り・シャー音・残響・他列車の通過音 ===== */
-let CLB=null,RVI=null,RVG=null,rbg=null,whg=null,whf=null,pasPrev=0,VA=0,fng=null,fnf=null,runSrc=null,runG=null;
+let CLB=null,RVI=null,RVG=null,rbg=null,whg=null,whf=null,pasPrev=0,VA=0,fng=null,fnf=null;
 function mkBufs(){if(CLB||!AC)return;const sr=44100,mkc=(f1,f2,dec)=>{const n=4410,b=AC.createBuffer(1,n,sr),d=b.getChannelData(0);for(let i=0;i<n;i++){const e=Math.exp(-i/dec);d[i]=(Math.random()*2-1)*.55*Math.exp(-i/90)+Math.sin(i*6.283*f1/sr)*.35*e+Math.sin(i*6.283*f2/sr)*.22*e}return b};
  const w=AC.createBuffer(1,66150,sr),wd=w.getChannelData(0);for(let i=0;i<66150;i++)wd[i]=Math.random()*2-1;
  CLB=[mkc(1650,3120,700),mkc(1180,2480,900),mkc(2100,3700,600),w];
@@ -910,17 +977,17 @@ function axleHit(vol,t0,k){if(!AC||!CLB)return;const t=AC.currentTime+t0,s=AC.cr
 function thud(vol,t0,f,d){if(!AC)return;const t=AC.currentTime+t0,o=AC.createOscillator(),g=AC.createGain(),l=AC.createBiquadFilter();o.type='triangle';l.type='lowpass';l.frequency.value=320;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*.55,t+d*.7);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.008);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(l);l.connect(g);g.connect(AC.destination);if(RVI)g.connect(RVI);o.start(t);o.stop(t+d+.05)}
 /* 台車ごとに「ド・ド・ン」(車軸2本の低い打音＋長く響く重低音) を繰り返す */
 function joint(vol){if(!AC)return;mkBufs();const cj=MEL.joint;if(cj&&cj.buf){playBuf(cj.buf,Math.min(1,vol*3));return}const sp=Math.max(v,3);[0,14.4,20,34.4,40,54.4].forEach((b,i)=>{const d=b/sp;if(d>1.8)return;const a=vol*Math.pow(.84,i)*2.4,ax=2.1/sp;thud(a*.8,d,118,.16);thud(a*.9,d+ax,104,.17);thud(a*1.15,d+ax+.085,58,.5);axleHit(a*.05,d,i%3)})}
-function whoosh(a){if(!AC||!CLB)return;const cp=MEL.pass;if(cp&&cp.buf){playBuf(cp.buf,Math.min(1,a*1.2));return}const t=AC.currentTime,s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=CLB[3];f.type='bandpass';f.Q.value=.8;f.frequency.setValueAtTime(2200,t);f.frequency.exponentialRampToValueAtTime(500,t+1.1);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(Math.min(.3,a*.35),t+.15);g.gain.exponentialRampToValueAtTime(.001,t+1.3);s.connect(f);f.connect(g);g.connect(AC.destination);if(RVI)g.connect(RVI);s.start(t)}
+function whoosh(a){if(!AC||!CLB)return;const t=AC.currentTime,s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=CLB[3];f.type='bandpass';f.Q.value=.8;f.frequency.setValueAtTime(2200,t);f.frequency.exponentialRampToValueAtTime(500,t+1.1);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(Math.min(.3,a*.35),t+.15);g.gain.exponentialRampToValueAtTime(.001,t+1.3);s.connect(f);f.connect(g);g.connect(AC.destination);if(RVI)g.connect(RVI);s.start(t)}
 function extraAudio(){try{mkBufs();mg.connect(RVI);ng.connect(RVI);sg.connect(RVI);
  const br=AC.createBuffer(1,88200,44100),d=br.getChannelData(0);let l=0;for(let i=0;i<88200;i++){l=(l+.02*(Math.random()*2-1))/1.02;d[i]=l*3.5}
  const s1=AC.createBufferSource();s1.buffer=br;s1.loop=true;const f1=AC.createBiquadFilter();f1.type='lowpass';f1.frequency.value=170;rbg=AC.createGain();rbg.gain.value=0;s1.connect(f1);f1.connect(rbg);rbg.connect(AC.destination);rbg.connect(RVI);s1.start();
  const s2=AC.createBufferSource();s2.buffer=CLB[3];s2.loop=true;whf=AC.createBiquadFilter();whf.type='bandpass';whf.frequency.value=1800;whf.Q.value=.6;whg=AC.createGain();whg.gain.value=0;s2.connect(whf);whf.connect(whg);whg.connect(AC.destination);whg.connect(RVI);s2.start();const s3=AC.createBufferSource();s3.buffer=CLB[3];s3.loop=true;fnf=AC.createBiquadFilter();fnf.type='bandpass';fnf.frequency.value=650;fnf.Q.value=1.4;fng=AC.createGain();fng.gain.value=0;s3.connect(fnf);fnf.connect(fng);fng.connect(AC.destination);s3.start()}catch(e){}}
-function audioX(){if(!AC||!rbg)return;const t=AC.currentTime,n2=performance.now(),dt=Math.min(.1,(n2-lastA)/1000||0);lastA=n2;const cr=MEL.run,hasRun=cr&&cr.buf;if(hasRun){if(!runSrc){runSrc=AC.createBufferSource();runG=AC.createGain();runSrc.buffer=cr.buf;runSrc.loop=true;runSrc.connect(runG);runG.connect(AC.destination);runSrc.start()}runG.gain.setTargetAtTime(Math.min(.8,v*.016),t,.1);runSrc.playbackRate.setTargetAtTime(.7+Math.min(.7,v/60),t,.2)}else if(runSrc){try{runSrc.stop()}catch(e){}runSrc=null}
- rbg.gain.setTargetAtTime(hasRun?0:Math.min(.2,v*.0055),t,.1);if(fng){fng.gain.setTargetAtTime(Math.min(.06,VA*1.1)*(.4+v/30),t,.2);fnf.frequency.setTargetAtTime(520+v*9,t,.2)}whg.gain.setTargetAtTime(hasRun?0:Math.min(.06,v*v*.00007),t,.1);whf.frequency.setTargetAtTime(1300+v*38,t,.1);
+function audioX(){if(!AC||!rbg)return;const t=AC.currentTime,n2=performance.now(),dt=Math.min(.1,(n2-lastA)/1000||0);lastA=n2;
+ rbg.gain.setTargetAtTime(Math.min(.2,v*.0055),t,.1);if(fng){fng.gain.setTargetAtTime(Math.min(.06,VA*1.1)*(.4+v/30),t,.2);fnf.frequency.setTargetAtTime(520+v*9,t,.2)}whg.gain.setTargetAtTime(Math.min(.06,v*v*.00007),t,.1);whf.frequency.setTargetAtTime(1300+v*38,t,.1);
  let wet=pos<9040?.05:.015;for(let i=0;i<4;i++)if(Math.abs(pos-ST[i].s)<(i%3?100:140))wet=i%3?.16:.3;RVG.gain.setTargetAtTime(wet,t,.4);
  const pa=pas*(1-Math.min(.8,Math.abs(pasO)/30));
  if(pas>.05&&pasPrev<=.05&&pa>.04)whoosh(pa);pasPrev=pas;
- if(pas>.05){pasAcc+=Math.abs(pasV)*dt;let n=0;while(pasAcc>7.3&&n<2){pasAcc-=7.3;n++;if(!(MEL.pass&&MEL.pass.buf))axleHit(Math.min(.22,pa*.3),0,Math.random()*3|0)}}else pasAcc=0}
+ if(pas>.05){pasAcc+=Math.abs(pasV)*dt;let n=0;while(pasAcc>7.3&&n<2){pasAcc-=7.3;n++;axleHit(Math.min(.22,pa*.3),0,Math.random()*3|0)}}else pasAcc=0}
 /* ===== 音声の差し替え: 端末(アプリ内)＞ audioフォルダ(GitHub Pages)＞内蔵音 の優先順位 ===== */
 let annSrc=null,FMF=null;
 function playBuf(buf,gain=.9,delay=0){if(!AC||!buf)return null;const s=AC.createBufferSource(),g=AC.createGain();g.gain.value=gain;s.buffer=buf;s.connect(g);g.connect(AC.destination);s.start(AC.currentTime+delay);return s}
@@ -948,8 +1015,8 @@ function vvvf(){const t=AC.currentTime,f=1.32*v*3.6;let fc,as=0;
 const puff=v=>clack(v,22050,4500);
 function thump(vol,t0=0){if(!AC)return;const t=AC.currentTime+t0;[['triangle',130,44,.45,1],['sine',62,34,.9,.8]].forEach(([ty,f0,f1,d,k])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f1,t+d*.6);g.gain.setValueAtTime(vol*k,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.05)})}
 function tone(f,t0,d,type='sine',g=.12){if(!AC)return;const o=AC.createOscillator(),a=AC.createGain(),t=AC.currentTime+t0;o.type=type;o.frequency.value=f;a.gain.setValueAtTime(0,t);a.gain.linearRampToValueAtTime(g,t+.02);a.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(a);a.connect(AC.destination);o.start(t);o.stop(t+d+.05)}
-let ms=null,dw=0,ph=0,dq=0,DWT=9.5,TR_ON=false,haz=null,hazSafe=true,lastHazClear=-1e9,WX='clear',slip=0,pPrev=0,slipT=0;const MEL={},MK=['open','close','all','cross','horn','joint','pass','run','brake','ovsp','ats','slip','hazard','chime','a_start','a_next','a_mid','a_approach','a_exit','a_arrive','a_door','a_ats',0,1,2,3,4,5,6,7],PL=[1,2,3,4,1,2,1,2];
-const NM={horn:'警笛（押している間ループ）',joint:'レール継ぎ目の音',pass:'すれ違い音',run:'走行音（ループ）',brake:'ブレーキ緩解音',cross:'踏切の警報音（ループ再生）',ovsp:'速度超過の警告音',ats:'ATS作動音',slip:'空転の警告音',hazard:'前方支障の警報音',chime:'車内チャイム（放送の前）',a_start:'放送：運転開始',a_next:'放送：次は○○（出発後）',a_mid:'放送：途中の案内',a_approach:'放送：まもなく○○',a_exit:'放送：お出口は○○側',a_arrive:'放送：到着',a_door:'放送：ドアが閉まります',a_ats:'放送：急停車します'},nm=k=>NM[k]||nm0(k),nm0=k=>k==='all'?'全駅共通メロディー':k==='open'?'ドアが開く音':k==='close'?'ドアが閉まる音':ST[k].n+' 発メロディー',mlen=()=>{const m=MEL[idx+1]||MEL.all;return m&&m.buf?m.buf.duration+.6:2.8};
+let ms=null,dw=0,ph=0,dq=0,DWT=9.5,TR_ON=false,haz=null,hazSafe=true,lastHazClear=-1e9,WX='clear',slip=0,pPrev=0,slipT=0;const MEL={},MK=['open','close','all','cross','horn','joint','brake','ovsp','ats','slip','hazard','chime','a_start','a_next','a_mid','a_approach','a_exit','a_arrive','a_door','a_ats',0,1,2,3,4,5,6,7],PL=[1,2,3,4,1,2,1,2];
+const NM={horn:'警笛（押している間ループ）',joint:'レール継ぎ目の音',brake:'ブレーキ緩解音',cross:'踏切の警報音（ループ再生）',ovsp:'速度超過の警告音',ats:'ATS作動音',slip:'空転の警告音',hazard:'前方支障の警報音',chime:'車内チャイム（放送の前）',a_start:'放送：運転開始',a_next:'放送：次は○○（出発後）',a_mid:'放送：途中の案内',a_approach:'放送：まもなく○○',a_exit:'放送：お出口は○○側',a_arrive:'放送：到着',a_door:'放送：ドアが閉まります',a_ats:'放送：急停車します'},nm=k=>NM[k]||nm0(k),nm0=k=>k==='all'?'全駅共通メロディー':k==='open'?'ドアが開く音':k==='close'?'ドアが閉まる音':ST[k].n+' 発メロディー',mlen=()=>{const m=MEL[idx+1]||MEL.all;return m&&m.buf?m.buf.duration+.6:2.8};
 function doorSnd(k){const m=MEL[k];if(m&&m.buf&&AC){const b=AC.createBufferSource(),g=AC.createGain();g.gain.value=.9;b.buffer=m.buf;b.connect(g);g.connect(AC.destination);b.start();return}
  if(k==='open'){tone(988,0,.35);tone(784,.32,.7);clack(.05,22050,5000);thump(.4,.05)}
  else{[988,784,988,784].forEach((f,i)=>tone(f,i*.2,.22));setTimeout(()=>{clack(.06,22050,5000);thump(.45)},900)}}
@@ -987,14 +1054,14 @@ function draw(now){
  if(VIEW===0){cam.position.set(tx(pos)+Math.sin(tt*23)*.004*vib,2.75+EL(pos)+Math.sin(tt*31)*.006*vib+(jo*=.9)*Math.sin(tt*70)+Math.sin(tt*7.3)*.004*vib,-pos);
  cam.rotation.set(-.1,-th,-cv*v*.8+Math.sin(tt*2.1)*.002*vib)}else camV(tt,th);
  sky.position.copy(cam.position);cp.copy(cam.position);dl.position.copy(cp).addScaledVector(sunDir,160);dl.target.position.copy(cp);
- if(AC){vvvf();audioX();ng.gain.value=(MEL.run&&MEL.run.buf?0:Math.min(.2,v*.007))+pas*.3;nf.frequency.value=120+v*14;sg.gain.value=Math.min(.035,Math.abs(cv)*v*1.2)+(v<5&&v>.3&&bc>2?.012:0)}
+ if(AC){vvvf();audioX();ng.gain.value=Math.min(.2,v*.007)+pas*.3;nf.frequency.value=120+v*14;sg.gain.value=Math.min(.035,Math.abs(cv)*v*1.2)+(v<5&&v>.3&&bc>2?.012:0)}
  if(B<pB&&pB>0){const cm=MEL.brake;if(cm&&cm.buf)playBuf(cm.buf,.6);else puff(.1)}pB=B;
  const k=Math.floor(pos/25);if(k!==lastK){lastK=k;if(v>1){joint(Math.min(.3,v*.013)*(k%16===0?1.7:1));jo=Math.min(.03,v*.0011)}}
  urb(tt,now);lamps();R.render(scene,cam)}
 function size(){const w=innerWidth,h=innerHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}
 addEventListener('resize',size);size();route();
 let last=performance.now();
-(function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000);last=now;if(run)step(dt);draw(now)})(last);
+(function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000);last=now;if(run)step(dt);draw(now);amUI()})(last);
 const idb=(m,k,v)=>new Promise(r=>{try{const q=indexedDB.open('ohami',1);q.onupgradeneeded=()=>q.result.createObjectStore('m');q.onsuccess=()=>{const t=q.result.transaction('m',m==='get'?'readonly':'readwrite').objectStore('m'),x=m==='get'?t.get(k):m==='put'?t.put(v,k):t.delete(k);x.onsuccess=()=>r(x.result);x.onerror=()=>r()};q.onerror=()=>r()}catch(e){r()}});
 function dec(k){const m=MEL[k];if(AC&&m&&!m.buf)AC.decodeAudioData(m.ab.slice(0),b=>{m.buf=b},()=>{})}
 const ANNK=['a_next','a_mid','a_approach','a_exit','a_arrive','a_door'],ALLK=MK.concat(ANNK.flatMap(a=>ST.map((_,i)=>a+'_'+i))),FK=k=>typeof k==='number'?'melody_'+k:k==='all'?'melody_all':k;
@@ -1002,7 +1069,7 @@ async function folderLoad(k){if(MEL[k]&&MEL[k].src==='idb')return;const fk=FK(k)
  try{const r=await fetch(u);if(!r.ok)return;const ab=await r.arrayBuffer();if(MEL[k]&&MEL[k].src==='idb')return;MEL[k]={name:u.split('/').pop(),ab,buf:null,src:'folder'};dec(k)}catch(e){}}
 async function loadFolder(){try{const r=await fetch('audio/manifest.json',{cache:'no-cache'});if(r.ok)FMF=await r.json()}catch(e){}
  for(let i=0;i<ALLK.length;i+=8)await Promise.all(ALLK.slice(i,i+8).map(folderLoad));mrows()}
-const GR=[['車両・走行音',['horn','joint','pass','run','brake','cross']],['警告音',['ovsp','ats','slip','hazard']],['ドア・発車メロディー',['open','close','all',0,1,2,3,4,5,6,7]],['車内放送（音声ファイルがあれば読み上げの代わりに再生）',['chime','a_start','a_next','a_mid','a_approach','a_exit','a_arrive','a_door','a_ats']]];
+const GR=[['車両・走行音',['horn','joint','brake','cross']],['警告音',['ovsp','ats','slip','hazard']],['ドア・発車メロディー',['open','close','all',0,1,2,3,4,5,6,7]],['車内放送（音声ファイルがあれば読み上げの代わりに再生）',['chime','a_start','a_next','a_mid','a_approach','a_exit','a_arrive','a_door','a_ats']]];
 function mrows(){const d=$('mrows');d.innerHTML='';GR.forEach(([gt,ks])=>{const h=document.createElement('div');h.className='mg';h.textContent=gt;d.appendChild(h);ks.forEach(k=>{const r=document.createElement('div');r.className='mr';const m=MEL[k];
   r.innerHTML=`<span>${nm(k)}</span><b>${m?(m.src==='folder'?'📁 ':'♪ ')+m.name.slice(0,14):'選ぶ'}<input type="file" accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg"></b>${m&&m.src!=='folder'?'<u>×</u>':''}`;
   r.querySelector('input').onchange=e=>{const f=e.target.files[0];if(!f)return;f.arrayBuffer().then(ab=>{MEL[k]={name:f.name,ab,buf:null,src:'idb'};idb('put',k,{name:f.name,ab});dec(k);mrows()})};
@@ -1012,7 +1079,7 @@ $('mNorm').onclick=()=>{TR_ON=false;$('mNorm').style.borderColor='#ffcf5a';$('mT
 $('mTrain').onclick=()=>{TR_ON=true;$('mTrain').style.borderColor='#ffcf5a';$('mNorm').style.borderColor='';$('trdesc').style.display='block'};
 document.querySelectorAll('#ov .mr b[data-d]').forEach(b=>b.onclick=()=>{DWT=+b.dataset.d;document.querySelectorAll('#ov .mr b[data-d]').forEach(x=>x.style.borderColor='');b.style.borderColor='#ffcf5a'});
 document.querySelectorAll('#ov .mr b[data-b]').forEach(b=>b.onclick=()=>{BELLT=+b.dataset.b;document.querySelectorAll('#ov .mr b[data-b]').forEach(x=>x.style.borderColor='');b.style.borderColor='#ffcf5a'});
-$('go').onclick=()=>{$('ov').style.display='none';run=true;audio();try{AC.resume()}catch(e){}ALLK.forEach(dec);
+$('go').onclick=()=>{try{localStorage.setItem('seenVer',VERSION)}catch(e){}$('ov').style.display='none';run=true;audio();try{AC.resume()}catch(e){}ALLK.forEach(dec);
 WX=Math.random()<0.3?'rain':Math.random()<0.18?'fog':'clear';
 if(WX==='rain'){const rc=$('rain');rc.innerHTML='';for(let i=0;i<70;i++){const d=document.createElement('i');d.style.left=Math.random()*100+'%';d.style.animationDuration=(.35+Math.random()*.3)+'s';d.style.animationDelay=Math.random()*1+'s';d.style.opacity=.4+Math.random()*.5;rc.appendChild(d)}rc.style.display='block';scene.fog.far=1250;scene.fog.near=80}
 else if(WX==='fog'){$('fogv').style.display='block';scene.fog.far=520;scene.fog.near=20}
