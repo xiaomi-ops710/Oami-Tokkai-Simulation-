@@ -1,0 +1,7 @@
+{
+  "_probe": true,
+  "horn": "my_horn.ogg",
+  "run": "wheel_loop.wav",
+  "a_next_1": "kinshicho_next.mp3",
+  "melody_2": "funabashi_melody.m4a"
+}
