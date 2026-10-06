@@ -316,6 +316,47 @@ body.shot #ph{display:block!important;opacity:.25;top:calc(var(--hudh,60px) + 6p
  .m3-upd{grid-column:1;grid-row:3;align-self:start;margin-right:0!important}
  .m3-body{grid-column:2;grid-row:2/4;padding-left:0}
 }
+/* ===== Ver 3.7: JR東日本の車内液晶モニター風の行き先表示（横長に調整） ===== */
+#nx .st{display:none!important}#tm .big{display:none!important}
+#nx br,#tm br{display:none!important}
+#route.lcdw{padding:0!important;overflow:hidden;border:1px solid #111!important;border-radius:8px!important;background:#fff!important;flex:1 1 420px!important;max-width:620px!important;box-shadow:0 1px 6px rgba(0,0,0,.5)}
+#route.lcdw::after{display:none!important}
+.lcd-head{display:flex;align-items:stretch;background:#35373b;color:#fff;min-height:40px}
+.lcd-type{flex:none;display:flex;flex-direction:column;justify-content:center;min-width:92px;padding:3px 14px 3px 8px;background:#0b5cad;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,0 100%)}
+.lcd-type b{font-size:15px;line-height:1.1;color:#e3f4ff;-webkit-text-stroke:.6px #08407a}
+.lcd-type span{font-size:12px;font-weight:700;line-height:1.15}.lcd-type small{font-size:8px;margin-left:2px}
+.lcd-now{flex:1;min-width:0;display:flex;align-items:center;gap:6px;padding:0 8px}
+.lcd-now>small{font-size:11px;font-weight:700;color:#e8e8e8;white-space:nowrap}
+.lcd-code{display:flex;flex-direction:column;align-items:center;background:#fff;color:#0b5cad;border:2px solid #0b5cad;border-radius:5px;padding:0 4px;line-height:1}
+.lcd-code i{font:900 8px/1.1 Arial,sans-serif;font-style:normal}.lcd-code b{font:900 14px/1.1 Arial,sans-serif;color:#111}
+.lcd-name{font-size:24px;font-weight:900;line-height:1;white-space:nowrap;letter-spacing:.06em}
+.lcd-now .lcd-ro{font-size:9px;color:#cfd2d6;white-space:nowrap}
+.lcd-clock{flex:none;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;padding:2px 8px 2px 4px;font-size:10px}
+.lcd-clock>b{background:#e9e9e9;color:#222;font:700 14px/1.2 Arial,sans-serif;padding:0 5px;margin:1px 0}
+.lcd-clock em{font-style:normal;font-weight:900;font-size:12px;color:#fff;background:#1a8a3e;border-radius:3px;padding:0 4px;line-height:1.2}.lcd-clock em small{font-size:8px;font-weight:700}
+.lcd-map{position:relative;display:flex;align-items:flex-start;background:#fff;color:#111;padding:3px 10px 3px 4px}
+.lcd-map .bar{position:absolute;left:4px;right:6px;top:21px;height:16px;background:#0b5cad;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,0 100%)}
+.lc{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center}
+.lc .nm{font-size:12px;font-weight:900;line-height:16px;white-space:nowrap}
+.lc .dt{position:relative;z-index:1;width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid #0b5cad;display:grid;place-items:center;font-style:normal}
+.lc .dt em{font:900 12px/1 Arial,sans-serif;font-style:normal;color:#111}
+.lc .dt.start{width:26px;height:16px;margin:2px 0;border-radius:0;border:0;background:#1a8a3e;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 50%,calc(100% - 6px) 100%,0 100%)}
+.lc .dt.start::after{content:'';width:7px;height:7px;border-radius:50%;background:#fff}
+.lc .no{font:700 8px/1.2 Arial,sans-serif;text-decoration:none;color:#0b5cad;border:1px solid #0b5cad;border-radius:2px;padding:0 2px;margin-top:2px}
+.lc.next .dt{box-shadow:0 0 0 3px #ffc400;animation:lcdp 1s ease-in-out infinite}
+@keyframes lcdp{50%{box-shadow:0 0 0 5px rgba(255,196,0,.45)}}
+@media (max-width:900px){.lc.far{display:none}}
+@media (max-height:480px) and (orientation:landscape),(max-width:600px){
+ .lcd-head{min-height:30px}.lcd-name{font-size:18px}.lcd-type{min-width:72px}.lcd-type b{font-size:12px}.lcd-type span{font-size:10px}
+ .lcd-now .lcd-ro,.lcd-clock em,.lc .no{display:none}.lcd-code b{font-size:12px}.lcd-clock>b{font-size:12px}
+ .lcd-map{padding:2px 8px 2px 3px}.lc .nm{font-size:10px;line-height:13px}.lc .dt{width:16px;height:16px}.lc .dt em{font-size:10px}
+ .lc .dt.start{height:12px;width:22px}.lcd-map .bar{top:17px;height:12px}
+}
+/* ===== Ver 3.8: ATS・戸閉ランプの表示崩れ修正（LED用の .lamp と衝突していたため専用クラスに分離） ===== */
+.clamp{display:inline-block;padding:2px 8px;border-radius:6px;background:#1a2028;color:#5b6a7c;font-size:11px;border:1px solid #2b3440;line-height:1.3;white-space:nowrap;position:static;width:auto;height:auto;margin:0;box-shadow:none}
+.clamp.on{background:#3a0f0c;color:#ff6a58;border-color:#ff4d3d;box-shadow:0 0 8px rgba(255,77,61,.55)}
+.clamp.g.on{background:#0d2e17;color:var(--grn);border-color:var(--grn);box-shadow:0 0 8px rgba(60,220,110,.45)}
+#dig{align-items:center}
 </style></head><body>
 <canvas id="gl"></canvas><div id="fr"></div><div id="winF"></div>
 <div id="hud">
@@ -326,7 +367,7 @@ body.shot #ph{display:block!important;opacity:.25;top:calc(var(--hudh,60px) + 6p
 <div id="cab">
  <div class="lv" id="bl"><h4>ブレーキ弁ハンドル</h4><div class="trk"><div class="plate"></div><div class="kn b"></div></div></div>
  <div id="mid"><canvas id="gauge" width="300" height="300"></canvas>
-  <div id="dig"><span>制限 <b id="lm">-</b></span><span>BC <b id="bcv">-</b></span><span class="lamp" id="lAts">ATS</span><span class="lamp g" id="lDr">戸閉</span></div></div>
+  <div id="dig"><span>制限 <b id="lm">-</b></span><span>BC <b id="bcv">-</b></span><span class="clamp" id="lAts">ATS</span><span class="clamp g" id="lDr">戸閉</span></div></div>
  <div class="lv" id="ml"><h4>主幹制御器（マスコン）</h4><div class="trk"><div class="plate"></div><div class="kn"></div></div></div>
 </div>
 <button id="mn">☰</button><button id="hn">警笛 (H)</button><button id="vw">視点: 運転席 (V)</button><button id="am">運転: 手動 (T)</button><button id="ps">⏸ 一時停止 (P)</button><button id="ph">📷 撮影 (U)</button><button id="fs">⛶ 全画面</button><div id="pz">⏸ 一時停止中<br><small style="font-size:16px">P / Esc / ボタンで再開</small></div><div id="rain"></div><div id="fogv"></div><div id="ann"></div><div id="msg"></div>
@@ -379,7 +420,7 @@ let sd=7;const rng=()=>{sd=(sd*16807)%2147483647;return sd/2147483647};
 const gate=s=>{let g=1;for(const t of ST)g=Math.min(g,sm(230,520,Math.abs(s-t.s)));return g};
 const tx=s=>(46*Math.sin(s/620+1)+22*Math.sin(s/230))*gate(s);
 const yaw=s=>Math.atan2(tx(s+1)-tx(s-1),2);
-const GA=[0,0,0,0,0,16,40,14],GD=s=>{if(s<=ST[4].s+380)return 0;for(let i=4;i<7;i++){const a=ST[i].s+380,b=ST[i+1].s-380;if(s<b)return s<a?GA[i]:GA[i]+(GA[i+1]-GA[i])*sm(a,b,s)}return GA[7]},VLF=s=>8*(1-sm(9040,10220,s)),EL=s=>VLF(s)+GD(s),zn=s=>s<9860?0:s<15700?1:2;
+const GA=[0,0,0,0,0,24,60,21],GD=s=>{if(s<=ST[4].s+380)return 0;for(let i=4;i<7;i++){const a=ST[i].s+380,b=ST[i+1].s-380;if(s<b)return s<a?GA[i]:GA[i]+(GA[i+1]-GA[i])*sm(a,b,s)}return GA[7]},VLF=s=>8*(1-sm(9040,10220,s)),EL=s=>VLF(s)+GD(s),zn=s=>s<9860?0:s<15700?1:2;
 const amp=s=>4+34*sm(13760,15460,s)*(1-.75*sm(18080,19480,s));
 const MC=[250,18700],mtn=(x,s)=>Math.exp(-((x-MC[0])**2/(2*95*95)+(s-MC[1])**2/(2*200*200)))*(250+30*vn(x*.02,s*.02));
 const H=(x,z)=>{const s=-z,d=Math.abs(x-tx(s));let h=Math.max(0,fbm(x*.006,z*.006)-.34)*1.7*amp(s)*sm(16,150,d);
@@ -417,12 +458,21 @@ const tg=new T.PlaneGeometry(1000,TL,120,1000);tg.rotateX(-Math.PI/2);
 const dm=new T.Object3D(),box=new T.BoxGeometry(1,1,1);
 const inst=(g,m,n,c,r)=>{const im=new T.InstancedMesh(g,m,n);im.castShadow=!!c;im.receiveShadow=!!r;im.frustumCulled=false;scene.add(im);return im};
 function put(im,i,s,off,y,sc,ry=0){const th=yaw(s);dm.position.set(tx(s)+off*Math.cos(th),y+EL(s),-s+off*Math.sin(th));dm.rotation.set(0,-th+ry,0);dm.scale.set(sc[0],sc[1],sc[2]);dm.updateMatrix();im.setMatrixAt(i,dm.matrix)}
+function putP(im,i,s,off,y,sc,ry=0){const th=yaw(s);dm.position.set(tx(s)+off*Math.cos(th),y+EL(s),-s+off*Math.sin(th));dm.rotation.order='YXZ';dm.rotation.set(Math.atan((EL(s+1.2)-EL(s-1.2))/2.4),-th+ry,0);dm.scale.set(sc[0],sc[1],sc[2]);dm.updateMatrix();dm.rotation.order='XYZ';im.setMatrixAt(i,dm.matrix)}
 {const len=S1-S0,nb=Math.ceil(len/3),ns=Math.ceil(len/.62),nr=Math.ceil(len/2.5);
- const bal=inst(box,new T.MeshLambertMaterial({color:0x6d6a66}),nb,0,1),sl=inst(box,new T.MeshLambertMaterial({color:0x4a4038}),ns,0,1),
- rl=inst(box,new T.MeshStandardMaterial({color:0x9aa1a9,metalness:.85,roughness:.32}),nr*2,0,1);
- for(let i=0;i<nb;i++)put(bal,i,S0+i*3,0,-.1,[3.9,.5,3.4]);
- for(let i=0;i<ns;i++)put(sl,i,S0+i*.62,0,.215,[2.3,.13,.25]);
- for(let i=0;i<nr;i++)for(let j=0;j<2;j++)put(rl,i*2+j,S0+i*2.5,j?.53:-.53,.36,[.075,.16,2.6]);
+ const mkT=(w,h,fn)=>{const c=document.createElement('canvas');c.width=w;c.height=h;fn(c.getContext('2d'));const t=new T.CanvasTexture(c);t.anisotropy=8;return t};
+ const gT=mkT(256,256,c=>{c.fillStyle='#716e69';c.fillRect(0,0,256,256);for(let i=0;i<5200;i++){const l=78+Math.random()*95|0;c.fillStyle=`rgb(${l},${l-2},${l-6})`;c.fillRect(Math.random()*256,Math.random()*256,2+Math.random()*4,2+Math.random()*3)}});
+ const bal=inst(box,new T.MeshLambertMaterial({map:gT}),nb,0,1),bal2=inst(box,new T.MeshLambertMaterial({color:0x575450}),nb,0,1),tr2=inst(box,new T.MeshLambertMaterial({color:0x9a978f}),nb*2,0,1),
+ sl=inst(box,new T.MeshLambertMaterial({color:0x8d8a84}),ns,0,1),
+ rl=inst(box,new T.MeshStandardMaterial({color:0x5b4b42,metalness:.55,roughness:.55}),nr*2,0,1),rt=inst(box,new T.MeshStandardMaterial({color:0xd3d9df,metalness:.9,roughness:.22}),nr*2,0,0),
+ cl=inst(box,new T.MeshLambertMaterial({color:0x2a2a2d}),Math.ceil(ns/2)*2,0,0);
+ for(let i=0;i<nb;i++){putP(bal,i,S0+i*3,0,-.1,[3.9,.5,3.4]);putP(bal2,i,S0+i*3,0,-.3,[5.3,.35,3.4]);putP(tr2,i*2,S0+i*3,-2.45,.3,[.55,.3,2.9]);putP(tr2,i*2+1,S0+i*3,2.45,.3,[.55,.3,2.9])}
+ for(let i=0;i<ns;i++){putP(sl,i,S0+i*.62,0,.215,[2.3,.13,.25]);if(i%2===0){putP(cl,i,S0+i*.62,-.53,.30,[.2,.05,.07]);putP(cl,i+1,S0+i*.62,.53,.30,[.2,.05,.07])}}
+ for(let i=0;i<nr;i++)for(let j=0;j<2;j++){putP(rl,i*2+j,S0+i*2.5,j?.53:-.53,.36,[.075,.16,2.6]);putP(rt,i*2+j,S0+i*2.5,j?.53:-.53,.447,[.05,.012,2.6])}
+ {const pts=[];for(let i=1;i<ST.length;i++)for(const d of[700,350,120])pts.push(ST[i].s-d);
+  const b1=inst(box,new T.MeshLambertMaterial({color:0x24477a}),pts.length,0,1),b2=inst(box,new T.MeshLambertMaterial({color:0xf2c200}),pts.length,0,0);
+  pts.forEach((s,i)=>{putP(b1,i,s,0,.31,[.5,.08,.9]);putP(b2,i,s,0,.355,[.34,.012,.7])})}
+
  const np=Math.floor(len/45),po=inst(box,new T.MeshLambertMaterial({color:0x8b9096}),np*2,1,0);
  for(let i=0;i<np;i++){const s=S0+i*45;put(po,i*2,s,3.1,3.5,[.26,7,.26]);put(po,i*2+1,s,1.5,6.4,[3.2,.14,.14])}
  const p=[];for(let s=S0;s<S1;s+=8){for(const y of[5.4,6.3])p.push(tx(s),y+EL(s),-s,tx(s+8),y+EL(s+8),-(s+8))}
@@ -614,8 +664,8 @@ function pg(im,i,s,o,y,sc){const[x,z,th]=pt(s,o);dm.position.set(x,y,z);dm.rotat
 const BALM=new T.MeshLambertMaterial({map:tex(256,256,c=>{c.fillStyle='#716e69';c.fillRect(0,0,256,256);for(let i=0;i<4000;i++){const l=80+Math.random()*90|0;c.fillStyle=`rgb(${l},${l-2},${l-6})`;c.fillRect(Math.random()*256,Math.random()*256,2+Math.random()*3,2+Math.random()*3)}})});
 function line(o,s0,s1){const L=s1-s0,nb=Math.ceil(L/3),ns=Math.ceil(L/.9),nr=Math.ceil(L/2.5),np=Math.floor(L/45),vs=[],fl=[];
  const bal=inst(box,BALM,nb,0,1),sl=inst(box,M1(0x8d8a84),ns,0,1),rl=inst(box,rM,nr*2,0,1),po=inst(box,mPs,np,0,0),bal2=inst(box,M1(0x575450),nb,0,1),tr2=inst(box,M1(0x9a978f),nb*2,0,1);
- for(let i=0;i<nb;i++){put(bal,i,s0+i*3,o,-.1,[3.9,.5,3.4]);put(bal2,i,s0+i*3,o,-.3,[5.3,.35,3.4]);put(tr2,i*2,s0+i*3,o-2.45,.3,[.55,.3,2.9]);put(tr2,i*2+1,s0+i*3,o+2.45,.3,[.55,.3,2.9])}for(let i=0;i<ns;i++)put(sl,i,s0+i*.9,o,.215,[2.3,.13,.25]);
- for(let i=0;i<nr;i++)for(let j=0;j<2;j++)put(rl,i*2+j,s0+i*2.5,o+(j?.53:-.53),.36,[.075,.16,2.6]);
+ for(let i=0;i<nb;i++){putP(bal,i,s0+i*3,o,-.1,[3.9,.5,3.4]);putP(bal2,i,s0+i*3,o,-.3,[5.3,.35,3.4]);putP(tr2,i*2,s0+i*3,o-2.45,.3,[.55,.3,2.9]);putP(tr2,i*2+1,s0+i*3,o+2.45,.3,[.55,.3,2.9])}for(let i=0;i<ns;i++)putP(sl,i,s0+i*.9,o,.215,[2.3,.13,.25]);
+ for(let i=0;i<nr;i++)for(let j=0;j<2;j++)putP(rl,i*2+j,s0+i*2.5,o+(j?.53:-.53),.36,[.075,.16,2.6]);
  for(let i=0;i<np;i++)put(po,i,s0+i*45+20,o+(o>0?1.9:-1.9),3.5,[.26,7,.26]);
  for(let s=s0;s<s1;s+=3)if(VLF(s)>.3){vs.push(s);if(VLF(s)>1.3&&(s-s0)%15<3)fl.push(s)}
  const sv=inst(box,mCo,vs.length,0,1),pv=inst(box,mCo,fl.length,0,1);
@@ -979,7 +1029,7 @@ function emu(c,n,label,no){label=label||'普通';no=no||'B'+(1+Math.floor(Math.r
  for(let i=0;i<n;i++){const u=new T.Group();{const bd=new T.Mesh(box,sideMats(c));bd.scale.set(3,2.6,19.4);bd.position.y=2.3;u.add(bd);u.add(new T.Mesh((i===2||i===n-3||(n<5&&i===1))?ROOFP:ROOFG,MROOF));u.add(new T.Mesh(UNDERG,MUND))}
   if(i===0)cab(u,1);if(i===n-1&&n>1)cab(u,-1);if(i===0&&n===1)cab(u,-1);
   scene.add(u);g.push(u)}return g}
-function trainAt(g,s,o,d){g.forEach((u,i)=>{const cs=s-d*i*20.5,[x,z,th]=pt(cs,o);u.position.set(x,EL(cs),z);u.rotation.y=-th})}
+function trainAt(g,s,o,d){g.forEach((u,i)=>{const cs=s-d*i*20.5,[x,z,th]=pt(cs,o);u.position.set(x,EL(cs),z);u.rotation.order='YXZ';u.rotation.set(Math.atan((EL(cs+4)-EL(cs-4))/8),-th,0)})}
 const TR=[[emu(0x00b1e7,10,'京浜東北線','K'),9.4,-1,24,S0+230,14370,0],[emu(0x9acd32,8,'山手線','G'),9.4,-1,24,S0+230,14370,5800],[emu(0xffd400,10,'中央・総武線','B'),-9.4,1,17,S0+230,3820,0],[emu(0xffd400,10,'中央・総武線','B'),-9.4,1,17,S0+230,3820,1500]];
 [[0xffd400,'中央・総武線','B',13.6,1,20,0],[0xe8752c,'中央線快速','H',13.6,-1,26,2400],[0x00b1e7,'京浜東北線','K',-13.6,1,22,900],[0x9acd32,'山手線','G',-13.6,-1,21,3900],[0xffd400,'中央・総武線','B',17.1,1,18,1700],[0xd3221a,'京葉線','E',17.1,-1,25,5200],[0x0f8a5a,'湘南新宿ライン','S',-17.1,1,27,3100],[0x1f5fbf,'京浜東北線','K',-17.1,-1,23,600]].forEach(([c,lb,no,o,d,sp,off])=>TR.push([emu(c,10,lb,no),o,d,sp,200,8520,off]));
 /* ===== 視点切替（V キー／ボタン）: 運転席・屋根上・横から・車窓・後方上空 ===== */
@@ -987,10 +1037,10 @@ let VIEW=0;const PT=emu(0x1f9d55,10,'大網特快','OA');PT.forEach(u=>u.visible
 const VN=['運転席','屋根上','横から','車窓','後方上空'];
 function setView(k){VIEW=(k+5)%5;PT.forEach(u=>u.visible=VIEW!==0);const b=document.getElementById('vw');if(b)b.textContent='視点: '+VN[VIEW]+' (V)';document.body.classList.toggle('winv',VIEW===3);const fr=document.getElementById('fr');if(fr)fr.style.display=VIEW?'none':''}
 function camV(tt,th){trainAt(PT,pos-8.2,0,1);let p,ry,rx=-.12,y=EL(pos);
- if(VIEW===1){p=pt(pos-6,0);y+=5.5;ry=-th;rx=-.15}
+ if(VIEW===1){p=pt(pos-6,0);y+=5.5;ry=-th;rx=-.15+slopePitch(performance.now())}
  else if(VIEW===2){p=pt(pos-18,5.4);y+=2.3;ry=-th+Math.PI/2;rx=-.03}
  else if(VIEW===3){p=pt(pos-28.7,.9);y+=2.35;ry=-th-Math.PI/2+.42;rx=-.02}
- else{p=pt(pos-44,0);y+=11;ry=-th;rx=-.27}
+ else{p=pt(pos-44,0);y+=11;ry=-th;rx=-.27+slopePitch(performance.now())}
  cam.position.set(p[0],y,p[1]);cam.rotation.set(rx,ry,0)}
 addEventListener('keydown',e=>{if(e.code==='KeyV')setView(VIEW+1)});
 document.getElementById('vw').onclick=()=>setView(VIEW+1);
@@ -1082,10 +1132,12 @@ let at;function ann(t,key,k){$('ann').textContent=t;$('ann').style.opacity=1;cle
 let mt;function say(t,ms=2600){const m=$('msg');m.textContent=t;m.style.opacity=1;clearTimeout(mt);mt=setTimeout(()=>m.style.opacity=0,ms)}
 /* ===== JR風LED行き先表示 ===== */
 let rtKey='',grTx='';
-function route(){const dw=state==='dwell',last=ST.length-1,cur=dw?Math.min(idx+1,last):idx,nx=Math.min(last,dw?idx+2:idx+1),el=$('route');el.classList.add('led');
- const box=i=>{const f=Math.abs(i-cur)>2&&i!==last&&i!==nx;return `<div class="ls ${f?'far ':''}${i<cur?'past':i===cur?'cur':''}${i===nx&&i!==cur?' next':''}"><i class="lamp"></i><b>${ST[i].n}</b><small>${CODE[i]}</small></div>`};
- el.innerHTML=`<div class="led-top"><span class="led-tag">特快</span><span class="led-dest"><span class="jp">大網 行き</span><span class="en">For Ōami</span></span><span class="led-next">${dw?`<span class="jp">ただいま <b>${ST[cur].n}</b></span><span class="en">Now at <b>${RJ[cur]}</b></span>`:`<span class="jp">次は <b>${ST[nx].n}</b></span><span class="en">Next <b>${RJ[nx]}</b></span>`}<i class="led-code">${CODE[dw?cur:nx]}</i></span></div><div class="led-line">${ST.map((_,i)=>box(i)).join('')}</div>`}
-function routeTick(){const k=idx+'|'+state;if(k!==rtKey){rtKey=k;route()}}
+function route(){const dw=state==='dwell',last=ST.length-1,cur=dw?Math.min(idx+1,last):idx,nx=Math.min(last,dw?idx+2:idx+1),el=$('route'),sh=dw?cur:nx;el.classList.remove('led');el.classList.add('lcdw');lcdK=-1;
+ const cells=[];for(let j=cur+1;j<=last;j++)cells.push(`<div class="lc${cells.length>3&&j!==last?' far':''}${j===nx&&!dw?' next':''}"><span class="nm">${ST[j].n}</span><i class="dt"><em class="mn" data-k="${j}">-</em></i><u class="no">${CODE[j]}</u></div>`);
+ el.innerHTML=`<div class="lcd-head"><div class="lcd-type"><b>特快</b><span>大網<small>ゆき</small></span></div><div class="lcd-now"><small>${dw?'ただいま':'次は'}</small><span class="lcd-code"><i>${CODE[sh].slice(0,2)}</i><b>${CODE[sh].slice(2)}</b></span><span class="lcd-name">${ST[sh].n}</span><small class="lcd-ro">${RJ[sh]}</small></div><div class="lcd-clock"><small>現在時刻</small><b id="lcdT">--:--</b><em>10<small>号車</small></em></div></div><div class="lcd-map"><i class="bar"></i><div class="lc st0"><span class="nm">${ST[cur].n}</span><i class="dt start"></i><u class="no">${CODE[cur]}</u></div>${cells.join('')}</div>`}
+let lcdK=-1;
+function lcdTick(){const k=Math.floor(time);if(k===lcdK)return;lcdK=k;const ts=14*3600+3*60+k,t=document.getElementById('lcdT');if(t)t.textContent=pad(Math.floor(ts/3600))+':'+pad(Math.floor(ts/60)%60);document.querySelectorAll('#route .mn').forEach(e=>{e.textContent=Math.max(1,Math.ceil((SA(+e.dataset.k)-time)/60))})}
+function routeTick(){const k=idx+'|'+state;if(k!==rtKey){rtKey=k;route()}lcdTick()}
 setInterval(()=>{const r=$('route');if(r)r.classList.toggle('en')},3500);
 function grUI(){const g=document.getElementById('grd');if(!g)return;const sl=Math.round((EL(pos+12)-EL(pos-12))/24*1000),tx=sl>2?`▲ 上り ${sl}‰`:sl<-2?`▼ 下り ${-sl}‰`:'─ 水平';if(tx!==grTx){grTx=tx;g.innerHTML='勾配<b>'+tx+'</b>';g.className='chip '+(sl>2?'up':sl<-2?'dn':'')}}
 
@@ -1149,7 +1201,10 @@ function atoStep(dt){
  if(B===0){if(nP>P&&ATO.rT<=0){P=P+1;ATO.rT=rr}else if(nP<P){P=nP}}else{P=0}
 }
 /* ===== 運転支援UI・バージョン表示・拡大防止・一時停止・撮影モード・設定の記憶 ===== */
-const VERSION='3.6',CHANGELOG=[
+const VERSION='3.9',CHANGELOG=[
+ {v:'3.9',d:'2026-10-05',n:['勾配が映像でも分かるように修正：運転席のカメラが勾配に合わせて上下に傾く（実際の約6倍に強調）、車両・レール・まくら木も勾配に沿って傾く。勾配自体も約1.5倍に急にした（最大約2.9％）','自分が走る線路を実物らしく：砂利の質感のバラスト、法面、ケーブルトラフ、コンクリートまくら木、レール締結装置、錆色のレールと磨かれたレール頭部、駅の700m・350m・120m手前のATS地上子']},
+ {v:'3.8',d:'2026-10-05',n:['ATS・戸閉ランプの表示崩れを修正（行き先表示のLED用スタイルと衝突して、ランプが小さな丸になり文字がはみ出していた）','スピードメーターを実機風に刷新：クロームのベゼル、2km/hごとの細かい目盛り、制限速度の黄色・赤の帯と赤い指標、慣性のある先端オレンジの針、デジタル速度表示、ガラスの反射（高解像度化）']},
+ {v:'3.7',d:'2026-10-05',n:['画面上部の行き先表示を、JR東日本の車内の液晶モニター風のデザインに変更（種別と行先の青い箱、「ただいま／次は」と駅ナンバリング・大きな駅名、現在時刻と号車、駅名と所要分数が並ぶ路線図）。縦長の元のデザインを、横長の画面向けに調整','次の駅名と現在時刻は行き先表示に集約し、残り距離と得点の表示は重複を減らして簡素化']},
  {v:'3.6',d:'2026-10-05',n:['画面上部の表示を読みやすいサイズに調整（残り距離などが潰れないよう、次の駅・時刻を2段表示に戻した）','開始画面を Material 3 をベースにしたJR風デザインに変更（JRグリーンの配色、駅名標風のタイトル、駅ナンバリングのバッジ）']},
  {v:'3.5',d:'2026-10-05',n:['画面上部の表示（行き先表示・次の駅・時刻・勾配・制限速度）をコンパクトにして景色を見やすくした。LED電光掲示板の表示をより本物に近づけた（赤い種別表示・細かいドットの発光）','操作ボタン（視点・運転支援・一時停止・撮影・全画面）をメニュー（☰）にまとめた。自動運転/自動停車の作動中だけ状態が常に表示される','開始画面をJR東日本の駅サイン風デザインに変更（緑の帯とJRロゴ、駅ナンバリングのバッジ、白地に黒文字、日英併記、券売機風のボタン）']},
  {v:'3.4.1',d:'2026-10-05',n:['起動時にエラーで止まり、開始ボタンを押しても始まらない場合がある不具合を修正（画質設定の変数の定義漏れ）','勾配のある区間でも、自動運転・自動停車が停止位置±0.5m以内（パーフェクト判定）で止まることをシミュレーションで再確認']},
@@ -1330,16 +1385,45 @@ function horn(on){if(!AC)return;if(on&&!hn){if(MEL.horn&&MEL.horn.buf){const g=A
 $('hn').addEventListener('pointerdown',e=>{e.preventDefault();horn(true)});['pointerup','pointercancel','pointerleave'].forEach(ev=>$('hn').addEventListener(ev,()=>horn(false)));
 addEventListener('keyup',e=>{if(e.key==='h'||e.key==='H')horn(false)});
 /* gauge */
-const gc=$('gauge').getContext('2d'),A=k=>(135+k/120*270)*Math.PI/180;
-function gauge(kmh,L){const c=gc;c.clearRect(0,0,300,300);let g=c.createRadialGradient(150,140,20,150,150,150);g.addColorStop(0,'#232a35');g.addColorStop(1,'#050608');
- c.fillStyle=g;c.beginPath();c.arc(150,150,146,0,6.283);c.fill();c.lineWidth=6;c.strokeStyle='#39424f';c.stroke();
- c.lineWidth=5;c.strokeStyle='rgba(255,176,32,.9)';c.beginPath();c.arc(150,150,130,A(0),A(L));c.stroke();c.strokeStyle='rgba(255,77,61,.85)';c.beginPath();c.arc(150,150,130,A(L),A(120));c.stroke();
+const gc=$('gauge').getContext('2d'),A=k=>(135+k/120*270)*Math.PI/180;$('gauge').width=$('gauge').height=600;gc.scale(2,2);
+/* ===== スピードメーター（実機風: クロームのベゼル・細かい目盛り・制限速度の指標・デジタル表示・慣性のある針・ガラスの反射） ===== */
+const mkGC=()=>{const c=document.createElement('canvas');c.width=c.height=600;const x=c.getContext('2d');x.scale(2,2);return[c,x]},[GFc,gfx]=mkGC(),[GGc,ggx]=mkGC();
+let gvS=0,gT=0;
+function rrPath(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
+(function buildGauge(){const c=gfx;let g=c.createLinearGradient(30,20,270,280);
+ g.addColorStop(0,'#f7f9fb');g.addColorStop(.25,'#8d96a1');g.addColorStop(.5,'#e3e6ea');g.addColorStop(.75,'#59626e');g.addColorStop(1,'#cfd4da');
+ c.fillStyle=g;c.beginPath();c.arc(150,150,149,0,6.283);c.fill();
+ g=c.createLinearGradient(270,280,30,20);g.addColorStop(0,'#2a2f36');g.addColorStop(1,'#0b0d10');c.fillStyle=g;c.beginPath();c.arc(150,150,140,0,6.283);c.fill();
+ g=c.createRadialGradient(150,138,10,150,150,135);g.addColorStop(0,'#272c35');g.addColorStop(.7,'#12151a');g.addColorStop(1,'#050608');c.fillStyle=g;c.beginPath();c.arc(150,150,135,0,6.283);c.fill();
+ c.strokeStyle='rgba(200,206,214,.55)';c.lineWidth=1;c.beginPath();c.arc(150,150,123,A(0),A(120));c.stroke();
  c.textAlign='center';c.textBaseline='middle';
- for(let k=0;k<=120;k+=5){const a=A(k),b=k%20===0,r1=b?100:110;c.lineWidth=b?3:1.5;c.strokeStyle='#e9eef5';c.beginPath();c.moveTo(150+Math.cos(a)*r1,150+Math.sin(a)*r1);c.lineTo(150+Math.cos(a)*120,150+Math.sin(a)*120);c.stroke();
-  if(b){c.fillStyle='#e9eef5';c.font='bold 16px sans-serif';c.fillText(k,150+Math.cos(a)*80,150+Math.sin(a)*80)}}
- c.fillStyle='#9fb0c3';c.font='12px sans-serif';c.fillText('km/h',150,196);c.fillStyle='#fff';c.font='bold 30px sans-serif';c.fillText(Math.round(kmh),150,232);
- c.save();c.translate(150,150);c.rotate(A(Math.min(kmh,124)));c.shadowColor='#000';c.shadowBlur=8;c.fillStyle='#ff5a3c';c.beginPath();c.moveTo(-20,-3.5);c.lineTo(114,-1.5);c.lineTo(114,1.5);c.lineTo(-20,3.5);c.fill();c.restore();
- g=c.createRadialGradient(146,146,2,150,150,14);g.addColorStop(0,'#8b95a1');g.addColorStop(1,'#1c2129');c.fillStyle=g;c.beginPath();c.arc(150,150,13,0,6.283);c.fill()}
+ for(let k=0;k<=120;k+=2){const a=A(k),M=k%20===0,m=k%10===0,r1=M?105:m?111:116;c.lineWidth=M?3.2:m?2:1;c.strokeStyle=M?'#f6f3ea':'#d9d5c9';c.beginPath();c.moveTo(150+Math.cos(a)*r1,150+Math.sin(a)*r1);c.lineTo(150+Math.cos(a)*122,150+Math.sin(a)*122);c.stroke();
+  if(M){c.fillStyle='#f6f3ea';c.shadowColor='rgba(255,255,255,.35)';c.shadowBlur=3;c.font='bold 17px "Helvetica Neue",Arial,sans-serif';c.fillText(k,150+Math.cos(a)*86,150+Math.sin(a)*86);c.shadowBlur=0}}
+ c.fillStyle='#8f98a4';c.font='bold 8px Arial,sans-serif';c.fillText('SPEEDOMETER',150,128);c.font='bold 11px Arial,sans-serif';c.fillStyle='#b9c1cc';c.fillText('km/h',150,114);
+ g=c.createLinearGradient(0,172,0,222);g.addColorStop(0,'#3a424d');g.addColorStop(1,'#0b0d10');rrPath(c,99,174,102,44,8);c.fillStyle=g;c.fill();
+ rrPath(c,102,177,96,38,6);c.fillStyle='#070d09';c.fill();c.strokeStyle='rgba(120,200,140,.25)';c.lineWidth=1;c.stroke();
+ c.fillStyle='#5fae70';c.font='bold 9px Arial,sans-serif';c.textAlign='right';c.fillText('km/h',192,206);
+ const q=ggx;q.save();q.beginPath();q.arc(150,150,135,0,6.283);q.clip();
+ g=q.createRadialGradient(105,85,5,150,150,140);g.addColorStop(0,'rgba(255,255,255,.24)');g.addColorStop(.35,'rgba(255,255,255,.06)');g.addColorStop(1,'rgba(255,255,255,0)');q.fillStyle=g;q.fillRect(0,0,300,300);
+ g=q.createLinearGradient(0,20,0,140);g.addColorStop(0,'rgba(255,255,255,.16)');g.addColorStop(1,'rgba(255,255,255,0)');q.fillStyle=g;q.beginPath();q.ellipse(150,80,104,58,0,Math.PI,0);q.fill();q.restore();
+ q.strokeStyle='rgba(0,0,0,.55)';q.lineWidth=4;q.beginPath();q.arc(150,150,133,0,6.283);q.stroke()})();
+function needle(c){c.beginPath();c.moveTo(-26,-4.2);c.lineTo(-26,4.2);c.lineTo(-8,3.6);c.lineTo(112,1.2);c.lineTo(118,0);c.lineTo(112,-1.2);c.lineTo(-8,-3.6);c.closePath()}
+function gauge(kmh,L){const c=gc,n=performance.now(),dt=Math.min(.1,(n-gT)/1000||0);gT=n;
+ gvS+=(kmh-gvS)*Math.min(1,dt*9);if(Math.abs(kmh-gvS)<.02)gvS=kmh;
+ const dv=gvS+(kmh>3?Math.sin(n/41)*.12+Math.sin(n/97)*.08:0);
+ c.clearRect(0,0,300,300);c.drawImage(GFc,0,0,300,300);
+ c.lineWidth=7;c.lineCap='butt';c.strokeStyle='rgba(255,176,32,.75)';c.beginPath();c.arc(150,150,106,A(Math.max(0,L-5)),A(L));c.stroke();
+ c.strokeStyle='rgba(255,64,48,.7)';c.beginPath();c.arc(150,150,106,A(L),A(120));c.stroke();
+ c.save();c.translate(150,150);c.rotate(A(L));c.fillStyle='#ff3b2f';c.beginPath();c.moveTo(100,0);c.lineTo(118,-5.5);c.lineTo(118,5.5);c.closePath();c.fill();c.restore();
+ c.textAlign='right';c.textBaseline='middle';c.fillStyle=kmh>L+.5?'#ff5a4a':'#ffb347';c.shadowColor=kmh>L+.5?'rgba(255,80,60,.8)':'rgba(255,170,60,.8)';c.shadowBlur=6;
+ c.font='bold 27px ui-monospace,Menlo,"Courier New",monospace';c.fillText(String(Math.round(kmh)).padStart(3,' '),172,197);c.shadowBlur=0;
+ c.save();c.translate(150,150);c.rotate(A(Math.min(Math.max(dv,0),124)));
+ c.save();c.translate(3,4);c.fillStyle='rgba(0,0,0,.45)';needle(c);c.fill();c.restore();
+ const ng=c.createLinearGradient(0,0,118,0);ng.addColorStop(0,'#eceff2');ng.addColorStop(.7,'#ffffff');ng.addColorStop(.72,'#ff8a2a');ng.addColorStop(1,'#ff5a1a');c.fillStyle=ng;needle(c);c.fill();c.restore();
+ let g=c.createRadialGradient(145,145,1,150,150,13);g.addColorStop(0,'#aeb7c2');g.addColorStop(.6,'#4b535e');g.addColorStop(1,'#14181d');c.fillStyle=g;c.beginPath();c.arc(150,150,12.5,0,6.283);c.fill();
+ c.fillStyle='#0c0f13';c.beginPath();c.arc(150,150,4.5,0,6.283);c.fill();c.fillStyle='rgba(255,255,255,.55)';c.beginPath();c.arc(147.5,147.5,1.6,0,6.283);c.fill();
+ c.drawImage(GGc,0,0,300,300)}
+let gPv=0,gPt=0;const GK=6;function slopePitch(now){const sl=(EL(pos+30)-EL(pos-30))/60,dt=Math.min(.1,(now-gPt)/1000||0);gPt=now;gPv+=(sl*GK-gPv)*Math.min(1,dt*2.5);return gPv}
 /* render */
 const pad=n=>String(n).padStart(2,'0'),cp=new T.Vector3();
 function draw(now){
@@ -1352,7 +1436,7 @@ function draw(now){
  dB();dP();
  const th=yaw(pos),cv=(yaw(pos+8)-yaw(pos-8))/16,vib=Math.min(1,v/25),tt=now/1000;
  if(VIEW===0){cam.position.set(tx(pos)+Math.sin(tt*23)*.004*vib,2.75+EL(pos)+Math.sin(tt*31)*.006*vib+(jo*=.9)*Math.sin(tt*70)+Math.sin(tt*7.3)*.004*vib,-pos);
- cam.rotation.set(-.1,-th,-cv*v*.8+Math.sin(tt*2.1)*.002*vib)}else camV(tt,th);
+ cam.rotation.set(-.1+slopePitch(now),-th,-cv*v*.8+Math.sin(tt*2.1)*.002*vib)}else camV(tt,th);
  sky.position.copy(cam.position);cp.copy(cam.position);dl.position.copy(cp).addScaledVector(sunDir,160);dl.target.position.copy(cp);
  if(AC){vvvf();audioX();ng.gain.value=Math.min(.2,v*.007)+pas*.3;nf.frequency.value=120+v*14;sg.gain.value=Math.min(.035,Math.abs(cv)*v*1.2)+(v<5&&v>.3&&bc>2?.012:0)}
  if(B<pB&&pB>0){const cm=MEL.brake;if(cm&&cm.buf)playBuf(cm.buf,.6);else puff(.1)}pB=B;
