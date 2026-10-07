@@ -423,8 +423,9 @@ const yaw=s=>Math.atan2(tx(s+1)-tx(s-1),2);
 const GA=[0,0,0,0,0,24,60,21],GD=s=>{if(s<=ST[4].s+380)return 0;for(let i=4;i<7;i++){const a=ST[i].s+380,b=ST[i+1].s-380;if(s<b)return s<a?GA[i]:GA[i]+(GA[i+1]-GA[i])*sm(a,b,s)}return GA[7]},VLF=s=>8*(1-sm(9040,10220,s)),EL=s=>VLF(s)+GD(s),zn=s=>s<9860?0:s<15700?1:2;
 const amp=s=>4+34*sm(13760,15460,s)*(1-.75*sm(18080,19480,s));
 const MC=[250,18700],mtn=(x,s)=>Math.exp(-((x-MC[0])**2/(2*95*95)+(s-MC[1])**2/(2*200*200)))*(250+30*vn(x*.02,s*.02));
-const H=(x,z)=>{const s=-z,d=Math.abs(x-tx(s));let h=Math.max(0,fbm(x*.006,z*.006)-.34)*1.7*amp(s)*sm(16,150,d);
- h+=sm(330,480,Math.abs(x))*110*(.6+fbm(x*.01,z*.01))+sm(END+900,END+1600,s)*110+(1-sm(-650,-450,s))*80+mtn(x,s);return -.45+h+GD(s)};
+const flatK=(x,s,tc)=>{let k=1;for(let i=4;i<8;i++){const ds=(s-ST[i].s)/95;if(Math.abs(ds)>1.9)continue;k=Math.min(k,sm(1,1.9,Math.hypot((x-tc+55)/75,ds)))}return k};
+const H=(x,z)=>{const s=-z,tc=tx(s),d=Math.abs(x-tc),fk=flatK(x,s,tc);let h=Math.max(0,fbm(x*.006,z*.006)-.34)*1.7*amp(s)*sm(16,150,d)*fk;
+ h+=sm(330,480,Math.abs(x))*110*(.6+fbm(x*.01,z*.01))+sm(END+900,END+1600,s)*110+(1-sm(-650,-450,s))*80+mtn(x,s)*sm(50,320,d)*fk;return -.45+h+GD(s)};
 
 /* renderer / scene */
 const R=new T.WebGLRenderer({canvas:$('gl'),antialias:true,powerPreference:'high-performance'});
@@ -1031,7 +1032,7 @@ function emu(c,n,label,no){label=label||'普通';no=no||'B'+(1+Math.floor(Math.r
   scene.add(u);g.push(u)}return g}
 function trainAt(g,s,o,d){g.forEach((u,i)=>{const cs=s-d*i*20.5,[x,z,th]=pt(cs,o);u.position.set(x,EL(cs),z);u.rotation.order='YXZ';u.rotation.set(Math.atan((EL(cs+4)-EL(cs-4))/8),-th,0)})}
 const TR=[[emu(0x00b1e7,10,'京浜東北線','K'),9.4,-1,24,S0+230,14370,0],[emu(0x9acd32,8,'山手線','G'),9.4,-1,24,S0+230,14370,5800],[emu(0xffd400,10,'中央・総武線','B'),-9.4,1,17,S0+230,3820,0],[emu(0xffd400,10,'中央・総武線','B'),-9.4,1,17,S0+230,3820,1500]];
-[[0xffd400,'中央・総武線','B',13.6,1,20,0],[0xe8752c,'中央線快速','H',13.6,-1,26,2400],[0x00b1e7,'京浜東北線','K',-13.6,1,22,900],[0x9acd32,'山手線','G',-13.6,-1,21,3900],[0xffd400,'中央・総武線','B',17.1,1,18,1700],[0xd3221a,'京葉線','E',17.1,-1,25,5200],[0x0f8a5a,'湘南新宿ライン','S',-17.1,1,27,3100],[0x1f5fbf,'京浜東北線','K',-17.1,-1,23,600]].forEach(([c,lb,no,o,d,sp,off])=>TR.push([emu(c,10,lb,no),o,d,sp,200,8520,off]));
+[[0xffd400,'中央・総武線','B',13.6,1,20,0],[0xe8752c,'中央線快速','H',13.6,-1,26,2400],[0x00b1e7,'京浜東北線','K',-13.6,1,22,900],[0x9acd32,'山手線','G',-13.6,-1,21,3900],[0xffd400,'中央・総武線','B',17.1,1,18,1700],[0xd3221a,'京葉線','E',17.1,-1,25,5200],[0x0f8a5a,'湘南新宿ライン','S',-17.1,1,27,3100],[0x1f5fbf,'京浜東北線','K',-17.1,-1,23,600]].forEach(([c,lb,no,o,d,sp,off])=>TR.push([emu(c,10,lb,no),o,d,sp,390,8330,off]));
 /* ===== 視点切替（V キー／ボタン）: 運転席・屋根上・横から・車窓・後方上空 ===== */
 let VIEW=0;const PT=emu(0x1f9d55,10,'大網特快','OA');PT.forEach(u=>u.visible=false);
 const VN=['運転席','屋根上','横から','車窓','後方上空'];
@@ -1052,8 +1053,8 @@ document.getElementById('vw').onclick=()=>setView(VIEW+1);
    const po=side*(offs[k]+1.85);mesh(box,mRPl,po,.22,z0+15,[1.55,1.4,190]);mesh(box,mRTa,po-side*.65,.98,z0+15,[.4,.02,190]);
    for(let j=0;j<8;j++)mesh(box,mWp,po,3.2,z0+70-j*20,[.22,4.6,.22],1);
    const st=emu(CN2[k%4],5,'普通','K'+(k+1));
-   trainAt(st,z0+150+((k*37)%40),o,1)}};
- for(const ii of[0,3]){const t=ST[ii],z0=-t.s-PSH;extraLine(z0,-1);extraLine(z0,1)}}
+   trainAt(st,-(z0+15)+((k*37)%30),o,1)}};
+ for(const ii of[0,3]){const t=ST[ii],z0=-t.s-PSH;YO=EL(t.s);extraLine(z0,-1);extraLine(z0,1);YO=0}}
 /* 踏切（黄黒の警報柱・X字の踏切標識・矢印表示器・スピーカー・縞の遮断桿） */
 const poleTx=tex(16,64,c=>{c.fillStyle='#f2c200';c.fillRect(0,0,16,64);c.fillStyle='#111';c.fillRect(0,32,16,32)});poleTx.wrapS=poleTx.wrapT=T.RepeatWrapping;poleTx.repeat.set(1,9);
 const armTx=tex(256,16,c=>{c.fillStyle='#f2c200';c.fillRect(0,0,256,16);for(let x=0;x<256;x+=32){c.fillStyle='#111';c.fillRect(x+16,0,16,16)}c.fillStyle='#d3221a';c.fillRect(96,0,16,16);c.fillRect(160,0,16,16)});
@@ -1201,7 +1202,8 @@ function atoStep(dt){
  if(B===0){if(nP>P&&ATO.rT<=0){P=P+1;ATO.rT=rr}else if(nP<P){P=nP}}else{P=0}
 }
 /* ===== 運転支援UI・バージョン表示・拡大防止・一時停止・撮影モード・設定の記憶 ===== */
-const VERSION='3.9',CHANGELOG=[
+const VERSION='3.9.1',CHANGELOG=[
+ {v:'3.9.1',d:'2026-10-06',n:['大網山の付近で線路が土に埋もれる不具合を修正：線路の周りの地面を切土のように平らにし、山は線路から離れた位置にそびえるように変更（線路の高さ付近で最大11mあった地面の盛り上がりを解消）','土気・鎌取・大網・蘇我の駅前の地面を平らにして、ロータリーや店舗が浮いたり埋まったりしないよう修正','浮いていた電車を修正：東京駅・千葉駅の並行ホームの停車中の電車が、線路のない場所に置かれていた（千葉駅では地図の外側）ので、ホームの線路の上に移動し、線路も駅の高さに合わせた','都会の増設線を走る電車が、線路の端から車両がはみ出して浮く問題を修正']},
  {v:'3.9',d:'2026-10-05',n:['勾配が映像でも分かるように修正：運転席のカメラが勾配に合わせて上下に傾く（実際の約6倍に強調）、車両・レール・まくら木も勾配に沿って傾く。勾配自体も約1.5倍に急にした（最大約2.9％）','自分が走る線路を実物らしく：砂利の質感のバラスト、法面、ケーブルトラフ、コンクリートまくら木、レール締結装置、錆色のレールと磨かれたレール頭部、駅の700m・350m・120m手前のATS地上子']},
  {v:'3.8',d:'2026-10-05',n:['ATS・戸閉ランプの表示崩れを修正（行き先表示のLED用スタイルと衝突して、ランプが小さな丸になり文字がはみ出していた）','スピードメーターを実機風に刷新：クロームのベゼル、2km/hごとの細かい目盛り、制限速度の黄色・赤の帯と赤い指標、慣性のある先端オレンジの針、デジタル速度表示、ガラスの反射（高解像度化）']},
  {v:'3.7',d:'2026-10-05',n:['画面上部の行き先表示を、JR東日本の車内の液晶モニター風のデザインに変更（種別と行先の青い箱、「ただいま／次は」と駅ナンバリング・大きな駅名、現在時刻と号車、駅名と所要分数が並ぶ路線図）。縦長の元のデザインを、横長の画面向けに調整','次の駅名と現在時刻は行き先表示に集約し、残り距離と得点の表示は重複を減らして簡素化']},
