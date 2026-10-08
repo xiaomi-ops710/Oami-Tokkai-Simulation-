@@ -283,6 +283,8 @@ body:not(.tb) #vw,body:not(.tb) #ps,body:not(.tb) #ph,body:not(.tb) #fs,body:not
 body:not(.tb) #am.on{top:calc(var(--hudh,60px) + 6px + var(--tbh))!important}
 body.shot #mn{display:none!important}
 body.shot #ph{display:block!important;opacity:.25;top:calc(var(--hudh,60px) + 6px)!important}
+#qb{position:fixed;z-index:30;color:#fff;border:1px solid rgba(255,255,255,.35);font-weight:700;left:auto!important;right:max(12px,env(safe-area-inset-right))!important;font-size:12px!important;padding:5px 9px!important;border-radius:9px!important;background:rgba(3,7,12,.72)!important;top:calc(var(--hudh,60px) + 6px + var(--tbh)*6)!important}
+body:not(.tb) #qb,body:not(.playing) #qb,body.shot #qb{display:none!important}
 /* --- Material 3（JRグリーンのカラースキーム）× JR駅サイン --- */
 #ov{--p:#006d3b;--op:#fff;--pc:#96f7b5;--opc:#00210e;--sc:#d1e8d5;--osc:#0c1f13;--tc:#ffdea6;--otc:#261a00;--s:#f6fbf3;--sc2:#eaefe7;--sc3:#dee4db;--os:#181d19;--osv:#404943;--ol:#707972;--olv:#bfc9c1;--er:#ba1a1a;font-family:'Roboto','Hiragino Sans','Noto Sans JP',system-ui,sans-serif}
 #ov .card.m3{padding:0 0 calc(104px + env(safe-area-inset-bottom)) 0}
@@ -372,7 +374,7 @@ body.shot #ph{display:block!important;opacity:.25;top:calc(var(--hudh,60px) + 6p
   <div id="dig"><span>制限 <b id="lm">-</b></span><span>BC <b id="bcv">-</b></span><span class="clamp" id="lAts">ATS</span><span class="clamp g" id="lDr">戸閉</span></div></div>
  <div class="lv" id="ml"><h4>主幹制御器（マスコン）</h4><div class="trk"><div class="plate"></div><div class="kn"></div></div></div>
 </div>
-<button id="mn">☰</button><button id="hn">警笛 (H)</button><button id="vw">視点: 運転席 (V)</button><button id="am">運転: 手動 (T)</button><button id="ps">⏸ 一時停止 (P)</button><button id="ph">📷 撮影 (U)</button><button id="fs">⛶ 全画面</button><div id="pz">⏸ 一時停止中<br><small style="font-size:16px">P / Esc / ボタンで再開</small></div><div id="rain"></div><div id="fogv"></div><div id="ann"></div><div id="msg"></div>
+<button id="mn">☰</button><button id="hn">警笛 (H)</button><button id="vw">視点: 運転席 (V)</button><button id="am">運転: 手動 (T)</button><button id="ps">⏸ 一時停止 (P)</button><button id="ph">📷 撮影 (U)</button><button id="fs">⛶ 全画面</button><button id="qb">画質</button><div id="pz">⏸ 一時停止中<br><small style="font-size:16px">P / Esc / ボタンで再開</small></div><div id="rain"></div><div id="fogv"></div><div id="ann"></div><div id="msg"></div>
 <div id="ov" data-as="0"><div class="card m3">
  <header class="m3-head"><div class="jr-logo">JR</div><h1>電車でGO！</h1><div class="jo-badge"><i>JO</i><b>32</b></div></header>
  <section class="m3-hero"><div class="eki"><div class="eki-nb"><i>JO</i><b>32</b></div><div class="eki-nm"><small>おおあみとっかい</small><strong>大網特快</strong><em>Ōami Tokkai Limited Express</em></div><div class="eki-nbr"><span>← 東京<br><i>Tōkyō</i></span><span>大網 →<br><i>Ōami</i></span></div></div><div class="eki-bar"></div></section>
@@ -393,7 +395,7 @@ body.shot #ph{display:block!important;opacity:.25;top:calc(var(--hudh,60px) + 6p
    <div class="mr"><span class="lbl">天候</span><div class="seg"><b data-w="auto" class="sel" data-en="Auto">おまかせ</b><b data-w="clear" data-en="Clear">晴れ</b><b data-w="rain" data-en="Rain">雨</b><b data-w="fog" data-en="Fog">霧</b></div></div>
    <div class="mr"><span class="lbl">踏切音</span><div class="seg"><b data-b="0" class="sel" data-en="Standard">標準</b><b data-b="1" data-en="Electronic">電子式</b><b data-b="2" data-en="Low">低音</b></div></div>
    <div class="mr"><span class="lbl">上部余白</span><div class="seg"><b data-tg="auto" class="sel" data-en="Auto">自動</b><b data-tg="0" data-en="None">なし</b><b data-tg="28" data-en="M">中</b><b data-tg="56" data-en="L">大</b></div></div>
-   <div class="mr"><span class="lbl">画質</span><div class="seg"><b data-q="auto" class="sel" data-en="Auto">自動</b><b data-q="std" data-en="Standard">標準</b><b data-q="eco" data-en="Light">軽量</b></div></div>
+   <div class="mr"><span class="lbl">画質</span><div class="seg"><b data-q="auto" class="sel" data-en="Auto">自動</b><b data-q="hi" data-en="High">高</b><b data-q="std" data-en="Standard">標準</b><b data-q="eco" data-en="Light">軽量</b></div></div>
   </section>
   <details id="mlist" class="m3-acc"><summary>♪ 音の設定<small>VVVF以外のすべての音（mp3・m4a・wav・ogg）</small></summary><div class="m3-accb"><p class="hint">優先順位: この端末で選んだ音 ＞ GitHub Pagesの <b>audio</b> フォルダの音(📁) ＞ 内蔵音。使い方は audio/README.txt を参照。</p><div id="mrows"></div></div></details>
   <details class="m3-acc"><summary>⌨ 操作方法<small>キーボード・タッチ</small></summary><div class="m3-accb"><p class="hint">ブレーキを「緩め」にしてからマスコンを入れて発車。画面のレバーはドラッグ／タップ、横の ▲▼ ボタン（長押しで連続）でも操作できます。</p>
@@ -1203,7 +1205,7 @@ function urb(tt,now){const dt=Math.min(.1,(now-pn)/1000||0);pn=now;
  if(AC&&run&&(ats||v*3.6-lim>5)&&tt>nal){const cm=MEL[ats?'ats':'ovsp'];if(cm&&cm.buf){nal=tt+Math.max(.25,cm.buf.duration);playBuf(cm.buf,.8)}else{nal=tt+(ats?.09:.6);tone(ats?2300:1500,0,ats?.07:.18,'square',ats?.05:.035)}}}
 
 /* game state */
-let mel=false,clos=false,annApp=false,annMid=false,ann2=false,pB=8,idx=0,pos=0,v=0,P=0,B=8,pw=0,bc=8,ats=false,state='hold',dwell=0,score=0,time=0,moved=false,warnedOver=false,run=false,lim=100,lastK=0;
+let mel=false,clos=false,annApp=false,annMid=false,ann2=false,annNx=true,pB=8,idx=0,pos=0,v=0,P=0,B=8,pw=0,bc=8,ats=false,state='hold',dwell=0,score=0,time=0,moved=false,warnedOver=false,run=false,lim=100,lastK=0;
 const nxt=()=>ST[idx+1];
 const SA=k=>Math.round(ST[k].s/15.5+k*21),clk=x=>{const q=14*3600+180+Math.floor(x);return pad(Math.floor(q/3600))+':'+pad(Math.floor(q/60)%60)+':'+pad(q%60)};
 const DS=['右','左','右','左','右','左','右','左'],TRF=['','地下鉄半蔵門線は、お乗り換えです。','東武アーバンパークラインは、お乗り換えです。','モノレール、内房線、外房線は、お乗り換えです。','内房線は、お乗り換えです。','','','東金線は、お乗り換えです。'],
@@ -1229,7 +1231,7 @@ function onStop(){const t=nxt(),err=pos-t.s,a=Math.abs(err);
  else{pts=a<=.5?500:a<=1?400:a<=2?300:a<=5?200:100;txt=(a<=.5?'パーフェクト！ ':'停車 ')+`${err>=0?'+':''}${err.toFixed(2)}m  +${pts}点`;score+=pts}
  {const df=Math.round(time-SA(idx+1)),ad=Math.abs(df),tp=ad<=5?200:-Math.min(200,(ad-5)*4);score+=tp;LOG.push({n:t.n,err,pts:err>10?-100:pts,df,tp});txt+=`\n${ad<=5?'定時':df>0?df+'秒 遅れ':-df+'秒 早着'} ${tp>=0?'+':''}${tp}点`}
  state='dwell';dw=0;ph=0;say(`${t.n} 到着\n${txt}`,4200)}
-function depart(){stopMel();if(idx+1===ST.length-1){finish();return}idx++;state='run';warnedOver=false;annApp=annMid=ann2=false;route();ann(`次は、${nxt().n}、${nxt().n}です。`,'a_next',idx+1);say(`出発進行！\n次は ${nxt().n}`,3000)}
+function depart(){stopMel();if(idx+1===ST.length-1){finish();return}idx++;state='run';warnedOver=false;annApp=annMid=ann2=false;annNx=false;route();say(`出発進行！\n次は ${nxt().n}`,3000)}
 function finish(){state='end';run=false;const s=Math.max(0,score),mx=(ST.length-1)*700,r=s>=mx*.85?'S':s>=mx*.65?'A':s>=mx*.4?'B':'C';
  $('ov').style.display='flex';document.body.classList.remove('playing');$('ov').innerHTML=`<div class="card"><h1>大網 到着</h1><p style="font-size:20px;color:#fff">得点 ${s}　評価 ${r}</p>${finishExtra(s)}<button onclick="location.reload()">もう一度運転する</button></div>`}
 /* ===== 自動停車(TASC)・自動運転(ATO) =====
@@ -1282,7 +1284,9 @@ function atoStep(dt){
  if(B===0){if(nP>P&&ATO.rT<=0){P=P+1;ATO.rT=rr}else if(nP<P){P=nP}}else{P=0}
 }
 /* ===== 運転支援UI・バージョン表示・拡大防止・一時停止・撮影モード・設定の記憶 ===== */
-const VERSION='3.10.3',CHANGELOG=[
+const VERSION='3.11',CHANGELOG=[
+ {v:'3.11',d:'2026-10-08',n:['端末の自動音声（読み上げ）が鳴らなくなった問題を修正：読み上げ機能を、運転開始のタップで確実に使える状態にし、日本語の声を選ぶように変更','画質をゲーム中でも切り替え可能に（メニュー☰の「画質」ボタン：自動／高／標準／軽量）。「自動」は、重いときだけ解像度や影を自動で調整し、軽い間は高画質を保つ','都市部の重さを軽減：ビル・木・住宅などの大量配置を地区ごとに分け、見えない地区は描画しないように変更（見た目は変わりません）','「次は、〇〇」の放送を、発車直後ではなく、発車して300mほど走ってから流すように変更']},
+ {v:'3.10.4',d:'2026-10-08',n:['audioフォルダのファイル名の拡張子が二重（a_next_1.mp3.mp3 など、アップロード時に付いたもの）でも読み込めるように変更。manifest.json に書かれたファイルが無い場合も、既定の名前を探すように変更']},
  {v:'3.10.3',d:'2026-10-08',n:['アップロードした車内放送の音声が鳴らない・ブラウザの自動音声と重なる問題を修正：放送を1本ずつ順番に再生し、前の放送が終わるまで次を待つ（途中で切れたり、音声ファイルと読み上げが同時に鳴ったりしない）','ドアが閉まる放送・到着放送は、音声ファイルの長さに合わせて、ドアの開閉音を待つように変更','audioフォルダの駅別ファイルを、ハイフン区切り（a-next-1.mp3）でも読み込めるように変更。manifest.json の _probe:false があっても、既定の名前を探すように変更','音の設定の画面に、audioフォルダから読み込めた駅別の放送ファイルの一覧を表示']},
  {v:'3.10.2',d:'2026-10-08',n:['「運転開始」を押しても何も起きず、ゲーム画面が出ない不具合を修正（3.10で追加した地方の景色の神社の処理で、位置の計算に使う関数が未定義だったため、読み込みの途中でエラーになっていた）']},
  {v:'3.10.1',d:'2026-10-08',n:['iPadのホーム画面アプリで、更新しても古い版のまま動き続ける問題に対応：アプリを開いたとき・前面に戻ったときに最新版を自動確認し、新しい版があれば画面上に「タップして更新」を表示（3.10の踏切・上部余白・秒表示・地方の景色が反映されない原因）','サービスワーカーが画面の読み込み時にキャッシュを使わず常に最新を取りに行くよう変更（CACHE v18）']},
@@ -1345,8 +1349,14 @@ addEventListener('contextmenu',e=>e.preventDefault());
  if(!rq)fb.style.display='none';else fb.onclick=async()=>{try{if(document.fullscreenElement||document.webkitFullscreenElement)(document.exitFullscreen||document.webkitExitFullscreen).call(document);else{await rq.call(de);try{await screen.orientation.lock('landscape')}catch(e){}}}catch(e){}}}
 let WL=null;async function wl(){try{if('wakeLock'in navigator&&!WL){WL=await navigator.wakeLock.request('screen');WL.addEventListener('release',()=>{WL=null})}}catch(e){}}
 document.addEventListener('visibilitychange',()=>{if(document.hidden){if(run&&!paused)setPause(true)}else if(run)wl()});
-function applyQ(){const eco=QSEL==='eco'||(QSEL==='auto'&&matchMedia('(pointer:coarse)').matches);R.setPixelRatio(eco?1:Math.min(devicePixelRatio||1,2));dl.castShadow=!eco;size()}
+let PRcur=1,PRmax=1,SHon=true,qE=16.7,qCool=0,qS=0,qBlock=0;
+function updQB(){const e=$('qb');if(e)e.textContent='画質: '+({auto:'自動',hi:'高',std:'標準',eco:'軽量'}[QSEL])+(QSEL==='auto'?'（'+PRcur.toFixed(2).replace(/0$/,'')+'x'+(SHon?'・影':'')+'）':'')}
+function applyQ(){const d=devicePixelRatio||1;let pr,sh;if(QSEL==='eco'){pr=1;sh=false}else if(QSEL==='std'){pr=Math.min(d,1.5);sh=true}else if(QSEL==='hi'){pr=Math.min(d,2);sh=true}else{PRmax=Math.min(d,2);pr=Math.min(PRmax,1.5);sh=true;qE=16.7;qCool=2500;qS=0;qBlock=0}PRcur=pr;SHon=sh;R.setPixelRatio(pr);dl.castShadow=sh;size();updQB()}
+function qAdapt(raw){if(QSEL!=='auto'||paused||document.hidden||raw>250)return;qE=qE*.92+raw*.08;qBlock-=raw;if((qCool-=raw)>0)return;
+ if(qE>25){if(PRcur>1.01){PRcur=Math.max(1,PRcur-.25);R.setPixelRatio(PRcur);size();qCool=1500;qBlock=25000;updQB()}else if(SHon){SHon=false;dl.castShadow=false;qCool=1500;qBlock=40000;updQB()}qS=0}
+ else if(qE<19){qS+=raw;if(qS>6000&&qBlock<=0){qS=0;if(!SHon){SHon=true;dl.castShadow=true;qCool=2000;updQB()}else if(PRcur<PRmax-.01){PRcur=Math.min(PRmax,PRcur+.25);R.setPixelRatio(PRcur);size();qCool=2000;updQB()}}}else qS=0}
 selB('#ov .mr b[data-q]',b=>{QSEL=b.dataset.q;applyQ()});applyQ();
+if($('qb'))$('qb').onclick=()=>{const o=['auto','hi','std','eco'];QSEL=o[(o.indexOf(QSEL)+1)%o.length];applyQ();saveCfg();document.querySelectorAll('#ov .mr b[data-q]').forEach(x=>x.classList.toggle('sel',x.dataset.q===QSEL));say('画質: '+({auto:'自動（重いときは自動で調整）',hi:'高画質',std:'標準',eco:'軽量'}[QSEL]),1800)};
 function autoTG(){return(/iPad|Macintosh/.test(navigator.userAgent)&&navigator.maxTouchPoints>1&&(matchMedia('(display-mode: standalone)').matches||navigator.standalone))?36:0}
 function applyTG(){document.documentElement.style.setProperty('--tg',(TG==='auto'?autoTG():+TG)+'px');fitHud()}
 selB('#ov .mr b[data-tg]',b=>{TG=b.dataset.tg;applyTG()});applyTG();
@@ -1375,6 +1385,7 @@ function step(dt){
  if(!ats&&over>12){ats=true;hap([160,70,160]);score-=100;if(haz)hazSafe=false;ann('急停車します。ご注意ください。','a_ats');say('ATS 非常ブレーキ！\n速度超過 -100点',3200)}
  if(ats&&v<.05){ats=false;B=8;P=0}
  if(v>.5)moved=true;
+ if(state==='run'&&!annNx&&pos-ST[idx].s>300){annNx=true;if(nxt().s-pos>700)ann(`次は、${nxt().n}、${nxt().n}です。`,'a_next',idx+1)}
  if(state==='run'&&!annMid&&pos-ST[idx].s>450&&nxt().s-pos>1300){annMid=true;ann(MSG[idx%MSG.length],'a_mid',idx)}
  if(state==='run'&&!annApp&&nxt().s-pos<650){annApp=true;ann(`まもなく、${nxt().n}、${nxt().n}です。${TRF[idx+1]}`,'a_approach',idx+1)}
  if(state==='run'&&!ann2&&nxt().s-pos<330){ann2=true;ann(`お出口は、${DS[idx+1]}側です。`,'a_exit',idx+1)}
@@ -1435,13 +1446,17 @@ function audioX(){if(!AC||!rbg)return;const t=AC.currentTime,n2=performance.now(
 /* ===== 音声の差し替え: 端末(アプリ内)＞ audioフォルダ(GitHub Pages)＞内蔵音 の優先順位 ===== */
 let annSrc=null,FMF=null;
 function playBuf(buf,gain=.9,delay=0){if(!AC||!buf)return null;const s=AC.createBufferSource(),g=AC.createGain();g.gain.value=gain;s.buffer=buf;s.connect(g);g.connect(AC.destination);s.start(AC.currentTime+delay);return s}
-let annQ=[],annTok=0,annBusy=false,annSrcs=[];
+let annQ=[],annTok=0,annBusy=false,annSrcs=[],spOK=false,JV=null;
+function spUnlock(){if(spOK)return;try{if(!('speechSynthesis'in window))return;const u=new SpeechSynthesisUtterance('あ');u.volume=0;u.lang='ja-JP';speechSynthesis.speak(u);spOK=true}catch(e){}}
+function pickV(){try{const v=speechSynthesis.getVoices();JV=v.find(x=>/^ja[-_]JP/i.test(x.lang))||v.find(x=>/^ja/i.test(x.lang))||null}catch(e){}}
+try{pickV();speechSynthesis.onvoiceschanged=pickV}catch(e){}
+['pointerdown','touchend','keydown','click'].forEach(e=>addEventListener(e,spUnlock,{passive:true}));
 function annFile(key,k){if(!key||!AC)return null;const m=MEL[key+'_'+k]||MEL[key];return m&&(m.buf||m.ab)?m:null}
 function annLen(key,k){const m=annFile(key,k),cm=MEL.chime,c=(cm&&cm.buf&&key!=='a_ats')?cm.buf.duration+.25:0;return m&&m.buf?c+m.buf.duration:3.6}
 function annStop(){annTok++;annQ.length=0;annBusy=false;annSrcs.forEach(s=>{try{s&&s.stop()}catch(e){}});annSrcs=[];try{speechSynthesis.cancel()}catch(e){}}
 function annPush(it){if(it.key==='a_ats')annStop();else while(annQ.length>=2)annQ.shift();annQ.push(it);if(!annBusy)annNext()}
 function annNext(){const it=annQ.shift();if(!it){annBusy=false;return}annBusy=true;const tok=++annTok;let fin=false;const done=()=>{if(fin||tok!==annTok)return;fin=true;annNext()};
- const speak=()=>{if(tok!==annTok)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(it.t);u.lang='ja-JP';u.rate=1.05;u.onend=done;u.onerror=done;speechSynthesis.speak(u);setTimeout(done,Math.max(5000,it.t.length*450))}catch(e){setTimeout(done,1500)}};
+ const speak=()=>{if(tok!==annTok)return;const go=()=>{if(tok!==annTok)return;try{const u=new SpeechSynthesisUtterance(it.t);u.lang='ja-JP';u.rate=1.05;if(JV)u.voice=JV;u.onend=done;u.onerror=done;window.__spu=u;speechSynthesis.speak(u);setTimeout(done,Math.max(6000,it.t.length*500))}catch(e){setTimeout(done,1500)}};try{if(speechSynthesis.speaking||speechSynthesis.pending){speechSynthesis.cancel();setTimeout(go,150)}else go()}catch(e){setTimeout(done,1500)}};
  const m=annFile(it.key,it.k);if(!m){speak();return}
  const play=b=>{if(tok!==annTok)return;if(!b){speak();return}const cm=MEL.chime,ch=(cm&&cm.buf&&it.key!=='a_ats')?cm.buf:null,d=ch?ch.duration+.25:0;annSrcs=[];if(ch)annSrcs.push(playBuf(ch,.8));annSrcs.push(playBuf(b,1,d));setTimeout(done,(d+b.duration)*1000+350)};
  if(m.buf)play(m.buf);else try{AC.decodeAudioData(m.ab.slice(0),b=>{m.buf=b;play(b)},()=>play(null))}catch(e){play(null)}}
@@ -1539,15 +1554,33 @@ function draw(now){
  if(AC){vvvf();audioX();ng.gain.value=Math.min(.2,v*.007)+pas*.3;nf.frequency.value=120+v*14;sg.gain.value=Math.min(.035,Math.abs(cv)*v*1.2)+(v<5&&v>.3&&bc>2?.012:0)}
  if(B<pB&&pB>0){const cm=MEL.brake;if(cm&&cm.buf)playBuf(cm.buf,.6);else puff(.1)}pB=B;
  const k=Math.floor(pos/25);if(k!==lastK){lastK=k;if(v>1){joint(Math.min(.3,v*.013)*(k%16===0?1.7:1));jo=Math.min(.03,v*.0011)}}
- urb(tt,now);lamps();R.render(scene,cam)}
+ urb(tt,now);lamps();cullInst();R.render(scene,cam)}
 function size(){const w=innerWidth,h=innerHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}
 addEventListener('resize',size);size();route();
+/* 静的な大量配置（ビル・木・住宅など）を地区ごとに分割し、見える地区だけ描画する（見た目は変わらず、描画量が大きく減る） */
+const CHK=[],cFr=new T.Frustum(),cPm=new T.Matrix4(),cSp=new T.Sphere();
+function chunkInst(){const CS=700,list=[];scene.children.forEach(o=>{if(o.isInstancedMesh&&o!==cars&&o.count>=300)list.push(o)});
+ list.forEach(im=>{const n=im.count,A=im.instanceMatrix.array,C=im.instanceColor?im.instanceColor.array:null,g=im.geometry;if(!g.boundingSphere)g.computeBoundingSphere();const gr=g.boundingSphere.radius+g.boundingSphere.center.length(),cells=new Map();
+  for(let i=0;i<n;i++){const k=Math.floor(A[i*16+12]/CS)+','+Math.floor(A[i*16+14]/CS);let c=cells.get(k);if(!c)cells.set(k,c=[]);c.push(i)}
+  if(cells.size<2)return;scene.remove(im);
+  cells.forEach(ix=>{const m=new T.InstancedMesh(g,im.material,ix.length);m.castShadow=im.castShadow;m.receiveShadow=im.receiveShadow;m.frustumCulled=false;
+   const MA=m.instanceMatrix.array;let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9,z0=1e9,z1=-1e9,ms=0;
+   if(C){m.instanceColor=new T.InstancedBufferAttribute(new Float32Array(ix.length*3),3)}
+   ix.forEach((si,j)=>{for(let q=0;q<16;q++)MA[j*16+q]=A[si*16+q];if(C){m.instanceColor.array[j*3]=C[si*3];m.instanceColor.array[j*3+1]=C[si*3+1];m.instanceColor.array[j*3+2]=C[si*3+2]}
+    const x=A[si*16+12],y=A[si*16+13],z=A[si*16+14];x0=Math.min(x0,x);x1=Math.max(x1,x);y0=Math.min(y0,y);y1=Math.max(y1,y);z0=Math.min(z0,z);z1=Math.max(z1,z);
+    ms=Math.max(ms,Math.hypot(A[si*16],A[si*16+1],A[si*16+2]),Math.hypot(A[si*16+4],A[si*16+5],A[si*16+6]),Math.hypot(A[si*16+8],A[si*16+9],A[si*16+10]))});
+   const cx=(x0+x1)/2,cy=(y0+y1)/2,cz=(z0+z1)/2,r=Math.hypot(x1-x0,y1-y0,z1-z0)/2+gr*ms;
+   m.instanceMatrix.needsUpdate=true;if(m.instanceColor)m.instanceColor.needsUpdate=true;scene.add(m);CHK.push({m,cx,cy,cz,r,cast:im.castShadow})})})}
+function cullInst(){cam.updateMatrixWorld();cPm.multiplyMatrices(cam.projectionMatrix,cam.matrixWorldInverse);cFr.setFromProjectionMatrix(cPm);const far=scene.fog.far+200,p=cam.position;
+ for(let i=0;i<CHK.length;i++){const c=CHK[i],d=Math.hypot(c.cx-p.x,c.cy-p.y,c.cz-p.z)-c.r;let v=d<far;if(v){cSp.center.set(c.cx,c.cy,c.cz);cSp.radius=c.r;v=cFr.intersectsSphere(cSp)}c.m.visible=v;c.m.castShadow=c.cast&&d<260}}
+chunkInst();
+
 let last=performance.now();
-(function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000);last=now;if(run&&!paused)step(dt);draw(now);amUI();routeTick()})(last);
+(function loop(now){requestAnimationFrame(loop);const raw=now-last,dt=Math.min(.05,raw/1000);last=now;qAdapt(raw);if(run&&!paused)step(dt);draw(now);amUI();routeTick()})(last);
 const idb=(m,k,v)=>new Promise(r=>{try{const q=indexedDB.open('ohami',1);q.onupgradeneeded=()=>q.result.createObjectStore('m');q.onsuccess=()=>{const t=q.result.transaction('m',m==='get'?'readonly':'readwrite').objectStore('m'),x=m==='get'?t.get(k):m==='put'?t.put(v,k):t.delete(k);x.onsuccess=()=>r(x.result);x.onerror=()=>r()};q.onerror=()=>r()}catch(e){r()}});
 function dec(k){const m=MEL[k];if(AC&&m&&!m.buf)AC.decodeAudioData(m.ab.slice(0),b=>{m.buf=b},()=>{})}
 const ANNK=['a_next','a_mid','a_approach','a_exit','a_arrive','a_door'],ALLK=MK.concat(ANNK.flatMap(a=>ST.map((_,i)=>a+'_'+i))),FK=k=>typeof k==='number'?'melody_'+k:k==='all'?'melody_all':k;
-async function folderLoad(k){if(MEL[k]&&MEL[k].src==='idb')return;const fk=FK(k),ns=[];if(FMF&&FMF[fk])ns.push(FMF[fk]);ns.push(fk+'.mp3');if(fk.indexOf('_')>=0)ns.push(fk.replace(/_/g,'-')+'.mp3');
+async function folderLoad(k){if(MEL[k]&&MEL[k].src==='idb')return;const fk=FK(k),ns=[];if(FMF&&FMF[fk])ns.push(FMF[fk]);const hy=fk.replace(/_/g,'-');ns.push(fk+'.mp3',fk+'.mp3.mp3');if(hy!==fk)ns.push(hy+'.mp3',hy+'.mp3.mp3');
  for(const n of ns.filter((x,i,a)=>a.indexOf(x)===i)){try{const r=await fetch('audio/'+n);if(!r.ok)continue;const ab=await r.arrayBuffer();if(MEL[k]&&MEL[k].src==='idb')return;MEL[k]={name:n.split('/').pop(),ab,buf:null,src:'folder'};dec(k);return}catch(e){}}}
 async function loadFolder(){try{const r=await fetch('audio/manifest.json',{cache:'no-cache'});if(r.ok)FMF=await r.json()}catch(e){}
  for(let i=0;i<ALLK.length;i+=8)await Promise.all(ALLK.slice(i,i+8).map(folderLoad));mrows()}
@@ -1563,7 +1596,7 @@ document.querySelectorAll('#ov .mr b[data-d]').forEach(b=>b.onclick=()=>{DWT=+b.
 document.querySelectorAll('#ov .mr b[data-b]').forEach(b=>b.onclick=()=>{BELLT=+b.dataset.b;document.querySelectorAll('#ov .mr b[data-b]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel')});
 {const go=$('go');let gx=0,gy=0;go.addEventListener('pointerdown',e=>{gx=e.clientX;gy=e.clientY});go.addEventListener('pointerup',e=>{if(!run&&Math.hypot(e.clientX-gx,e.clientY-gy)<14&&go.onclick)go.onclick()})}
 loadCfg();
-$('go').onclick=()=>{if(run)return;document.body.classList.add('playing');try{localStorage.setItem('seenVer',VERSION)}catch(e){}saveCfg();$('ov').style.display='none';run=true;wl();if(matchMedia('(orientation:portrait)').matches&&innerWidth<700)say('📱 横向きにすると操作しやすくなります',4500);audio();try{AC.resume()}catch(e){}ALLK.forEach(dec);
+$('go').onclick=()=>{if(run)return;spUnlock();document.body.classList.add('playing');try{localStorage.setItem('seenVer',VERSION)}catch(e){}saveCfg();$('ov').style.display='none';run=true;wl();if(matchMedia('(orientation:portrait)').matches&&innerWidth<700)say('📱 横向きにすると操作しやすくなります',4500);audio();try{AC.resume()}catch(e){}ALLK.forEach(dec);
 WX=WSEL!=='auto'?WSEL:(Math.random()<0.3?'rain':Math.random()<0.18?'fog':'clear');
 if(WX==='rain'){const rc=$('rain');rc.innerHTML='';for(let i=0;i<70;i++){const d=document.createElement('i');d.style.left=Math.random()*100+'%';d.style.animationDuration=(.35+Math.random()*.3)+'s';d.style.animationDelay=Math.random()*1+'s';d.style.opacity=.4+Math.random()*.5;rc.appendChild(d)}rc.style.display='block';scene.fog.far=1250;scene.fog.near=80}
 else if(WX==='fog'){$('fogv').style.display='block';scene.fog.far=520;scene.fog.near=20}
