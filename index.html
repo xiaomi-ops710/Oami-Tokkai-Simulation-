@@ -1209,7 +1209,7 @@ const SA=k=>Math.round(ST[k].s/15.5+k*21),clk=x=>{const q=14*3600+180+Math.floor
 const DS=['右','左','右','左','右','左','右','左'],TRF=['','地下鉄半蔵門線は、お乗り換えです。','東武アーバンパークラインは、お乗り換えです。','モノレール、内房線、外房線は、お乗り換えです。','内房線は、お乗り換えです。','','','東金線は、お乗り換えです。'],
 MSG=['携帯電話は、マナーモードに設定のうえ、通話はお控えください。','お忘れ物、落とし物にご注意ください。','車内では、席をお譲りあいのうえ、お座りください。','この電車は、全車両禁煙です。'];
 const limitAt=p=>{const d=nxt().s-p;let L=100;if(d<120)L=45;else if(d<350)L=70;else if(d<700)L=90;if(p-ST[idx].s<250)L=Math.min(L,65);if(haz&&p<haz.s+40&&p>haz.s-280)L=Math.min(L,15);return L};
-let at;function ann(t,key,k){$('ann').textContent=t;$('ann').style.opacity=1;clearTimeout(at);at=setTimeout(()=>$('ann').style.opacity=0,6500);if(playAnn(key,k))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='ja-JP';u.rate=1.05;speechSynthesis.speak(u)}catch(e){}}
+let at;function ann(t,key,k){$('ann').textContent=t;$('ann').style.opacity=1;clearTimeout(at);at=setTimeout(()=>$('ann').style.opacity=0,6500);annPush({t,key,k})}
 let mt;function say(t,ms=2600){const m=$('msg');m.textContent=t;m.style.opacity=1;clearTimeout(mt);mt=setTimeout(()=>m.style.opacity=0,ms)}
 /* ===== JR風LED行き先表示 ===== */
 let rtKey='',grTx='';
@@ -1282,7 +1282,8 @@ function atoStep(dt){
  if(B===0){if(nP>P&&ATO.rT<=0){P=P+1;ATO.rT=rr}else if(nP<P){P=nP}}else{P=0}
 }
 /* ===== 運転支援UI・バージョン表示・拡大防止・一時停止・撮影モード・設定の記憶 ===== */
-const VERSION='3.10.2',CHANGELOG=[
+const VERSION='3.10.3',CHANGELOG=[
+ {v:'3.10.3',d:'2026-10-08',n:['アップロードした車内放送の音声が鳴らない・ブラウザの自動音声と重なる問題を修正：放送を1本ずつ順番に再生し、前の放送が終わるまで次を待つ（途中で切れたり、音声ファイルと読み上げが同時に鳴ったりしない）','ドアが閉まる放送・到着放送は、音声ファイルの長さに合わせて、ドアの開閉音を待つように変更','audioフォルダの駅別ファイルを、ハイフン区切り（a-next-1.mp3）でも読み込めるように変更。manifest.json の _probe:false があっても、既定の名前を探すように変更','音の設定の画面に、audioフォルダから読み込めた駅別の放送ファイルの一覧を表示']},
  {v:'3.10.2',d:'2026-10-08',n:['「運転開始」を押しても何も起きず、ゲーム画面が出ない不具合を修正（3.10で追加した地方の景色の神社の処理で、位置の計算に使う関数が未定義だったため、読み込みの途中でエラーになっていた）']},
  {v:'3.10.1',d:'2026-10-08',n:['iPadのホーム画面アプリで、更新しても古い版のまま動き続ける問題に対応：アプリを開いたとき・前面に戻ったときに最新版を自動確認し、新しい版があれば画面上に「タップして更新」を表示（3.10の踏切・上部余白・秒表示・地方の景色が反映されない原因）','サービスワーカーが画面の読み込み時にキャッシュを使わず常に最新を取りに行くよう変更（CACHE v18）']},
  {v:'3.10',d:'2026-10-07',n:['踏切の遮断桿の向きを修正（線路に向かって伸びて電車に当たっていた。道路をふさぐ向きに直し、待機する車の位置も遮断桿の内側に合わせた）','画面上部（行き先表示など）がiPadのメニューバー等で隠れる問題に対応：開始画面の「上部余白」で調整可能（自動はiPadのホーム画面アプリで少し下げる）','行き先表示の現在時刻に秒を表示','地方の景色を大幅にリアル化：格子状の道路と庭木・塀のある住宅街（切妻・寄棟の屋根、窓と玄関つき）、団地、学校と校庭、ビニールハウスと畑・納屋、太陽光発電所、送電鉄塔と電線、鳥居と社殿のある神社。住宅街の地面は造成地のように平らに']},
@@ -1357,9 +1358,9 @@ function step(dt){
  pw+=(tP-pw)*Math.min(1,dt*3.5);bc+=(tB-bc)*Math.min(1,dt*(tB>bc?3:4));
  if(state==='dwell'){v=0;dw+=dt;const t=ST[idx+1];
   if(ph===0){ph=1;ann(`${t.n}、${t.n}、ご乗車ありがとうございます。`,'a_arrive',idx+1)}
-  else if(ph===1&&dw>=3.5){ph=2;doorSnd('open')}
+  else if(ph===1&&dw>=Math.max(3.5,annLen('a_arrive',idx+1)+.3)){ph=2;doorSnd('open')}
   else if(ph===2&&dw>=DWT){ph=3;melody();dq=dw+mlen()}
-  else if(ph===3&&dw>=dq){ph=4;ann(`${PL[idx+1]}番線、ドアが閉まります。ご注意ください。`,'a_door',idx+1);dq=dw+3.6}
+  else if(ph===3&&dw>=dq){ph=4;ann(`${PL[idx+1]}番線、ドアが閉まります。ご注意ください。`,'a_door',idx+1);dq=dw+Math.max(3.6,annLen('a_door',idx+1)+.4)}
   else if(ph===4&&dw>=dq){ph=5;doorSnd('close');dq=dw+2.4}
   else if(ph===5&&dw>=dq)depart()}
  else{
@@ -1434,7 +1435,16 @@ function audioX(){if(!AC||!rbg)return;const t=AC.currentTime,n2=performance.now(
 /* ===== 音声の差し替え: 端末(アプリ内)＞ audioフォルダ(GitHub Pages)＞内蔵音 の優先順位 ===== */
 let annSrc=null,FMF=null;
 function playBuf(buf,gain=.9,delay=0){if(!AC||!buf)return null;const s=AC.createBufferSource(),g=AC.createGain();g.gain.value=gain;s.buffer=buf;s.connect(g);g.connect(AC.destination);s.start(AC.currentTime+delay);return s}
-function playAnn(key,k){if(!key)return false;const m=MEL[key+'_'+k]||MEL[key];if(!(m&&m.buf&&AC))return false;try{annSrc&&annSrc.stop()}catch(e){}try{speechSynthesis.cancel()}catch(e){}let d=0;const cm=MEL.chime;if(cm&&cm.buf&&key!=='a_ats'){playBuf(cm.buf,.8);d=cm.buf.duration+.25}annSrc=playBuf(m.buf,1,d);return true}
+let annQ=[],annTok=0,annBusy=false,annSrcs=[];
+function annFile(key,k){if(!key||!AC)return null;const m=MEL[key+'_'+k]||MEL[key];return m&&(m.buf||m.ab)?m:null}
+function annLen(key,k){const m=annFile(key,k),cm=MEL.chime,c=(cm&&cm.buf&&key!=='a_ats')?cm.buf.duration+.25:0;return m&&m.buf?c+m.buf.duration:3.6}
+function annStop(){annTok++;annQ.length=0;annBusy=false;annSrcs.forEach(s=>{try{s&&s.stop()}catch(e){}});annSrcs=[];try{speechSynthesis.cancel()}catch(e){}}
+function annPush(it){if(it.key==='a_ats')annStop();else while(annQ.length>=2)annQ.shift();annQ.push(it);if(!annBusy)annNext()}
+function annNext(){const it=annQ.shift();if(!it){annBusy=false;return}annBusy=true;const tok=++annTok;let fin=false;const done=()=>{if(fin||tok!==annTok)return;fin=true;annNext()};
+ const speak=()=>{if(tok!==annTok)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(it.t);u.lang='ja-JP';u.rate=1.05;u.onend=done;u.onerror=done;speechSynthesis.speak(u);setTimeout(done,Math.max(5000,it.t.length*450))}catch(e){setTimeout(done,1500)}};
+ const m=annFile(it.key,it.k);if(!m){speak();return}
+ const play=b=>{if(tok!==annTok)return;if(!b){speak();return}const cm=MEL.chime,ch=(cm&&cm.buf&&it.key!=='a_ats')?cm.buf:null,d=ch?ch.duration+.25:0;annSrcs=[];if(ch)annSrcs.push(playBuf(ch,.8));annSrcs.push(playBuf(b,1,d));setTimeout(done,(d+b.duration)*1000+350)};
+ if(m.buf)play(m.buf);else try{AC.decodeAudioData(m.ab.slice(0),b=>{m.buf=b;play(b)},()=>play(null))}catch(e){play(null)}}
 function audio(){try{AC=new(window.AudioContext||window.webkitAudioContext)();const N=8,re=new Float32Array(N+1),im=new Float32Array(N+1);im[1]=1;im[2]=.14;im[3]=.24;im[5]=.09;im[7]=.04;const wv=AC.createPeriodicWave(re,im);
  lp=AC.createBiquadFilter();lp.type='lowpass';lp.Q.value=.8;mg=AC.createGain();lp.connect(mg);mg.connect(AC.destination);
  const mk=w=>{const o=AC.createOscillator();if(w)o.setPeriodicWave(w);else o.type='triangle';const g=AC.createGain();g.gain.value=0;o.connect(g);g.connect(lp);o.start();return[o,g]};
@@ -1537,15 +1547,15 @@ let last=performance.now();
 const idb=(m,k,v)=>new Promise(r=>{try{const q=indexedDB.open('ohami',1);q.onupgradeneeded=()=>q.result.createObjectStore('m');q.onsuccess=()=>{const t=q.result.transaction('m',m==='get'?'readonly':'readwrite').objectStore('m'),x=m==='get'?t.get(k):m==='put'?t.put(v,k):t.delete(k);x.onsuccess=()=>r(x.result);x.onerror=()=>r()};q.onerror=()=>r()}catch(e){r()}});
 function dec(k){const m=MEL[k];if(AC&&m&&!m.buf)AC.decodeAudioData(m.ab.slice(0),b=>{m.buf=b},()=>{})}
 const ANNK=['a_next','a_mid','a_approach','a_exit','a_arrive','a_door'],ALLK=MK.concat(ANNK.flatMap(a=>ST.map((_,i)=>a+'_'+i))),FK=k=>typeof k==='number'?'melody_'+k:k==='all'?'melody_all':k;
-async function folderLoad(k){if(MEL[k]&&MEL[k].src==='idb')return;const fk=FK(k),u=FMF&&FMF[fk]?'audio/'+FMF[fk]:(FMF&&FMF._probe===false?null:'audio/'+fk+'.mp3');if(!u)return;
- try{const r=await fetch(u);if(!r.ok)return;const ab=await r.arrayBuffer();if(MEL[k]&&MEL[k].src==='idb')return;MEL[k]={name:u.split('/').pop(),ab,buf:null,src:'folder'};dec(k)}catch(e){}}
+async function folderLoad(k){if(MEL[k]&&MEL[k].src==='idb')return;const fk=FK(k),ns=[];if(FMF&&FMF[fk])ns.push(FMF[fk]);ns.push(fk+'.mp3');if(fk.indexOf('_')>=0)ns.push(fk.replace(/_/g,'-')+'.mp3');
+ for(const n of ns.filter((x,i,a)=>a.indexOf(x)===i)){try{const r=await fetch('audio/'+n);if(!r.ok)continue;const ab=await r.arrayBuffer();if(MEL[k]&&MEL[k].src==='idb')return;MEL[k]={name:n.split('/').pop(),ab,buf:null,src:'folder'};dec(k);return}catch(e){}}}
 async function loadFolder(){try{const r=await fetch('audio/manifest.json',{cache:'no-cache'});if(r.ok)FMF=await r.json()}catch(e){}
  for(let i=0;i<ALLK.length;i+=8)await Promise.all(ALLK.slice(i,i+8).map(folderLoad));mrows()}
 const GR=[['車両・走行音',['horn','joint','brake','cross']],['警告音',['ovsp','ats','slip','hazard']],['ドア・発車メロディー',['open','close','all',0,1,2,3,4,5,6,7]],['車内放送（音声ファイルがあれば読み上げの代わりに再生）',['chime','a_start','a_next','a_mid','a_approach','a_exit','a_arrive','a_door','a_ats']]];
 function mrows(){const d=$('mrows');d.innerHTML='';GR.forEach(([gt,ks])=>{const h=document.createElement('div');h.className='mg';h.textContent=gt;d.appendChild(h);ks.forEach(k=>{const r=document.createElement('div');r.className='mr';const m=MEL[k];
   r.innerHTML=`<span>${nm(k)}</span><b>${m?(m.src==='folder'?'📁 ':'♪ ')+m.name.slice(0,14):'選ぶ'}<input type="file" accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg"></b>${m&&m.src!=='folder'?'<u>×</u>':''}`;
   r.querySelector('input').onchange=e=>{const f=e.target.files[0];if(!f)return;f.arrayBuffer().then(ab=>{MEL[k]={name:f.name,ab,buf:null,src:'idb'};idb('put',k,{name:f.name,ab});dec(k);mrows()})};
-  const u=r.querySelector('u');if(u)u.onclick=()=>{delete MEL[k];idb('del',k);mrows();folderLoad(k).then(mrows)};d.appendChild(r)})})}
+  const u=r.querySelector('u');if(u)u.onclick=()=>{delete MEL[k];idb('del',k);mrows();folderLoad(k).then(mrows)};d.appendChild(r)})});const fd=document.createElement('div');fd.className='mg';const fl=ALLK.filter(k=>typeof k==='string'&&/^a_[a-z]+_\d$/.test(k)&&MEL[k]&&MEL[k].src==='folder');fd.textContent='📁 駅別の放送ファイル：'+(fl.length?fl.length+'件読み込み済み（'+fl.join(', ')+'）':'まだ見つかっていません（audioフォルダの名前を確認）');d.appendChild(fd)}
 mrows();MK.forEach(k=>idb('get',k).then(v=>{if(v&&v.ab){MEL[k]={name:v.name,ab:v.ab,buf:null,src:'idb'};mrows()}}));loadFolder();
 $('mNorm').onclick=()=>{TR_ON=false;$('mNorm').classList.add('sel');$('mTrain').classList.remove('sel');$('trdesc').style.display='none'};
 $('mTrain').onclick=()=>{TR_ON=true;$('mTrain').classList.add('sel');$('mNorm').classList.remove('sel');$('trdesc').style.display='block'};
